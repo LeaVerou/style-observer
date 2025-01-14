@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>StyleObserver test</title>
+</head>
+<body>
+	<div id="test">Hover me to change property</div>
+<style>
+	/* @property --foo {
+		syntax: "*";
+		initial-value: 0;
+		inherits: false;
+	} */
+	#test {
+		--foo: 0;
+	}
+	#test:hover {
+		--foo: foo;
+		background: gold;
+	}
+</style>
+<script type="module">
+	import StyleObserver from "./src/index.js";
+
+	let observer = new StyleObserver(records => {
+		for (let r of records) {
+			console.log(r);
+		}
+	});
+
+	observer.observe(document.getElementById("test"), "--foo");
+</script>
+</body>
+</html>
