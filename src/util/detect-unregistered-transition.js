@@ -4,7 +4,7 @@ document.body.appendChild(dummy);
 let property = "--foo-" + Date.now();
 dummy.style.cssText = `${property}: 1; transition: ${property} 1ms step-start allow-discrete`;
 
-export default new Promise(resolve => {
+export default await new Promise(resolve => {
 	requestAnimationFrame(() => {
 		setTimeout(_ => resolve(true), 30);
 		dummy.addEventListener("transitionstart", _ => resolve(false));
