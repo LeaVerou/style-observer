@@ -1,3 +1,4 @@
+import TRANSITIONSTART_EVENT_LOOP_BUG from "./util/detect-transitionstart-loop.js";
 import UNREGISTERED_TRANSITION_BUG from "./util/detect-unregistered-transition.js";
 import MultiWeakMap from "./util/MultiWeakMap.js";
 import WeakMapMap from "./util/WeakMapMap.js";
@@ -64,6 +65,18 @@ export default class StyleObserver {
 		let record = { target, propertyName, pseudoElement, value, oldValue};
 
 		this.callback([record]);
+
+		if (TRANSITIONSTART_EVENT_LOOP_BUG) {
+			let target = event.target;
+			target.removeEventListener("transitionstart", this);
+
+			requestAnimationFrame(() => {
+				// If we re-add the listener, it won't fix the bug.
+				// The `transitionstart` events fire infinitely, so we get the same result as before.
+				// We should find a way to stop all the transitions related to the property from firing.
+				target.addEventListener("transitionstart", this);
+			});
+		}
 	}
 
 	static handleEvent = function handleEvent (event) {
