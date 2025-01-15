@@ -31,6 +31,9 @@
 	});
 
 	observer.observe(document.getElementById("test"), "--foo");
+	test.addEventListener("transitionstart", () => {
+		console.log("transitionstart");
+	});
 </script>
 </body>
 </html>
