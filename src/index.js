@@ -33,6 +33,11 @@ export default class StyleObserver {
 	static observedProperties = new Set();
 
 	/**
+	 * @type {WeakMapMap<Element, Map<string, CSSRule>>}
+	 */
+	static cssRules = new WeakMapMap();
+
+	/**
 	 * @param {function} callback
 	 * @param {StyleObserverOptions} options
 	 */
@@ -62,21 +67,45 @@ export default class StyleObserver {
 			return;
 		}
 
-		let record = { target, propertyName, pseudoElement, value, oldValue};
+		let record = { target, propertyName, pseudoElement, value, oldValue };
+
+		// Only handle bug workaround for custom properties
+		if (TRANSITIONSTART_EVENT_LOOP_BUG && propertyName.startsWith("--")) {
+			let rule = this.constructor.cssRules.get(target, propertyName);
+			if (rule === undefined) {
+				rule = this.constructor._findCSSRule(target, propertyName);
+			}
+
+			// In Safari < 18.1, transitioning custom properties of syntax `*` or `<string>`
+			// cause the infinite loop of `transitionstart` events.
+			// We must stop observing and re-observing such properties after a reasonable delay to break the loop.
+			if (!rule || rule.syntax === "*" || rule.syntax === "<string>") {
+				this.constructor._updateTransition(target, propertyName);
+				setTimeout(_ => this.constructor._updateTransition(target), 50); // the same delay we use to detect the bug
+			}
+		}
 
 		this.callback([record]);
+	}
 
-		if (TRANSITIONSTART_EVENT_LOOP_BUG) {
-			let target = event.target;
-			target.removeEventListener("transitionstart", this);
-
-			requestAnimationFrame(() => {
-				// If we re-add the listener, it won't fix the bug.
-				// The `transitionstart` events fire infinitely, so we get the same result as before.
-				// We should find a way to stop all the transitions related to the property from firing.
-				target.addEventListener("transitionstart", this);
-			});
+	static _findCSSRule (element, propertyName) {
+		for (let stylesheet of document.styleSheets) {
+			try {
+				for (let rule of stylesheet.cssRules) {
+					if (rule.name === propertyName) {
+						this.cssRules.set(element, propertyName, rule);
+						return rule;
+					}
+				}
+			}
+			catch {
+				continue; // Skip cross-origin stylesheets
+			}
 		}
+
+		this.cssRules.set(element, propertyName, null);
+
+		return null;
 	}
 
 	static handleEvent = function handleEvent (event) {
@@ -144,21 +173,26 @@ export default class StyleObserver {
 	static _initTarget (target) {
 		// TODO this will fail if the transition is modified after the fact
 		let transition = getComputedStyle(target).transition;
-		target.style.transition = transition + ", var(--style-observer-transition, all)";
+		// In Safari 18.1, if the transition property is not set (i.e., equal to "all"),
+		// and we add it at the beginning of the transition property, `--style-observer-transition` will be ignored,
+		// and the `transitionstart` event won't be fired,
+		// so the styles won't be observed.
+		target.style.transition = transition !== "all" ? transition : "" + "var(--style-observer-transition, all)";
+		// target.style.transition = transition + ", var(--style-observer-transition, all)";
 		target.addEventListener("transitionstart", this.handleEvent);
 	}
 
-	static _updateTransition (target) {
+	static _updateTransition (target, excludeProperty = null) {
 		let allProperties = [...this.observed.get(target)];
 		// Clear our own transition
 		target.style.setProperty("--style-observer-transition", "");
 
 		let transitionProperties = new Set(getComputedStyle(target).transitionProperty.split(", "));
 
-		// Only add properties not already present
+		// Only add properties not already present and not excluded
 		let transition = allProperties
-			.filter(property => !transitionProperties.has(property))
-			.map(property => `${property} 1ms step-start allow-discrete`).join(", ");
+			.filter(property => !transitionProperties.has(property) && property !== excludeProperty)
+			.map(property => `${ property } 1ms step-start allow-discrete`).join(", ");
 		target.style.setProperty("--style-observer-transition", transition);
 	}
 
