@@ -76,7 +76,7 @@ export default class StyleObserver {
 				rule = this.constructor._findCSSRule(target, propertyName);
 			}
 
-			// In Safari < 18.1, transitioning custom properties of syntax `*` or `<string>`
+			// In Safari < 18.2, transitioning custom properties of syntax `*` or `<string>`
 			// cause the infinite loop of `transitionstart` events.
 			// We must stop observing and re-observing such properties after a reasonable delay to break the loop.
 			if (!rule || rule.syntax === "*" || rule.syntax === "<string>") {
@@ -173,7 +173,7 @@ export default class StyleObserver {
 	static _initTarget (target) {
 		// TODO this will fail if the transition is modified after the fact
 		let transition = getComputedStyle(target).transition;
-		// In Safari 18.1, if the transition property is not set (i.e., equal to "all"),
+		// In Safari < 18.2, if the transition property is not set (i.e., equal to "all"),
 		// and we add it at the beginning of the transition property, `--style-observer-transition` will be ignored,
 		// and the `transitionstart` event won't be fired,
 		// so the styles won't be observed.
