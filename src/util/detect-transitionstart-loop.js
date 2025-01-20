@@ -1,3 +1,6 @@
+// In Safari < 18.2, transitioning custom properties of syntax `*` or `<string>`
+// cause the infinite loop of `transitionstart` events.
+// We use this test to detect the bug.
 let dummy = document.createElement("div");
 document.body.appendChild(dummy);
 let property = "--bar-" + Date.now();

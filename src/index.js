@@ -1,3 +1,4 @@
+import TRANSITIONSTART_EVENT_LOOP_BUG from "./util/detect-transitionstart-loop.js";
 import UNREGISTERED_TRANSITION_BUG from "./util/detect-unregistered-transition.js";
 import MultiWeakMap from "./util/MultiWeakMap.js";
 import WeakMapMap from "./util/WeakMapMap.js";
@@ -46,7 +47,6 @@ export default class StyleObserver {
 	}
 
 	handleEvent (event) {
-		console.log(event);
 		let observedProperties = this.observed.get(event.target);
 
 		let { propertyName, pseudoElement, target } = event;
@@ -61,7 +61,13 @@ export default class StyleObserver {
 			return;
 		}
 
-		let record = { target, propertyName, pseudoElement, value, oldValue};
+		let record = { target, propertyName, pseudoElement, value, oldValue };
+
+		if (TRANSITIONSTART_EVENT_LOOP_BUG) {
+			// To break the loop, stop observing `propertyName` and re-observe it after a reasonable delay
+			this.constructor._updateTransition(target, propertyName);
+			setTimeout(_ => this.constructor._updateTransition(target), 50); // the same delay we use to detect the bug
+		}
 
 		this.callback([record]);
 	}
@@ -131,21 +137,27 @@ export default class StyleObserver {
 	static _initTarget (target) {
 		// TODO this will fail if the transition is modified after the fact
 		let transition = getComputedStyle(target).transition;
-		target.style.transition = transition + ", var(--style-observer-transition, all)";
+		let prefix = !transition || transition === "all" ? "" : transition + ", ";
+
+		// Note that in Safari < 18.2 this fires no `transitionstart` events:
+		// transition: all, var(--style-observer-transition, all);
+		// so we can't just concatenate with whatever the existing value is
+		target.style.transition = prefix + "var(--style-observer-transition, all)";
+
 		target.addEventListener("transitionstart", this.handleEvent);
 	}
 
-	static _updateTransition (target) {
+	static _updateTransition (target, excludeProperty) {
 		let allProperties = [...this.observed.get(target)];
 		// Clear our own transition
 		target.style.setProperty("--style-observer-transition", "");
 
 		let transitionProperties = new Set(getComputedStyle(target).transitionProperty.split(", "));
 
-		// Only add properties not already present
+		// Only add properties not already present and not excluded
 		let transition = allProperties
-			.filter(property => !transitionProperties.has(property))
-			.map(property => `${property} 1ms step-start allow-discrete`).join(", ");
+			.filter(property => !transitionProperties.has(property) && property !== excludeProperty)
+			.map(property => `${ property } 1ms step-start allow-discrete`).join(", ");
 		target.style.setProperty("--style-observer-transition", transition);
 	}
 
