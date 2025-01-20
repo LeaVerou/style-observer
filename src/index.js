@@ -65,8 +65,8 @@ export default class StyleObserver {
 
 		if (TRANSITIONSTART_EVENT_LOOP_BUG) {
 			// To break the loop, stop observing `propertyName` and re-observe it after a reasonable delay
-			this.constructor._updateTransition(target, propertyName);
-			setTimeout(_ => this.constructor._updateTransition(target), 50); // the same delay we use to detect the bug
+			event.stopImmediatePropagation();
+			setTimeout(_ => target.addEventListener("transitionstart", this, { once: true }), 50); // the same delay we use to detect the bug
 		}
 
 		this.callback([record]);
@@ -144,7 +144,7 @@ export default class StyleObserver {
 		// so we can't just concatenate with whatever the existing value is
 		target.style.transition = prefix + "var(--style-observer-transition, all)";
 
-		target.addEventListener("transitionstart", this.handleEvent);
+		target.addEventListener("transitionstart", this.handleEvent, { once: TRANSITIONSTART_EVENT_LOOP_BUG });
 	}
 
 	static _updateTransition (target, excludeProperty) {
