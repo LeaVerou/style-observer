@@ -137,18 +137,13 @@ export default class StyleObserver {
 	static _initTarget (target) {
 		// TODO this will fail if the transition is modified after the fact
 		let transition = getComputedStyle(target).transition;
+		let prefix = !transition || transition === "all" ? "" : transition + ", ";
 
-		// In Safari < 18.2, if the transition property is not set (i.e., equal to "all"),
-		// and we add it at the beginning of the transition property, `--style-observer-transition` will be ignored,
-		// and the `transitionstart` event won't be fired,
-		// so the styles won't be observed.
-		// This issue is present simultaneously with the `transitionstart` event loop bug.
-		if (TRANSITIONSTART_EVENT_LOOP_BUG && transition === "all") {
-			target.style.transition = "var(--style-observer-transition, all)";
-		}
-		else {
-			target.style.transition = transition + ", var(--style-observer-transition, all)";
-		}
+		// Note that in Safari < 18.2 this fires no `transitionstart` events:
+		// transition: all, var(--style-observer-transition, all);
+		// so we can't just concatenate with whatever the existing value is
+		target.style.transition = prefix + "var(--style-observer-transition, all)";
+
 		target.addEventListener("transitionstart", this.handleEvent);
 	}
 
