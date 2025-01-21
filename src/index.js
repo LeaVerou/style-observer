@@ -66,7 +66,7 @@ export default class StyleObserver {
 			let observer = this.elementObservers.get(target);
 
 			if (!observer) {
-				observer = new ElementStyleObserver(target, this.changed, this.options);
+				observer = new ElementStyleObserver(target, records => this.changed(records), this.options);
 				this.elementObservers.set(target, observer);
 			}
 

@@ -18,7 +18,7 @@ gentleRegisterProperty("--style-observer-transition", { inherits: false });
 export default class ElementStyleObserver {
 	/**
 	 * Observed properties to their old values
-	 * @type {Set<string, string>}
+	 * @type {Map<string, string>}
 	 */
 	properties;
 
@@ -52,7 +52,6 @@ export default class ElementStyleObserver {
 	#initialized = false;
 
 	constructor (target, callback, options = {}) {
-		this.constructor.all.add(target, this);
 		this.properties = new Map();
 		this.target = target;
 		this.callback = callback;
@@ -74,13 +73,15 @@ export default class ElementStyleObserver {
 
 		if (!this.constructor.all.has(this.target)) {
 			// We don't need to do this multiple times for the same target
-			let transition = getComputedStyle(target).transition;
+			this.constructor.all.add(this.target, this);
+
+			let transition = getComputedStyle(this.target).transition;
 			let prefix = !transition || transition === "all" ? "" : transition + ", ";
 
 			// Note that in Safari < 18.2 this fires no `transitionstart` events:
 			// transition: all, var(--style-observer-transition, all);
 			// so we can't just concatenate with whatever the existing value is
-			target.style.transition = prefix + "var(--style-observer-transition, all)";
+			this.target.style.transition = prefix + "var(--style-observer-transition, all)";
 		}
 
 		this.#initialized = true;
@@ -95,12 +96,16 @@ export default class ElementStyleObserver {
 			return;
 		}
 
+		let { propertyName, pseudoElement, target } = event;
+
 		let value = getComputedStyle(target).getPropertyValue(propertyName);
 		let oldValue = this.properties.get(propertyName);
 
 		if (value === oldValue) {
 			return;
 		}
+
+		this.properties.set(propertyName, value);
 
 		let record = { target, propertyName, pseudoElement, value, oldValue };
 
