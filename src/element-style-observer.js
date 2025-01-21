@@ -2,7 +2,7 @@ import TRANSITIONSTART_EVENT_LOOP_BUG from "./util/detect-transitionstart-loop.j
 import UNREGISTERED_TRANSITION_BUG from "./util/detect-unregistered-transition.js";
 import gentleRegisterProperty from "./util/gentle-register-property.js";
 import MultiWeakMap from "./util/MultiWeakMap.js";
-import { toArray } from "./util.js";
+import { toArray, delay } from "./util.js";
 
 // We register this as non-inherited so that nested targets work as expected
 gentleRegisterProperty("--style-observer-transition", { inherits: false });
@@ -91,7 +91,7 @@ export default class ElementStyleObserver {
 		return Object.assign(resolveOptions(options), this.options);
 	}
 
-	handleEvent (event) {
+	async handleEvent (event) {
 		if (!this.properties.has(event.propertyName)) {
 			return;
 		}
@@ -110,9 +110,10 @@ export default class ElementStyleObserver {
 		let record = { target, propertyName, pseudoElement, value, oldValue };
 
 		if (TRANSITIONSTART_EVENT_LOOP_BUG) {
+			this.target.removeEventListener("transitionstart", this);
 			// To break the loop, stop observing `propertyName` and re-observe it after a reasonable delay
-			this.#updateTransition(target, propertyName);
-			setTimeout(_ => this.#updateTransition(target), 50); // the same delay we use to detect the bug
+			await delay(50);
+			this.target.addEventListener("transitionstart", this);
 		}
 
 		this.callback([record]);
@@ -154,10 +155,9 @@ export default class ElementStyleObserver {
 	}
 
 	/**
-	 *
-	 * @param {string} [excludeProperty]
+	 * Update the transition property to include all observed properties
 	 */
-	#updateTransition (excludeProperty) {
+	#updateTransition () {
 		// Clear our own transition
 		this.target.style.setProperty("--style-observer-transition", "");
 
@@ -172,7 +172,7 @@ export default class ElementStyleObserver {
 
 		// Only add properties not already present and not excluded
 		let transition = properties
-			.filter(property => !transitionProperties.has(property) && property !== excludeProperty)
+			.filter(property => !transitionProperties.has(property))
 			.map(property => `${ property } 1ms step-start allow-discrete`).join(", ");
 
 		this.target.style.setProperty("--style-observer-transition", transition);
