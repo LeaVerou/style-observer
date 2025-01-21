@@ -117,7 +117,9 @@ export default class ElementStyleObserver {
 			}
 		}
 
-		this.callback(records);
+		if (records.length > 0) {
+			this.callback(records);
+		}
 	}
 
 	/**
