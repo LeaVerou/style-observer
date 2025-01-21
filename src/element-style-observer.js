@@ -96,27 +96,28 @@ export default class ElementStyleObserver {
 			return;
 		}
 
-		let { propertyName, pseudoElement, target } = event;
-
-		let value = getComputedStyle(target).getPropertyValue(propertyName);
-		let oldValue = this.properties.get(propertyName);
-
-		if (value === oldValue) {
-			return;
-		}
-
-		this.properties.set(propertyName, value);
-
-		let record = { target, propertyName, pseudoElement, value, oldValue };
-
-		if (TRANSITIONSTART_EVENT_LOOP_BUG) {
+		if (TRANSITIONSTART_EVENT_LOOP_BUG || this.options.throttle > 0) {
+			// Safari < 18.2 fires `transitionstart` events too often, so we need to debounce
 			this.target.removeEventListener("transitionstart", this);
-			// To break the loop, stop observing `propertyName` and re-observe it after a reasonable delay
-			await delay(50);
+			await delay(this.options.throttle || 50);
 			this.target.addEventListener("transitionstart", this);
 		}
 
-		this.callback([record]);
+		let cs = getComputedStyle(this.target);
+		let records = [];
+
+		// Other properties may have changed in the meantime
+		for (let property of this.propertyNames) {
+			let value = cs.getPropertyValue(property);
+			let oldValue = this.properties.get(property);
+
+			if (value !== oldValue) {
+				records.push({ target: this.target, property, value, oldValue });
+				this.properties.set(property, value);
+			}
+		}
+
+		this.callback(records);
 	}
 
 	/**
