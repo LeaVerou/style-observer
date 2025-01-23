@@ -28,7 +28,7 @@ export default {
 		}, { target: dummy });
 	},
 
-	before () {
+	beforeEach () {
 		let { property, initial } = this.data;
 
 		if (initial) {
@@ -52,7 +52,7 @@ export default {
 		return record.value;
 	},
 
-	after () {
+	afterEach () {
 		observers[this.args[0]].unobserve(dummy, this.data.property);
 	},
 
