@@ -1,51 +1,40 @@
 import StyleObserver from "../src/index.js";
 import { delay } from "../src/util.js";
 
-// Shared state
-let dummy, observer, records = [];
-
 export default {
 	name: "Basic",
 
-	beforeAll () {
-		dummy = document.createElement("div");
+	beforeEach () {
+		let dummy = document.createElement("div");
 		document.body.append(dummy);
 
-		observer = new StyleObserver(recs => {
-			records = recs;
+		let observer = new StyleObserver(records => {
+			this.data.record = records[0];
 		});
-	},
 
-	before () {
 		let { property, initial } = this.data;
-
 		if (initial) {
 			dummy.style.setProperty(property, initial);
 		}
 
 		observer.observe(dummy, property);
+
+		this.data.observer = observer;
+		this.data.dummy = dummy;
 	},
 
 	async run (arg) {
-		let property = this.data.property;
-
-		dummy.style.setProperty(property, arg);
+		this.data.dummy.style.setProperty(this.data.property, arg);
 
 		// Wait for the observer to update the record
 		await delay(100);
 
-		// Find the record for the property
-		let record = records.find(record => record.property === property);
-
-		return record.value;
+		return this.data.record.value;
 	},
 
-	after () {
-		observer.unobserve(dummy, this.data.property);
-	},
-
-	afterAll () {
-		dummy.remove();
+	afterEach () {
+		this.data.observer.unobserve(this.data.dummy);
+		this.data.dummy.remove();
 	},
 
 	getName () {
