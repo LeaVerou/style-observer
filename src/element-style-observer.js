@@ -52,6 +52,7 @@ export default class ElementStyleObserver {
 	#initialized = false;
 
 	constructor (target, callback, options = {}) {
+		this.constructor.all.add(target, this);
 		this.properties = new Map();
 		this.target = target;
 		this.callback = callback;
@@ -71,10 +72,8 @@ export default class ElementStyleObserver {
 			return;
 		}
 
-		if (!this.constructor.all.has(this.target)) {
+		if (this.constructor.all.get(this.target).size === 1) {
 			// We don't need to do this multiple times for the same target
-			this.constructor.all.add(this.target, this);
-
 			let transition = getComputedStyle(this.target).transition;
 			let prefix = !transition || transition === "all" ? "" : transition + ", ";
 
@@ -219,6 +218,9 @@ export function resolveOptions (options) {
 
 	if (typeof options === "string" || Array.isArray(options)) {
 		options = { properties: toArray(options) };
+	}
+	else if (typeof options === "object") {
+		options = { properties: [], ...options };
 	}
 
 	return options;
