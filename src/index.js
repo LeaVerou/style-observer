@@ -22,6 +22,7 @@ export default class StyleObserver {
 
 		options = resolveOptions(options);
 		options.targets ??= [];
+		options.properties ??= [];
 
 		if (options.target) {
 			options.targets.push(options.target);
