@@ -219,6 +219,9 @@ export function resolveOptions (options) {
 	if (typeof options === "string" || Array.isArray(options)) {
 		options = { properties: toArray(options) };
 	}
+	else if (typeof options === "object") {
+		options = { properties: [], ...options };
+	}
 
 	return options;
 }
