@@ -3,7 +3,8 @@ import { delay } from "../src/util.js";
 
 export default {
 	name: "Basic",
-	setup () {
+
+	beforeEach () {
 		let dummy = document.createElement("div");
 		document.body.append(dummy);
 
@@ -31,7 +32,7 @@ export default {
 		return this.data.record.value;
 	},
 
-	teardown () {
+	afterEach () {
 		this.data.observer.unobserve(this.data.dummy);
 		this.data.dummy.remove();
 	},
