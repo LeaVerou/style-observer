@@ -6,6 +6,10 @@ import adoptCSS from "./adopt-css.js";
  * @param {*} meta
  */
 export default function gentleRegisterProperty (property, meta = {}) {
+	if (!property.startsWith("--")) {
+		return;
+	}
+
 	adoptCSS(`@property ${property} {
 		syntax: "${ meta.syntax || "*" }";
 		inherits: ${ meta.inherits || true };
