@@ -35,6 +35,6 @@ export default [
 			initial: "45deg",
 			value: "1turn",
 		},
-		expect: "1turn",
+		expect: "360deg",
 	},
 ];
