@@ -56,10 +56,10 @@ export default class ElementStyleObserver {
 		this.properties = new Map();
 		this.target = target;
 		this.callback = callback;
-		this.options = {...options, properties: []};
+		this.options = {properties: [], ...options};
 		let properties = toArray(options.properties);
 
-		if (properties) {
+		if (properties.length > 0) {
 			this.observe(properties);
 		}
 	}
