@@ -1,4 +1,5 @@
 {
 	"basic": "Basic",
-	"multiple": "Multiple observers"
+	"multiple": "Multiple observers",
+	"shadow": "Shadow DOM"
 }
