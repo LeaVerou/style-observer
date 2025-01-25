@@ -51,7 +51,7 @@ export default {
 		{
 			name: "Imperative",
 			beforeAll () {
-				let host = Object.assign(document.createElement("dummy-element"), { id: "imperative-host" });
+				let host = Object.assign(document.createElement("div"), { id: "imperative-host" });
 				host.attachShadow({ mode: "open" });
 				host.shadowRoot.innerHTML = "";
 				document.body.append(host);
