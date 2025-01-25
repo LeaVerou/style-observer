@@ -144,9 +144,66 @@ export default {
 				},
 			],
 		},
-		// {
-		// 	name: "Registered custom element",
-		// 	tests: [],
-		// },
+		{
+			name: "Registered custom element",
+			async beforeAll () {
+				class RegisteredComponent extends HTMLElement {
+					constructor () {
+						super();
+						this.attachShadow({ mode: "open" });
+					}
+
+					connectedCallback () {
+						this.setAttribute("id", "registered-host");
+					}
+				}
+
+				customElements.define("registered-component", RegisteredComponent);
+			},
+			data: {
+				hostId: "registered-host",
+			},
+			tests: [
+				{
+					name: "Interpolable built-in",
+					arg: {
+						property: "font-size",
+						value: "10px",
+					},
+					expect: "10px",
+				},
+				{
+					name: "Discrete built-in",
+					arg: {
+						property: "display",
+						initial: "table-cell",
+						value: "inline-block",
+					},
+					expect: "inline-block",
+				},
+				{
+					name: "Unregistered custom property",
+					arg: {
+						property: "--custom-element-unregistered",
+						initial: 0,
+						value: "foo",
+					},
+					expect: "foo",
+				},
+				{
+					name: "Registered custom property",
+					arg: {
+						property: "--custom-element-registered",
+						meta: {
+							syntax: "<length>",
+							initialValue: "0px",
+						},
+						initial: "1px",
+						value: "2px",
+					},
+					expect: "2px",
+				},
+			],
+		},
 	],
 };
