@@ -7,13 +7,15 @@ export default {
 
 	beforeEach () {
 		let host = document.getElementById(this.data.hostId);
-		let target = Object.assign(document.createElement("div"), { id: this.arg.property });
+		let id = this.arg.property + "-" + CSS.escape(this.arg.value);
+		let target = Object.assign(document.createElement("div"), { id });
 		host.shadowRoot.append(target);
 	},
 
-	async run ({property, meta, initial, value}) {
+	run ({property, meta, initial, value}) {
 		let host = document.getElementById(this.data.hostId);
-		let target = host.shadowRoot.getElementById(this.arg.property);
+		let id = this.arg.property + "-" + CSS.escape(this.arg.value);
+		let target = host.shadowRoot.getElementById(id);
 
 		if (property.startsWith("--")) {
 			// Make custom properties unique across all tests
@@ -28,7 +30,7 @@ export default {
 			target.style.setProperty(property, initial);
 		}
 
-		let records = await new Promise(resolve => {
+		return new Promise((resolve, reject) => {
 			let observer = new StyleObserver(records => {
 				resolve(records);
 			});
@@ -36,14 +38,20 @@ export default {
 			observer.observe(target, property);
 
 			target.style.setProperty(property, value);
-		});
 
-		return records[0].value;
+			// Timeout after 500ms
+			setTimeout(() => reject(), 500);
+		})
+		.catch(_ => {
+			return [{ value: "Timed out" }];
+		})
+		.then(records => records[0].value);
 	},
 
 	afterEach () {
 		let host = document.getElementById(this.data.hostId);
-		let target = host.shadowRoot.getElementById(this.arg.property);
+		let id = this.arg.property + "-" + CSS.escape(this.arg.value);
+		let target = host.shadowRoot.getElementById(id);
 		target.remove();
 	},
 

@@ -1,61 +1,44 @@
 import StyleObserver from "../src/index.js";
-import { delay } from "../src/util.js";
+import gentleRegisterProperty from "../src/util/gentle-register-property.js";
+import tests from "./tests.js";
 
 export default {
 	name: "Basic",
 
-	beforeEach () {
+	run ({property, meta, initial, value}) {
 		let dummy = document.createElement("div");
 		document.body.append(dummy);
 
-		let observer = new StyleObserver(records => {
-			this.data.record = records[0];
+		let observer;
+		return new Promise((resolve, reject) => {
+			observer = new StyleObserver(records => {
+				resolve(records);
+			});
+
+			if (meta) {
+				gentleRegisterProperty(property, meta);
+			}
+
+			if (initial) {
+				dummy.style.setProperty(property, initial);
+			}
+
+			observer.observe(dummy, property);
+
+			dummy.style.setProperty(property, value);
+
+			// Timeout after 500ms
+			setTimeout(() => reject(), 500);
+		})
+		.catch(_ => {
+			return [{ value: "Timed out" }];
+		})
+		.then(records => records[0].value)
+		.finally(() => {
+			observer.unobserve(dummy);
+			dummy.remove();
 		});
-
-		let { property, initial } = this.data;
-		if (initial) {
-			dummy.style.setProperty(property, initial);
-		}
-
-		observer.observe(dummy, property);
-
-		this.data.observer = observer;
-		this.data.dummy = dummy;
 	},
 
-	async run (arg) {
-		this.data.dummy.style.setProperty(this.data.property, arg);
-
-		// Wait for the observer to update the record
-		await delay(100);
-
-		return this.data.record.value;
-	},
-
-	afterEach () {
-		this.data.observer.unobserve(this.data.dummy);
-		this.data.dummy.remove();
-	},
-
-	getName () {
-		return this.data.property + ": " + (this.data.initial ?? "initial");
-	},
-
-	tests: [
-		{
-			data: {
-				property: "width",
-			},
-			arg: "42px",
-			expect: "42px",
-		},
-		{
-			data: {
-				property: "--color",
-				initial: "transparent",
-			},
-			arg: "rebeccapurple",
-			expect: "rebeccapurple",
-		},
-	],
+	tests,
 };

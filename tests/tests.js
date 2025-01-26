@@ -9,11 +9,34 @@ export default [
 	},
 	{
 		name: "Discrete built-in",
-		arg: {
-			property: "display",
-			value: "flex",
-		},
-		expect: "flex",
+		tests: [
+			{
+				name: "To display: none",
+				arg: {
+					property: "display",
+					value: "none",
+				},
+				expect: "none",
+			},
+			{
+				name: "From display: none",
+				arg: {
+					property: "display",
+					initial: "none",
+					value: "block",
+				},
+				expect: "block",
+			},
+			{
+				name: "From not none to not none",
+				arg: {
+					property: "display",
+					initial: "grid",
+					value: "flex",
+				},
+				expect: "flex",
+			},
+		],
 	},
 	{
 		name: "Unregistered custom property",
@@ -32,7 +55,6 @@ export default [
 				syntax: "<angle>",
 				initialValue: "0deg",
 			},
-			initial: "45deg",
 			value: "1turn",
 		},
 		expect: "360deg",
