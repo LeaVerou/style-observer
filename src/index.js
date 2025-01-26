@@ -30,7 +30,7 @@ export default class StyleObserver {
 		this.options = options;
 
 		if (this.options.targets.length > 0 && this.options.properties.length > 0) {
-			this.observe(this.options);
+			this.observe(this.options.targets, this.options.properties);
 		}
 	}
 
