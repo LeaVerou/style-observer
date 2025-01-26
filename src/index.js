@@ -96,6 +96,11 @@ export default class StyleObserver {
 			return;
 		}
 
+		if (properties.length === 0) {
+			// Default to constructor-specified properties
+			properties = this.options.properties;
+		}
+
 		for (let target of targets) {
 			let observer = this.elementObservers.get(target);
 
