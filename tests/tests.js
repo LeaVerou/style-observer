@@ -9,34 +9,11 @@ export default [
 	},
 	{
 		name: "Discrete built-in",
-		tests: [
-			{
-				name: "To display: none",
-				arg: {
-					property: "display",
-					value: "none",
-				},
-				expect: "none",
-			},
-			{
-				name: "From display: none",
-				arg: {
-					property: "display",
-					initial: "none",
-					value: "block",
-				},
-				expect: "block",
-			},
-			{
-				name: "From not none to not none",
-				arg: {
-					property: "display",
-					initial: "grid",
-					value: "flex",
-				},
-				expect: "flex",
-			},
-		],
+		arg: {
+			property: "text-align",
+			value: "center",
+		},
+		expect: "center",
 	},
 	{
 		name: "Unregistered custom property",
@@ -58,5 +35,36 @@ export default [
 			value: "1turn",
 		},
 		expect: "360deg",
+	},
+	{
+		name: "The display property",
+		tests: [
+			{
+				name: "To display: none",
+				arg: {
+					property: "display",
+					value: "none",
+				},
+				expect: "none",
+			},
+			{
+				name: "From display: none",
+				arg: {
+					property: "display",
+					initial: "none",
+					value: "block",
+				},
+				expect: "block",
+			},
+			{
+				name: "display: from not none to not none",
+				arg: {
+					property: "display",
+					initial: "grid",
+					value: "flex",
+				},
+				expect: "flex",
+			},
+		],
 	},
 ];
