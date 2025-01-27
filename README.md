@@ -61,6 +61,13 @@ This is not a fork of either. It was written from scratch and has several differ
 ## Limitations
 
 - You cannot observe `transition` and `animation` properties.
-- Observing `display` is inconsistent across browsers (see relevant tests).
+- Observing `display` is inconsistent across browsers (see relevant tests):
+
+| Rule | Chrome | Firefox | Safari | Safari (iOS) | Samsung Internet |
+| --- | --- | --- | --- | --- | --- |
+| From `display: none` | ❌ | ❌ | ❌ | ❌ | ❌ |
+| To `display: none` | ❌ | ❌ | ✅ | ✅ | ❌ |
+| From not `none` to not `none` |  ✅ | ❌ | ✅ | ✅ | ✅ |
+
 - You cannot change the `transition`/`transition-*` properties dynamically on elements you are observing after you start observing them.
 
