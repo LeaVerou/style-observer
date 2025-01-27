@@ -36,35 +36,4 @@ export default [
 		},
 		expect: "360deg",
 	},
-	{
-		name: "The display property",
-		tests: [
-			{
-				name: "To display: none",
-				arg: {
-					property: "display",
-					value: "none",
-				},
-				expect: "none",
-			},
-			{
-				name: "From display: none",
-				arg: {
-					property: "display",
-					initial: "none",
-					value: "block",
-				},
-				expect: "block",
-			},
-			{
-				name: "display: from not none to not none",
-				arg: {
-					property: "display",
-					initial: "grid",
-					value: "flex",
-				},
-				expect: "flex",
-			},
-		],
-	},
 ];

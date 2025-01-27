@@ -3,6 +3,7 @@ let tests = await Promise.all([
 	"multiple",
 	"shadow",
 	"nested",
+	"display",
 ].map(name => import(`./${name}.js`).then(module => module.default)));
 
 
