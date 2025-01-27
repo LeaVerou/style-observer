@@ -1,7 +1,7 @@
 {
   "name": "style-observer",
   "description": "Observe CSS property changes on any elements",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "main": "src/index.js",
   "exports": {
     ".": "./src/index.js"
@@ -16,12 +16,12 @@
     "Dmitry Sharabin"
   ],
   "repository": {
-		"type": "git",
-		"url": "git+https://github.com/LeaVerou/style-observer.git"
-	},
+    "type": "git",
+    "url": "git+https://github.com/LeaVerou/style-observer.git"
+  },
   "bugs": {
-		"url": "https://github.com/LeaVerou/style-observer/issues"
-	},
+    "url": "https://github.com/LeaVerou/style-observer/issues"
+  },
   "license": "MIT",
   "type": "module",
   "devDependencies": {
