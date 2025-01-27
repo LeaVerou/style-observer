@@ -1,4 +1,5 @@
 let tests = await Promise.all([
+	"constructor",
 	"basic",
 	"multiple",
 	"shadow",
