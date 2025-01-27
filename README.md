@@ -1,32 +1,61 @@
 # `StyleObserver`
 
-Like `MutationObserver`, `ResizeObserver` etc for CSS property changes.
+A production-ready library to observe CSS property changes on any element.
 
-Prior art:
+✅ Observe (almost [^1]) any property on any element
+✅ Lightweight, ESM-only code, with no dependencies
+✅ Tests you can run in your browser of choice
+✅ Detects browser bugs and works around them
+✅ Browser-compatibility: Chrome 117+, Safari 17.4+, Firefox 129 (same as [`transition-behavior`](https://caniuse.com/mdn-css_properties_transition-behavior)) i.e. ~90% of global users. Even wider for non-discrete, non-custom properties.
+✅ Optional throttling per element
+
+## Usage
+
+You can first create the observer instance and then observe, like a `MutationObserver`:
+
+```js
+import { StyleObserver } from 'style-observer';
+
+const observer = new StyleObserver(callback);
+
+observer.observe(document.querySelectorAll('.my-element'), ['color', '--my-custom-property']);
+```
+
+But you can also provide both targets and properties when creating the observer,
+which will also call `observe()` for you:
+
+```js
+import { StyleObserver } from 'style-observer';
+
+const observer = new StyleObserver(callback, {
+	targets: document.querySelectorAll('.my-element'),
+	properties: ['color', '--my-custom-property'],
+});
+```
+
+## Future Work
+
+- Observe pseudo-elements
+- Improver integration with existing transitions
+- `immediate` convenience option that fires the callback immediately for every observed element
+- Option to fire callback at the *end* of a transition rather than the start
+
+## Prior Art
+
 - [css-variable-observer](https://github.com/fluorumlabs/css-variable-observer) by [Artem Godin](https://github.com/fluorumlabs) paved the way,
 using an ingenious hack based on `font-variation-settings` to observe CSS property changes.
 - Four years, later [Bramus Van Damme](https://github.com/bramus) pioneered a way to do it "properly" in [style-observer](https://github.com/bramus/style-observer),
 thanks to [`transition-behavior: allow-discrete`](https://caniuse.com/mdn-css_properties_transition-behavior) becoming Baseline and even [blogged about all the bugs he encountered along the way](https://www.bram.us/2024/08/31/introducing-bramus-style-observer-a-mutationobserver-for-css/).
 
-This is not a fork for either, it is written from scratch and has several differences:
+This is not a fork of either. It was written from scratch and has several differences, including:
+- Actually detects browser bugs, so it doesn't need to tread carefully around them
 - Integrates better with existing transitions
-- Actually detects the bugs, so it doesn't need to tread carefully around them
-- Follows an API design that is more consistent with other observers on the web platform.
+- Throttling and coalescing of changes
 
 
-TODO:
-- Combines the best of both: it does it properly if `transition-behavior` is supported, and falls back to the hack if not.
-- Observe pseudo-elements
-- Throttles property changes
-- Detect whether transitionstart fires upfront
+## Limitations
 
-Limitations:
 - You cannot observe `transition` and `animation` properties.
-- Existing (static) values are preserved, but you cannot change the `transition` or `font-variation-settings` properties dynamically on the element you are observing.
+- Observing `display` is inconsistent across browsers (see relevant tests).
+- You cannot change the `transition`/`transition-*` properties dynamically on elements you are observing after you start observing them.
 
-Browser bugs:
-- Chrome will not fire a transition event if the property is not registered (even with a syntax of `*`)
-
-Edge cases to test:
-- Nested targets
-- Multiple observers on the same targets
