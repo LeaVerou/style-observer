@@ -3,5 +3,6 @@
 	"multiple": "Multiple observers",
 	"shadow": "Shadow DOM",
 	"nested": "Nested targets",
-	"display": "The display property"
+	"display": "The display property",
+	"syntax": "Syntax descriptor"
 }
