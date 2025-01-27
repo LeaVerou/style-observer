@@ -2,5 +2,6 @@
 	"basic": "Basic",
 	"multiple": "Multiple observers",
 	"shadow": "Shadow DOM",
-	"nested": "Nested targets"
+	"nested": "Nested targets",
+	"display": "The display property"
 }
