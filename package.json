@@ -8,7 +8,9 @@
   },
   "scripts": {
     "test": "open tests/index.html",
-    "release": "release-it"
+    "release": "release-it",
+    "build:apidocs": "npx typedoc",
+    "watch:apidocs": "npx typedoc --watch"
   },
   "keywords": [],
   "contributors": [
@@ -25,6 +27,8 @@
   "license": "MIT",
   "type": "module",
   "devDependencies": {
-    "release-it": "^18.0.0"
+    "release-it": "^18.0.0",
+    "typedoc": "^0.27.6",
+    "typedoc-plugin-rename-defaults": "^0.7.2"
   }
 }

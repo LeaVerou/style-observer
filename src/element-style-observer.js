@@ -124,7 +124,7 @@ export default class ElementStyleObserver {
 	/**
 	 * Observe the target for changes to one or more CSS properties
 	 * @param {string | string[]} properties
-	 * @void
+	 * @return {void}
 	 */
 	observe (properties) {
 		properties = toArray(properties);
@@ -183,7 +183,7 @@ export default class ElementStyleObserver {
 	/**
 	 * Stop observing a target for changes to one or more CSS properties.
 	 * @param { string | string[] } [properties] Properties to stop observing. Defaults to all observed properties.
-	 * @void
+	 * @return {void}
 	 */
 	unobserve (properties) {
 		properties = toArray(properties);
