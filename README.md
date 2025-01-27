@@ -2,12 +2,12 @@
 
 A production-ready library to observe CSS property changes on any element.
 
-✅ Observe (almost [^1]) any property on any element
-✅ Lightweight, ESM-only code, with no dependencies
-✅ Tests you can run in your browser of choice
-✅ Detects browser bugs and works around them
-✅ Browser-compatibility: Chrome 117+, Safari 17.4+, Firefox 129 (same as [`transition-behavior`](https://caniuse.com/mdn-css_properties_transition-behavior)) i.e. ~90% of global users. Even wider for non-discrete, non-custom properties.
-✅ Optional throttling per element
+- ✅ Observe ([almost](#limitations)) any property on any element
+- ✅ Lightweight, ESM-only code, with no dependencies
+- ✅ Tests you can run in your browser of choice
+- ✅ Detects browser bugs and works around them
+- ✅ Browser-compatibility: Chrome 117+, Safari 17.4+, Firefox 129 (same as [`transition-behavior`](https://caniuse.com/mdn-css_properties_transition-behavior)) i.e. ~90% of global users. Even wider for non-discrete, non-custom properties.
+- ✅ Optional throttling per element
 
 ## Usage
 
