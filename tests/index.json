@@ -1,4 +1,5 @@
 {
+	"constructor": "Object construction",
 	"basic": "Basic",
 	"multiple": "Multiple observers",
 	"shadow": "Shadow DOM",
