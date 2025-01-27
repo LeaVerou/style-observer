@@ -48,7 +48,7 @@ export default class StyleObserver {
 	 * @param {string | string[]} properties
 	 * @param {Element | Element[]} targets
 
-	 * @void
+	 * @return {void}
 	 */
 	observe (...args) {
 		let {targets, properties} = resolveArgs(...args);
@@ -82,7 +82,7 @@ export default class StyleObserver {
 	 * @overload
 	 * @param {string | string[]} properties
 	 * @param {Element | Element[]} targets
-	 * @void
+	 * @return {void}
 	 */
 	unobserve (...args) {
 		let {targets, properties} = resolveArgs(...args);

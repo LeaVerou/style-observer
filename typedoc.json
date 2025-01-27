@@ -1,0 +1,15 @@
+
+{
+	"out": "./api",
+	"json": "./api/docs.json",
+	"name": "Style Observer API Docs",
+	"entryPoints": [
+		"src/**/*.js"
+	],
+	"plugin": [
+		"typedoc-plugin-rename-defaults"
+	],
+	"entryPointStrategy": "expand",
+	"excludeExternals": true,
+	"includeVersion": true,
+}
