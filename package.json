@@ -7,7 +7,8 @@
     ".": "./src/index.js"
   },
   "scripts": {
-    "test": "open tests/index.html"
+    "test": "open tests/index.html",
+    "release": "release-it"
   },
   "keywords": [],
   "contributors": [
