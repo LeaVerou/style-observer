@@ -4,7 +4,7 @@ A production-ready library to observe CSS property changes on any element.
 
 - ✅ Observe ([almost](#limitations)) any property on any element
 - ✅ Lightweight, ESM-only code, with no dependencies
-- ✅ Tests you can run in your browser of choice
+- ✅ Tests you can run in your browser of choice to verify compatibility
 - ✅ Detects browser bugs and works around them
 - ✅ Browser-compatibility: Chrome 117+, Safari 17.4+, Firefox 129 (same as [`transition-behavior`](https://caniuse.com/mdn-css_properties_transition-behavior)) i.e. ~90% of global users. Even wider for non-discrete, non-custom properties.
 - ✅ Optional throttling per element
@@ -32,6 +32,11 @@ const observer = new StyleObserver(callback, {
 	properties: ['color', '--my-custom-property'],
 });
 ```
+
+With either syntax:
+- ✅ Targets can be either a single element, or an iterable of elements
+- ✅ Properties can be either a single property, or an iterable of properties
+
 
 ## Future Work
 
