@@ -6,6 +6,7 @@ let tests = await Promise.all([
 	"nested",
 	"display",
 	"syntax",
+	"records",
 ].map(name => import(`./${name}.js`).then(module => module.default)));
 
 
