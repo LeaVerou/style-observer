@@ -29,8 +29,8 @@ let tests = [
 	{
 		name: "Non-inherited discrete built-in",
 		arg: {
-			property: "display",
-			value: "flex",
+			property: "position",
+			value: "relative",
 		},
 		expect: "No change",
 	},
