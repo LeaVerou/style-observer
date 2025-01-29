@@ -51,6 +51,8 @@ export default class ElementStyleObserver {
 	 */
 	#initialized = false;
 
+	displayObserver;
+
 	constructor (target, callback, options = {}) {
 		this.constructor.all.add(target, this);
 		this.properties = new Map();
@@ -148,6 +150,15 @@ export default class ElementStyleObserver {
 				this.constructor.properties.add(property);
 			}
 
+			if (property === "display") {
+				this.displayObserver = new IntersectionObserver(() => {
+					this.target.dispatchEvent(new TransitionEvent("transitionstart", { propertyName: "display" }));
+				}, {
+					root: this.target?.parentElement ?? document.body,
+				});
+				this.displayObserver.observe(this.target);
+			}
+
 			let value = cs.getPropertyValue(property);
 			this.properties.set(property, value);
 		}
@@ -196,6 +207,7 @@ export default class ElementStyleObserver {
 		}
 
 		if (this.properties.size === 0) {
+			this.displayObserver?.unobserve(this.target);
 			this.target.removeEventListener("transitionstart", this);
 		}
 
