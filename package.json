@@ -11,7 +11,7 @@
     "release": "release-it",
     "build:apidocs": "npx typedoc",
     "build:html": "npx @11ty/eleventy --config=_build/eleventy.js --quiet",
-    "build": "npm run build:apidocs",
+    "build": "npm run build:html & npm run build:apidocs",
     "watch:apidocs": "npx typedoc --watch --preserveWatchOutput",
     "watch:html": "npx @11ty/eleventy --config=_build/eleventy.js --serve --quiet"
   },
