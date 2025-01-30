@@ -2,9 +2,9 @@
   "name": "style-observer",
   "description": "Observe CSS property changes on any elements",
   "version": "0.0.1",
-  "main": "src/index.js",
+  "main": "index.js",
   "exports": {
-    ".": "./src/index.js"
+    ".": "./index.js"
   },
   "scripts": {
     "test": "open tests/index.html",

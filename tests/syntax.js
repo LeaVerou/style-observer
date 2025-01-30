@@ -1,4 +1,4 @@
-import StyleObserver from "../src/index.js";
+import StyleObserver from "../index.js";
 import gentleRegisterProperty from "../src/util/gentle-register-property.js";
 
 let initialData = {
@@ -69,7 +69,7 @@ export default {
 			observer = new StyleObserver(records => {
 				resolve(records);
 			}, { target: this.dummy, properties: [name] });
-			
+
 			this.dummy.style.setProperty(name, value);
 
 			// Timeout after 500ms

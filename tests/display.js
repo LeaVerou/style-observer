@@ -1,4 +1,4 @@
-import StyleObserver from "../src/index.js";
+import StyleObserver from "../index.js";
 
 export default {
 	name: "The display property",
