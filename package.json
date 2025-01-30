@@ -10,8 +10,10 @@
     "test": "open tests/index.html",
     "release": "release-it",
     "build:apidocs": "npx typedoc",
+    "build:html": "npx @11ty/eleventy --config=_build/eleventy.js --quiet",
     "build": "npm run build:apidocs",
-    "watch:apidocs": "npx typedoc --watch"
+    "watch:apidocs": "npx typedoc --watch",
+    "watch:html": "npx @11ty/eleventy --config=_build/eleventy.js --serve --quiet"
   },
   "keywords": [],
   "contributors": [
@@ -28,6 +30,7 @@
   "license": "MIT",
   "type": "module",
   "devDependencies": {
+    "@11ty/eleventy": "^3.0.0",
     "release-it": "^18.0.0",
     "typedoc": "^0.27.6",
     "typedoc-plugin-rename-defaults": "^0.7.2"

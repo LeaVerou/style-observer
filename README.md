@@ -1,13 +1,19 @@
-# `StyleObserver`
+<header slot=header>
+
+# Style Observer
+
+[![npm](https://img.shields.io/npm/v/style-observer)](https://www.npmjs.com/package/style-observer)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/style-observer)](https://bundlephobia.com/package/style-observer)
+</header>
 
 A production-ready library to observe CSS property changes on any element.
 
 - ✅ Observe ([almost](#limitations)) any property on any element
 - ✅ Lightweight, ESM-only code, with no dependencies
-- ✅ Tests you can run in your browser of choice to verify compatibility
+- ✅ [Tests](tests) you can run in your browser of choice to verify compatibility
 - ✅ Detects browser bugs and works around them
-- ✅ Browser-compatibility: Chrome 117+, Safari 17.4+, Firefox 129 (same as [`transition-behavior`](https://caniuse.com/mdn-css_properties_transition-behavior)) i.e. ~90% of global users. Even wider for non-discrete, non-custom properties.
-- ✅ Optional throttling per element
+- ✅ Browser-compatibility: **Chrome 117+, Safari 17.4+, Firefox 129** (same as [`transition-behavior`](https://caniuse.com/mdn-css_properties_transition-behavior)) i.e. ~90% of global users.
+- ✅ Optional throttling (per element)
 
 ## Usage
 

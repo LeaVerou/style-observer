@@ -3,34 +3,122 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>StyleObserver test</title>
+	<title>Style Observer</title>
+	<link rel="stylesheet" href="https://early.webawesome.com/webawesome@3.0.0-alpha.9/dist/styles/themes/default.css" />
+	<link rel="stylesheet" href="https://early.webawesome.com/webawesome@3.0.0-alpha.9/dist/styles/webawesome.css" />
+	<link rel="stylesheet" href="assets/style.css" />
+	<script type="module" src="https://early.webawesome.com/webawesome@3.0.0-alpha.9/dist/webawesome.loader.js"></script>
 </head>
 <body>
-	<div id="test">Hover me to change property</div>
-<style>
-	/* @property --foo {
-		syntax: "*";
-		initial-value: 0;
-		inherits: false;
-	} */
-	#test {
-		--foo: 0;
-	}
-	#test:hover {
-		--foo: foo;
-		background: gold;
-	}
-</style>
-<script type="module">
-	import StyleObserver from "./src/index.js";
+	<wa-page>
+		<main>
+			<header slot=header>
+<h1>Style Observer</h1>
+<p><a href="https://www.npmjs.com/package/style-observer"><img src="https://img.shields.io/npm/v/style-observer" alt="npm"></a>
+<a href="https://bundlephobia.com/package/style-observer"><img src="https://img.shields.io/bundlephobia/minzip/style-observer" alt="npm bundle size"></a></p>
+</header>
+<p>A production-ready library to observe CSS property changes on any element.</p>
+<ul>
+<li>✅ Observe (<a href="#limitations">almost</a>) any property on any element</li>
+<li>✅ Lightweight, ESM-only code, with no dependencies</li>
+<li>✅ <a href="tests">Tests</a> you can run in your browser of choice to verify compatibility</li>
+<li>✅ Detects browser bugs and works around them</li>
+<li>✅ Browser-compatibility: <strong>Chrome 117+, Safari 17.4+, Firefox 129</strong> (same as <a href="https://caniuse.com/mdn-css_properties_transition-behavior"><code>transition-behavior</code></a>) i.e. ~90% of global users.</li>
+<li>✅ Optional throttling (per element)</li>
+</ul>
+<h2>Usage</h2>
+<p>You can first create the observer instance and then observe, like a <code>MutationObserver</code>:</p>
+<pre><code class="language-js">import { StyleObserver } from 'style-observer';
 
-	let observer = new StyleObserver(records => {
-		for (let r of records) {
-			console.log(r);
-		}
-	});
+const observer = new StyleObserver(callback);
 
-	observer.observe(document.getElementById("test"), "--foo");
-</script>
+observer.observe(document.querySelectorAll('.my-element'), ['color', '--my-custom-property']);
+</code></pre>
+<p>But you can also provide both targets and properties when creating the observer,
+which will also call <code>observe()</code> for you:</p>
+<pre><code class="language-js">import { StyleObserver } from 'style-observer';
+
+const observer = new StyleObserver(callback, {
+	targets: document.querySelectorAll('.my-element'),
+	properties: ['color', '--my-custom-property'],
+});
+</code></pre>
+<p>With either syntax:</p>
+<ul>
+<li>✅ Targets can be either a single element, or an iterable of elements</li>
+<li>✅ Properties can be either a single property, or an iterable of properties</li>
+</ul>
+<h2>Future Work</h2>
+<ul>
+<li>Observe pseudo-elements</li>
+<li><code>immediate</code> convenience option that fires the callback immediately for every observed element</li>
+<li>Option to fire callback at the <em>end</em> of a transition rather than the start</li>
+</ul>
+<h2>Prior Art</h2>
+<ul>
+<li><a href="https://github.com/fluorumlabs/css-variable-observer">css-variable-observer</a> by <a href="https://github.com/fluorumlabs">Artem Godin</a> paved the way,
+using an ingenious hack based on <code>font-variation-settings</code> to observe CSS property changes.</li>
+<li>Four years, later <a href="https://github.com/bramus">Bramus Van Damme</a> pioneered a way to do it &quot;properly&quot; in <a href="https://github.com/bramus/style-observer">style-observer</a>,
+thanks to <a href="https://caniuse.com/mdn-css_properties_transition-behavior"><code>transition-behavior: allow-discrete</code></a> becoming Baseline and even <a href="https://www.bram.us/2024/08/31/introducing-bramus-style-observer-a-mutationobserver-for-css/">blogged about all the bugs he encountered along the way</a>.</li>
+</ul>
+<p>This is not a fork of either. It was written from scratch and has several differences, including:</p>
+<ul>
+<li>Actually detects browser bugs, so it doesn't need to tread carefully around them</li>
+<li>Integrates better with existing transitions</li>
+<li>Throttling and coalescing of changes</li>
+</ul>
+<h2>Limitations &amp; Caveats</h2>
+<h3>Transitions &amp; Animations</h3>
+<ul>
+<li>You cannot observe <code>transition</code> and <code>animation</code> properties.</li>
+<li>You cannot observe changes caused by CSS animations or transitions.</li>
+</ul>
+<h3>Observing <code>display</code></h3>
+<p>Observing <code>display</code> is inconsistent across browsers (see <a href="tests/display">relevant tests</a>):</p>
+<table>
+<thead>
+<tr>
+<th>Rule</th>
+<th>Chrome</th>
+<th>Firefox</th>
+<th>Safari</th>
+<th>Safari (iOS)</th>
+<th>Samsung Internet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>From <code>display: none</code></td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>To <code>display: none</code></td>
+<td>❌</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>From not <code>none</code> to not <code>none</code></td>
+<td>✅</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<h3>Changing <code>transition</code> properties after observing</h3>
+<p>If you change the <code>transition</code>/<code>transition-*</code> properties dynamically on elements you are observing after you start observing them,
+you need to call <code>observer.updateTransition(targets)</code> to regenerate the <code>transition</code> property the observer uses to detect changes.
+Or just tuck <code>, var(--style-observer-transition, all)</code> at the end of your <code>transition</code> property, and then you don’t need to worry about it.</p>
+
+		</main>
+	</wa-page>
 </body>
 </html>
