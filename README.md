@@ -98,7 +98,7 @@ This is not a fork of either. It was written from scratch and has several differ
 
 ### Observing `display`
 
-Observing `display` is inconsistent across browsers (see [relevant tests](tests/display)):
+Observing `display` is inconsistent across browsers (see [relevant tests](tests/?test=display)):
 
 | Rule | Chrome | Firefox | Safari | Safari (iOS) | Samsung Internet |
 | --- | --- | --- | --- | --- | --- |
