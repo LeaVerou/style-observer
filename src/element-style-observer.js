@@ -72,16 +72,8 @@ export default class ElementStyleObserver {
 			return;
 		}
 
-		if (this.constructor.all.get(this.target).size === 1) {
-			// We don't need to do this multiple times for the same target
-			let transition = getComputedStyle(this.target).transition;
-			let prefix = !transition || transition === "all" ? "" : transition + ", ";
-
-			// Note that in Safari < 18.2 this fires no `transitionstart` events:
-			// transition: all, var(--style-observer-transition, all);
-			// so we can't just concatenate with whatever the existing value is
-			this.target.style.transition = prefix + "var(--style-observer-transition, all)";
-		}
+		let firstTime = this.constructor.all.get(this.target).size === 1;
+		this.#updateTransition({firstTime});
 
 		this.#initialized = true;
 	}
@@ -153,13 +145,13 @@ export default class ElementStyleObserver {
 		}
 
 		this.target.addEventListener("transitionstart", this);
-		this.#updateTransition();
+		this.#updateTransitionProperties();
 	}
 
 	/**
 	 * Update the transition property to include all observed properties
 	 */
-	#updateTransition () {
+	#updateTransitionProperties () {
 		// Clear our own transition
 		this.target.style.setProperty("--style-observer-transition", "");
 
@@ -181,6 +173,43 @@ export default class ElementStyleObserver {
 	}
 
 	/**
+	 * @type { string | undefined }
+	 */
+	#inlineTransition;
+
+	#updateTransition ({firstTime} = {}) {
+		const sot = "var(--style-observer-transition, all)";
+		const inlineTransition = this.target.style.transition;
+		let transition;
+
+		// NOTE This code assumes that if there is an inline style, it takes precedence over other styles
+		// This is not always true (think of !important), but will do for now.
+		if (firstTime ? inlineTransition : !inlineTransition.includes(sot)) {
+			// Either we are starting with an inline style being there, or our inline style was overwritten
+			transition = this.#inlineTransition = inlineTransition;
+		}
+
+		if (transition === undefined && (firstTime || !this.#inlineTransition)) {
+			// Just update based on most current computed style
+			if (inlineTransition.includes(sot)) {
+				this.target.style.transition = "";
+			}
+
+			transition = getComputedStyle(this.target).transition;
+		}
+
+		if (transition === "all") {
+			transition = "";
+		}
+
+		// Note that in Safari < 18.2 this fires no `transitionstart` events:
+		// transition: all, var(--style-observer-transition, all);
+		// so we can't just concatenate with whatever the existing value is
+		const prefix = transition ? transition + ", " : "";
+		this.target.style.setProperty("transition", prefix + sot, "important");
+	}
+
+	/**
 	 * Stop observing a target for changes to one or more CSS properties.
 	 * @param { string | string[] } [properties] Properties to stop observing. Defaults to all observed properties.
 	 * @return {void}
@@ -199,7 +228,7 @@ export default class ElementStyleObserver {
 			this.target.removeEventListener("transitionstart", this);
 		}
 
-		this.#updateTransition();
+		this.#updateTransitionProperties();
 	}
 
 	/** All properties ever observed by this class */
