@@ -16,9 +16,9 @@ export default [
 		expect: "center",
 	},
 	{
-		name: "Unregistered custom property",
+		name: "Not registered custom property",
 		arg: {
-			property: "--unregistered",
+			property: "--not-registered",
 			initial: "bar",
 			value: "foo",
 		},
