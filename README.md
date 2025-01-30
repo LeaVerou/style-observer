@@ -41,7 +41,6 @@ With either syntax:
 ## Future Work
 
 - Observe pseudo-elements
-- Improver integration with existing transitions
 - `immediate` convenience option that fires the callback immediately for every observed element
 - Option to fire callback at the *end* of a transition rather than the start
 
@@ -58,10 +57,16 @@ This is not a fork of either. It was written from scratch and has several differ
 - Throttling and coalescing of changes
 
 
-## Limitations
+## Limitations & Caveats
+
+### Transitions & Animations
 
 - You cannot observe `transition` and `animation` properties.
-- Observing `display` is inconsistent across browsers (see relevant tests):
+- You cannot observe changes caused by CSS animations or transitions.
+
+### Observing `display`
+
+Observing `display` is inconsistent across browsers (see [relevant tests](tests/display)):
 
 | Rule | Chrome | Firefox | Safari | Safari (iOS) | Samsung Internet |
 | --- | --- | --- | --- | --- | --- |
@@ -69,5 +74,9 @@ This is not a fork of either. It was written from scratch and has several differ
 | To `display: none` | ❌ | ❌ | ✅ | ✅ | ❌ |
 | From not `none` to not `none` |  ✅ | ❌ | ✅ | ✅ | ✅ |
 
-- You cannot change the `transition`/`transition-*` properties dynamically on elements you are observing after you start observing them.
+### Changing `transition` properties after observing
+
+If you change the `transition`/`transition-*` properties dynamically on elements you are observing after you start observing them,
+you need to call `observer.updateTransition(targets)` to regenerate the `transition` property the observer uses to detect changes.
+Or just tuck `, var(--style-observer-transition, all)` at the end of your `transition` property, and then you don’t need to worry about it.
 

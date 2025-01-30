@@ -109,6 +109,16 @@ export default class StyleObserver {
 			}
 		}
 	}
+
+	updateTransition (targets) {
+		for (let target of toArray(targets)) {
+			let observer = this.elementObservers.get(target);
+
+			if (observer) {
+				observer.updateTransition();
+			}
+		}
+	}
 }
 
 function resolveArgs (targets, properties) {

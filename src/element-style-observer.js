@@ -73,7 +73,7 @@ export default class ElementStyleObserver {
 		}
 
 		let firstTime = this.constructor.all.get(this.target).size === 1;
-		this.#updateTransition({firstTime});
+		this.updateTransition({firstTime});
 
 		this.#initialized = true;
 	}
@@ -145,13 +145,13 @@ export default class ElementStyleObserver {
 		}
 
 		this.target.addEventListener("transitionstart", this);
-		this.#updateTransitionProperties();
+		this.updateTransitionProperties();
 	}
 
 	/**
 	 * Update the transition property to include all observed properties
 	 */
-	#updateTransitionProperties () {
+	updateTransitionProperties () {
 		// Clear our own transition
 		this.target.style.setProperty("--style-observer-transition", "");
 
@@ -177,7 +177,7 @@ export default class ElementStyleObserver {
 	 */
 	#inlineTransition;
 
-	#updateTransition ({firstTime} = {}) {
+	updateTransition ({firstTime} = {}) {
 		const sot = "var(--style-observer-transition, all)";
 		const inlineTransition = this.target.style.transition;
 		let transition;
@@ -207,6 +207,8 @@ export default class ElementStyleObserver {
 		// so we can't just concatenate with whatever the existing value is
 		const prefix = transition ? transition + ", " : "";
 		this.target.style.setProperty("transition", prefix + sot, "important");
+
+		this.updateTransitionProperties();
 	}
 
 	/**
@@ -228,7 +230,7 @@ export default class ElementStyleObserver {
 			this.target.removeEventListener("transitionstart", this);
 		}
 
-		this.#updateTransitionProperties();
+		this.updateTransitionProperties();
 	}
 
 	/** All properties ever observed by this class */
