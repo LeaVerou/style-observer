@@ -12,7 +12,7 @@
     "build:apidocs": "npx typedoc",
     "build:html": "npx @11ty/eleventy --config=_build/eleventy.js --quiet",
     "build": "npm run build:apidocs",
-    "watch:apidocs": "npx typedoc --watch",
+    "watch:apidocs": "npx typedoc --watch --preserveWatchOutput",
     "watch:html": "npx @11ty/eleventy --config=_build/eleventy.js --serve --quiet"
   },
   "keywords": [],
