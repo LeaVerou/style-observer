@@ -10,6 +10,7 @@
     "test": "open tests/index.html",
     "release": "release-it",
     "build:apidocs": "npx typedoc",
+    "build": "npm run build:apidocs",
     "watch:apidocs": "npx typedoc --watch"
   },
   "keywords": [],
