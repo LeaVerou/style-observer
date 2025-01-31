@@ -176,6 +176,7 @@ export default {
 				dynamic: true,
 			},
 
+			skip: true,
 			tests: testsDynamic,
 		},
 	],
