@@ -1,0 +1,70 @@
+pre {
+	background-color: var(--wa-color-gray-20);
+	color: white;
+
+	/* Ensures a discernible background color in dark mode
+	 * Useful for themes that use gray-20 as --wa-color-surface-default  */
+	.wa-dark & {
+	  background-color: var(--wa-color-surface-lowered);
+	}
+  }
+
+  .token.comment,
+  .token.prolog,
+  .token.doctype,
+  .token.cdata,
+  .token.operator,
+  .token.punctuation {
+	color: var(--wa-color-gray-80);
+  }
+
+  .token.namespace {
+	opacity: 0.7;
+  }
+
+  .token.property,
+  .token.tag,
+  .token.url {
+	color: var(--wa-color-indigo-80);
+  }
+
+  .token.keyword {
+	font-weight: bold;
+	color: var(--wa-color-indigo-70);
+  }
+
+  .token.symbol,
+  .token.deleted,
+  .token.important {
+	color: var(--wa-color-red-80);
+  }
+
+  .token.boolean,
+  .token.constant,
+  .token.selector,
+  .token.attr-name,
+  .token.string,
+  .token.char,
+  .token.builtin,
+  .token.inserted {
+	color: var(--wa-color-green-80);
+  }
+
+  .token.atrule,
+  .token.attr-value,
+  .token.number,
+  .token.variable,
+  .token.function,
+  .token.class-name,
+  .token.regex {
+	color: var(--wa-color-blue-80);
+  }
+
+  .token.important,
+  .token.bold {
+	font-weight: bold;
+  }
+
+  .token.italic {
+	font-style: italic;
+  }

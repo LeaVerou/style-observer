@@ -1,3 +1,5 @@
+@import url('prism.css');
+
 main {
 	max-width: 120ch;
 	margin: 0 auto;
