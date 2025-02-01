@@ -2,13 +2,14 @@
 
 # Style Observer
 
-<nav>
+<nav class="wa-gap-m">
 	<a href="/api">API</a>
 	<a href="/tests">Tests</a>
-	<a href="https://github.com/leaverou/style-observer">
+	<wa-divider orientation="vertical"></wa-divider>
+	<a href="https://github.com/leaverou/style-observer" target="_blank">
 		<wa-icon name="github" label="GitHub" family="brands"></wa-icon>
 	</a>
-	<a href="https://www.npmjs.com/package/style-observer">
+	<a href="https://www.npmjs.com/package/style-observer" target="_blank">
 		<wa-icon name="npm" label="NPM" family="brands"></wa-icon>
 	</a>
 </nav>

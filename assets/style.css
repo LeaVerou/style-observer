@@ -8,6 +8,32 @@ main {
 
 header {
 	border-bottom: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-surface-border);
+
+	h1 {
+		font-size: var(--wa-font-size-l);
+		line-height: 1;
+	}
+
+	nav {
+		display: flex;
+		align-items: center;
+
+		a {
+			text-decoration: none;
+			color: var(--wa-color-text-normal);
+			font-weight: var(--wa-font-weight-bold);
+			color: var(--wa-color-on-quiet);
+		}
+
+		a:has(~ wa-divider) {
+			font-size: var(--wa-font-size-s);
+
+		}
+
+		a:is(wa-divider ~ *) {
+			font-size: var(--wa-font-size-xl);
+		}
+	}
 }
 
 aside {
