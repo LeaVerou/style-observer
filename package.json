@@ -20,6 +20,7 @@
     "Lea Verou",
     "Dmitry Sharabin"
   ],
+  "homepage": "https://observe.style",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/LeaVerou/style-observer.git"

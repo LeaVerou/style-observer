@@ -1,30 +1,42 @@
-<header slot=header>
+<header slot="header" class="wa-split">
 
 # Style Observer
 
-[![npm](https://img.shields.io/npm/v/style-observer)](https://www.npmjs.com/package/style-observer)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/style-observer)](https://bundlephobia.com/package/style-observer)
-</header>
-
-<nav slot="navigation">
-
-  <a href="#install">Install</a>
-  <a href="#usage">Usage</a>
-  <a href="#future-work">Future Work</a>
-  <a href="#prior-art">Prior Art</a>
-  <a href="#limitations--caveats">Limitations & Caveats</a>
-  <a href="/api">API</a>
-  <a href="https://github.com/leaverou/style-observer"><wa-icon name="github" label="GitHub" family="brands"></wa-icon></a>
+<nav>
+	<a href="/api">API</a>
+	<a href="/tests">Tests</a>
+	<a href="https://github.com/leaverou/style-observer">
+		<wa-icon name="github" label="GitHub" family="brands"></wa-icon>
+	</a>
+	<a href="https://www.npmjs.com/package/style-observer">
+		<wa-icon name="npm" label="NPM" family="brands"></wa-icon>
+	</a>
 </nav>
 
+</header>
+
+<aside slot="aside">
+
+- [Install](#install)
+- [Usage](#usage)
+- [Future Work](#future-work)
+- [Prior Art](#prior-art)
+- [Limitations & Caveats](#limitations--caveats)
+
+</aside>
+<main>
+
+[![npm](https://img.shields.io/npm/v/style-observer)](https://www.npmjs.com/package/style-observer)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/style-observer)](https://bundlephobia.com/package/style-observer)
+
 A robust, production-ready library to observe CSS property changes on any element.
+Detects browser bugs and works around them, so you don't have to.
 
 - ✅ Observe ([almost](#limitations--caveats)) any property on any element
 - ✅ Lightweight, ESM-only code, with no dependencies
 - ✅ [Tests](tests) you can run in your browser of choice to verify compatibility
-- ✅ Detects browser bugs and works around them
 - ✅ Browser compatibility: **Chrome 117+, Safari 17.4+, Firefox 129** (same as [`transition-behavior`](https://caniuse.com/mdn-css_properties_transition-behavior) i.e. <strong>~90% of global users</strong>).
-- ✅ Optional throttling (per element)
+- ✅ Throttling (per element)
 
 ## Install
 
@@ -34,11 +46,20 @@ The quickest way is to just include straight from the [Netlify](https://www.netl
 import StyleObserver from 'https://observe.style/index.js';
 ```
 
-Or, you can use npm:
+This will always point to the latest version, so it may be a good idea to eventually switch to a local version that you can control.
+E.g. you can use npm:
 
 ```sh
 npm install style-observer
 ```
+
+and then, if you use a bundler like Rollup or Webpack:
+
+```js
+import StyleObserver from 'style-observer';
+```
+
+and if you don’t, you can just include the file from `node_modules/style-observer/dist/index.js`.
 
 ## Usage
 
@@ -67,6 +88,7 @@ const observer = new StyleObserver(callback, {
 
 Both targets and properties can be either a single value or an iterable.
 
+Note that the observer will not fire immediately for the initial state of the elements.
 
 ## Future Work
 
@@ -112,6 +134,7 @@ If you change the `transition`/`transition-*` properties dynamically on elements
 you need to call `observer.updateTransition(targets)` to regenerate the `transition` property the observer uses to detect changes.
 Or just tuck `, var(--style-observer-transition, all)` at the end of your `transition` property, and then you don’t need to worry about it.
 
+</main>
 <footer slot=footer>
 
 By [Lea Verou](https://lea.verou.me/) and [Dmitry Sharabin](https://d12n.me/).

@@ -1,6 +1,19 @@
 @import url('prism.css');
 
 main {
-	max-width: 120ch;
-	margin: 0 auto;
+	max-width: 80ch;
+	padding: var(--wa-space-xl);
+	margin-inline: auto;
+}
+
+header {
+	border-bottom: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-surface-border);
+}
+
+aside {
+	border-left: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-surface-border);
+}
+
+footer {
+	border-top: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-surface-border);
 }
