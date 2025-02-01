@@ -1,9 +1,22 @@
 @import url('prism.css');
 
+:root {
+	--max-page-width: 120ch;
+}
+
+header, main, footer {
+	padding-inline: clamp(1em, var(--max-page-width) / 2 - 40ch, 50vw);
+}
+
 main {
 	max-width: 80ch;
 	padding: var(--wa-space-xl);
 	margin-inline: auto;
+}
+
+wa-icon {
+	color: var(--wa-color-on-quiet);
+	vertical-align: -.1em;
 }
 
 header {
@@ -26,7 +39,7 @@ header {
 		}
 
 		a:has(~ wa-divider) {
-			font-size: var(--wa-font-size-s);
+			font-size: var(--wa-font-size-m);
 
 		}
 

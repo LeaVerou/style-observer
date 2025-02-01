@@ -33,10 +33,15 @@
 A robust, production-ready library to observe CSS property changes on any element.
 Detects browser bugs and works around them, so you don't have to.
 
+<wa-icon name="chrome" family="brands">Chrome</wa-icon> **117+**
+<wa-icon name="safari" family="brands">Safari</wa-icon> **17.4+**
+<wa-icon name="firefox" family="brands">Firefox</wa-icon> **129**
+
+<small>Same compat as [`transition-behavior`](https://caniuse.com/mdn-css_properties_transition-behavior) i.e. <strong>~90% of global users</strong></small>
+
 - ✅ Observe ([almost](#limitations--caveats)) any property on any element
-- ✅ Lightweight, ESM-only code, with no dependencies
+- ✅ [Lightweight](https://bundlephobia.com/package/style-observer), ESM-only code, with no dependencies
 - ✅ [Tests](tests) you can run in your browser of choice to verify compatibility
-- ✅ Browser compatibility: **Chrome 117+, Safari 17.4+, Firefox 129** (same as [`transition-behavior`](https://caniuse.com/mdn-css_properties_transition-behavior) i.e. <strong>~90% of global users</strong>).
 - ✅ Throttling (per element)
 
 ## Install
