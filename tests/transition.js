@@ -140,7 +140,7 @@ export default {
 	},
 
 	afterEach () {
-		// this.target.remove();
+		this.target.remove();
 	},
 
 	expect: true,
