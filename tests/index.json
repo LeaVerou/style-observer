@@ -6,5 +6,6 @@
 	"nested": "Nested targets",
 	"display": "The display property",
 	"syntax": "Syntax descriptor",
-	"records": "Number of records"
+	"records": "Number of records",
+	"transition": "The transition property"
 }
