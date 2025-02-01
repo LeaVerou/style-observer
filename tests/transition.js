@@ -3,80 +3,80 @@ import adoptCSS from "../src/util/adopt-css.js";
 
 let testsStatic = [
 	{
-		args: ["opacity", "background-color .2s"],
+		args: ["opacity", "background-color 20ms"],
 	},
 	{
-		args: ["opacity", "background-color .2s, opacity .1s .05s"],
+		args: ["opacity", "background-color 20ms, opacity .1s .05s"],
 	},
 	{
-		args: ["opacity", "background-color .2s", "important"],
+		args: ["opacity", "background-color 20ms", "important"],
 	},
 	{
-		args: ["opacity", "background-color .2s, opacity .1s .05s", "important"],
+		args: ["opacity", "background-color 20ms, opacity .1s .05s", "important"],
 	},
 	{
-		args: ["--custom-property", "background-color .2s"],
+		args: ["--custom-property", "background-color 20ms"],
 	},
 	{
-		args: ["--custom-property", "background-color .2s, --custom-property .1s .05s"],
+		args: ["--custom-property", "background-color 20ms, --custom-property .1s .05s allow-discrete"],
 	},
 	{
-		args: ["--custom-property", "background-color .2s", "important"],
+		args: ["--custom-property", "background-color 20ms", "important"],
 	},
 	{
-		args: ["--custom-property", "background-color .2s, --custom-property .1s .05s", "important"],
+		args: ["--custom-property", "background-color 20ms, --custom-property .1s .05s allow-discrete", "important"],
 	},
 ];
 
 // [property, transition, important, newTransition, newImportant]
 let testsDynamic = [
 	{
-		args: ["opacity", "background-color .2s", "", "color 150ms"],
+		args: ["opacity", "background-color 20ms", "", "color 15ms"],
 	},
 	{
-		args: ["opacity", "background-color .2s", "", "opacity 300ms, color 150ms"],
+		args: ["opacity", "background-color 20ms", "", "opacity 30ms, color 15ms"],
 	},
 	{
-		args: ["opacity", "background-color .2s", "important", "color 150ms"],
+		args: ["opacity", "background-color 20ms", "important", "color 15ms"],
 	},
 	{
-		args: ["opacity", "background-color .2s", "important", "opacity 300ms, color 150ms"],
+		args: ["opacity", "background-color 20ms", "important", "opacity 30ms, color 15ms"],
 	},
 	{
-		args: ["--custom-property", "background-color .2s", "", "color 150ms", "important"],
+		args: ["--custom-property", "background-color 20ms", "", "color 15ms", "important"],
 	},
 	{
-		args: ["--custom-property", "background-color .2s", "", "--custom-property 300ms, color 150ms", "important"],
+		args: ["--custom-property", "background-color 20ms", "", "--custom-property 30ms allow-discrete, color 15ms", "important"],
 	},
 	{
-		args: ["--custom-property", "background-color .2s", "important", "color 150ms", "important"],
+		args: ["--custom-property", "background-color 20ms", "important", "color 15ms", "important"],
 	},
 	{
-		args: ["--custom-property", "background-color .2s", "important", "--custom-property 300ms, color 150ms", "important"],
+		args: ["--custom-property", "background-color 20ms", "important", "--custom-property 30ms allow-discrete, color 15ms", "important"],
 	},
 	{
-		args: ["opacity", "background-color .2s, opacity .1s .05s", "", "color 150ms"],
+		args: ["opacity", "background-color 20ms, opacity .1s .05s", "", "color 15ms"],
 	},
 	{
-		args: ["opacity", "background-color .2s, opacity .1s .05s", "", "opacity 300ms, color 150ms"],
+		args: ["opacity", "background-color 20ms, opacity .1s .05s", "", "opacity 30ms, color 15ms"],
 	},
 	{
-		args: ["opacity", "background-color .2s, opacity .1s .05s", "important", "color 150ms"],
+		args: ["opacity", "background-color 20ms, opacity .1s .05s", "important", "color 15ms"],
 	},
 	{
-		args: ["opacity", "background-color .2s, opacity .1s .05s", "important", "opacity 300ms, color 150ms"],
+		args: ["opacity", "background-color 20ms, opacity .1s .05s", "important", "opacity 30ms, color 15ms"],
 	},
 	{
-		args: ["--custom-property", "background-color .2s, --custom-property .1s .05s", "", "color 150ms", "important"],
+		args: ["--custom-property", "background-color 20ms, --custom-property .1s .05s", "", "color 15ms", "important"],
 	},
 	{
-		args: ["--custom-property", "background-color .2s, --custom-property .1s .05s", "", "color 150ms, --custom-property 300ms", "important"],
+		args: ["--custom-property", "background-color 20ms, --custom-property .1s .05s", "", "color 15ms, --custom-property 30ms allow-discrete", "important"],
 	},
 	{
-		args: ["--custom-property", "background-color .2s, --custom-property .1s .05s", "important", "color 150ms", "important"],
+		args: ["--custom-property", "background-color 20ms, --custom-property .1s .05s", "important", "color 15ms", "important"],
 	},
 	{
-		args: ["--custom-property", "background-color .2s, --custom-property .1s .05s", "important", "--custom-property 300ms, color 150ms", "important"],
+		args: ["--custom-property", "background-color 20ms, --custom-property .1s .05s", "important", "--custom-property 30ms allow-discrete, color 15ms", "important"],
 	},
 ];
 
@@ -140,7 +140,7 @@ export default {
 	},
 
 	afterEach () {
-		this.target.remove();
+		// this.target.remove();
 	},
 
 	expect: true,
