@@ -5,7 +5,7 @@
 <nav class="wa-gap-m">
 	<a href="/api">API</a>
 	<a href="/tests">Tests</a>
-	<wa-divider orientation="vertical"></wa-divider>
+	<wa-divider vertical></wa-divider>
 	<a href="https://github.com/leaverou/style-observer" target="_blank">
 		<wa-icon name="github" label="GitHub" family="brands"></wa-icon>
 	</a>

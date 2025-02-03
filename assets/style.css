@@ -46,11 +46,21 @@ header {
 		a:is(wa-divider ~ *) {
 			font-size: var(--wa-font-size-xl);
 		}
+
+		wa-divider {
+			/* The default height: 100% doesn't work because nav has display: flex, and its children are center-aligned */
+			block-size: 1lh;
+		}
 	}
 }
 
 aside {
 	border-left: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-surface-border);
+
+	ul {
+		list-style: none;
+		line-height: var(--wa-line-height-expanded);
+	}
 }
 
 footer {
