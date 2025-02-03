@@ -18,7 +18,7 @@ export default function gentleRegisterProperty (property, meta = {}) {
 			inherits: meta.inherits ?? true,
 		};
 
-		if (meta.initialValue) {
+		if (meta.initialValue !== undefined) {
 			definition.initialValue = meta.initialValue;
 		}
 
