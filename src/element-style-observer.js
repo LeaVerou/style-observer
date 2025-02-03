@@ -87,7 +87,7 @@ export default class ElementStyleObserver {
 			return;
 		}
 
-		if (TRANSITIONSTART_EVENT_LOOP_BUG || this.options.throttle > 0) {
+		if (TRANSITIONSTART_EVENT_LOOP_BUG && event.type === "transitionstart" || this.options.throttle > 0) {
 			// Safari < 18.2 fires `transitionstart` events too often, so we need to debounce
 			this.target.removeEventListener("transitionstart", this);
 			await delay(this.options.throttle || 50);
@@ -145,6 +145,7 @@ export default class ElementStyleObserver {
 		}
 
 		this.target.addEventListener("transitionstart", this);
+		this.target.addEventListener("transitionend", this);
 		this.updateTransitionProperties();
 	}
 
@@ -228,6 +229,7 @@ export default class ElementStyleObserver {
 
 		if (this.properties.size === 0) {
 			this.target.removeEventListener("transitionstart", this);
+			this.target.removeEventListener("transitionend", this);
 		}
 
 		this.updateTransitionProperties();
