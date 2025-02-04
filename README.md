@@ -38,7 +38,7 @@ Compatibility:
 </wa-badge>
 <wa-badge class="browser" pill appearance="filled"><wa-icon name="safari" family="brands">Safari</wa-icon> **17.4+**
 </wa-badge>
-<wa-badge class="browser" variant="warning" pill appearance="filled"><wa-icon name="firefox" family="brands">Firefox</wa-icon> **129**
+<wa-badge class="browser" variant="warning" pill appearance="filled"><wa-icon name="firefox" family="brands">Firefox</wa-icon> **129+**
 </wa-badge>
 
 <small class="compat wa-caption-m"><wa-icon name="circle-info" variant="regular"></wa-icon> Same compat as [`transition-behavior`](https://caniuse.com/mdn-css_properties_transition-behavior) i.e. <strong>~90% of global users</strong>
