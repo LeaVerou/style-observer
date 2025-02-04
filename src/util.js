@@ -40,7 +40,7 @@ export function getLonghands (property) {
  * @return { number[] } Any times found, in milliseconds
  */
 export function parseTimes (cssTime) {
-	let matches = cssTime.matchAll(/(?<=^|\s)([+-]?(?:\d+|\d*\.\d+))\s*(ms|s)?(?=\s|$)/);
+	let matches = cssTime.matchAll(/(?<=^|\s)([+-]?(?:\d+|\d*\.\d+))\s*(ms|s)?(?=\s|$)/g);
 	let ret = [];
 
 	for (let match of matches) {
