@@ -14,9 +14,8 @@ main {
 	margin-inline: auto;
 }
 
-wa-icon {
-	color: var(--wa-color-on-quiet);
-	vertical-align: -.1em;
+wa-badge.browser {
+	font-size: var(--wa-font-size-m);
 }
 
 header {
@@ -54,12 +53,43 @@ header {
 	}
 }
 
+wa-icon {
+	vertical-align: -.1em;
+}
+
+nav {
+	a:not(:hover) > wa-icon {
+		color: var(--wa-color-on-quiet);
+	}
+}
+
 aside {
 	border-left: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-surface-border);
 
 	ul {
 		list-style: none;
 		line-height: var(--wa-line-height-expanded);
+	}
+}
+
+main {
+	ul:first-of-type {
+		list-style: "✅ ";
+		padding-inline-start: 0;
+
+		span {
+			display: none;
+		}
+	}
+
+	p:has(+ p > .compat) {
+		margin-block-end: var(--wa-space-s);
+	}
+
+	.compat {
+		wa-icon {
+			vertical-align: -.1em;
+		}
 	}
 }
 

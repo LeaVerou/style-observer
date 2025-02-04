@@ -179,7 +179,7 @@ export default class ElementStyleObserver {
 	#inlineTransition;
 
 	updateTransition ({firstTime} = {}) {
-		const sot = "var(--style-observer-transition, --style-observer-dummy)";
+		const sot = "var(--style-observer-transition, --style-observer-noop)";
 		const inlineTransition = this.target.style.transition;
 		let transition;
 

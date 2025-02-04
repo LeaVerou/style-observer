@@ -33,16 +33,22 @@
 A robust, production-ready library to observe CSS property changes on any element.
 Detects browser bugs and works around them, so you don't have to.
 
-<wa-icon name="chrome" family="brands">Chrome</wa-icon> **117+**
-<wa-icon name="safari" family="brands">Safari</wa-icon> **17.4+**
-<wa-icon name="firefox" family="brands">Firefox</wa-icon> **129**
+Compatibility:
+<wa-badge class="browser" variant="success" pill appearance="filled"><wa-icon name="chrome" family="brands">Chrome</wa-icon> **117+**
+</wa-badge>
+<wa-badge class="browser" pill appearance="filled"><wa-icon name="safari" family="brands">Safari</wa-icon> **17.4+**
+</wa-badge>
+<wa-badge class="browser" variant="warning" pill appearance="filled"><wa-icon name="firefox" family="brands">Firefox</wa-icon> **129**
+</wa-badge>
 
-<small>Same compat as [`transition-behavior`](https://caniuse.com/mdn-css_properties_transition-behavior) i.e. <strong>~90% of global users</strong></small>
+<small class="compat wa-caption-m"><wa-icon name="circle-info" variant="regular"></wa-icon> Same compat as [`transition-behavior`](https://caniuse.com/mdn-css_properties_transition-behavior) i.e. <strong>~90% of global users</strong>
+</small>
 
-- ✅ Observe ([almost](#limitations--caveats)) any property on any element
-- ✅ [Lightweight](https://bundlephobia.com/package/style-observer), ESM-only code, with no dependencies
-- ✅ [Tests](tests) you can run in your browser of choice to verify compatibility
-- ✅ Throttling (per element)
+- <span>✅</span> Observe changes to custom properties on any element
+- <span>✅</span> Observe changes to standard properties on any element (except `display`, `transition`, `animation`)
+- <span>✅</span> [Lightweight](https://bundlephobia.com/package/style-observer), ESM-only code, with no dependencies
+- <span>✅</span> [Tests](tests) you can run in your browser of choice to verify compatibility
+- <span>✅</span> Throttling (per element)
 
 ## Install
 
@@ -137,8 +143,9 @@ Observing `display` is inconsistent across browsers (see [relevant tests](tests/
 ### Changing `transition` properties after observing
 
 If you change the `transition`/`transition-*` properties dynamically on elements you are observing after you start observing them,
-you need to call `observer.updateTransition(targets)` to regenerate the `transition` property the observer uses to detect changes.
-Or just tuck `, var(--style-observer-transition, all)` at the end of your `transition` property, and then you don’t need to worry about it.
+you need to do **one** of these two things:
+1. In JS, call `observer.updateTransition(targets)` to regenerate the `transition` property the observer uses to detect changes.
+2. Add `, var(--style-observer-transition, --style-observer-noop)` at the end of your `transition` property. E.g. if instead of `transition: 1s background` you'd set `transition: 1s background, var(--style-observer-transition, --style-observer-noop)`.
 
 </main>
 <footer slot=footer>
