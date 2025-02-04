@@ -75,7 +75,7 @@ export function getTimesFor (property, transitions) {
 	else {
 		let properties = getLonghands(property);
 		properties.push("all");
-		propertyRegex = RegExp(`(?<![\\w-])(${ properties.join("|") })\\b`);
+		propertyRegex = RegExp(`(?<=^|\\s)(${ properties.join("|") })\\b`);
 	}
 
 	let lastRelevantTransition = transitions.findLast(transition => propertyRegex.test(transition));
