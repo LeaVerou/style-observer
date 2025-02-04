@@ -62,7 +62,7 @@ const dummy = document.createElement("div");
 /**
  * Get the duration and delay of a CSS transition for a given property
  * @param {string} property - The CSS property name
- * @param {string} transition - The computed value of the `transition` property
+ * @param {string} transitions - The computed value of the `transition` property
  * @returns { { duration: number, delay: number } } The duration and delay, in milliseconds
  */
 export function getTimesFor (property, transitions) {
