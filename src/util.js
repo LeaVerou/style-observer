@@ -10,7 +10,7 @@ export function toArray(value) {
 	return [value];
 }
 
-export function delay(ms) {
+export function wait (ms) {
 	if (ms) {
 		return new Promise(resolve => setTimeout(resolve, ms));
 	}
