@@ -87,7 +87,7 @@ export default class ElementStyleObserver {
 			return;
 		}
 
-		if (TRANSITIONRUN_EVENT_LOOP_BUG || this.options.throttle > 0) {
+		if (TRANSITIONRUN_EVENT_LOOP_BUG && event.type === "transitionrun" || this.options.throttle > 0) {
 			if (TRANSITIONRUN_EVENT_LOOP_BUG) {
 				// Safari < 18.2 fires `transitionrun` events too often, so we need to debounce.
 				// Wait at least the amount of time needed for the transition to run + 1 frame (~16ms)
@@ -101,10 +101,8 @@ export default class ElementStyleObserver {
 			}
 			else {
 				this.target.removeEventListener("transitionstart", this);
-				this.target.removeEventListener("transitionend", this);
 				await delay(this.options.throttle);
 				this.target.addEventListener("transitionstart", this);
-				this.target.addEventListener("transitionend", this);
 			}
 		}
 
@@ -161,10 +159,9 @@ export default class ElementStyleObserver {
 		if (TRANSITIONRUN_EVENT_LOOP_BUG) {
 			this.target.addEventListener("transitionrun", this);
 		}
-		else {
-			this.target.addEventListener("transitionstart", this);
-			this.target.addEventListener("transitionend", this);
-		}
+
+		this.target.addEventListener("transitionstart", this);
+		this.target.addEventListener("transitionend", this);
 
 		this.updateTransitionProperties();
 	}
