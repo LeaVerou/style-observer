@@ -88,22 +88,24 @@ export default class ElementStyleObserver {
 		}
 
 		if (TRANSITIONRUN_EVENT_LOOP_BUG && event.type === "transitionrun" || this.options.throttle > 0) {
+			let eventName, debounceTime;
+
 			if (TRANSITIONRUN_EVENT_LOOP_BUG) {
 				// Safari < 18.2 fires `transitionrun` events too often, so we need to debounce.
 				// Wait at least the amount of time needed for the transition to run + 1 frame (~16ms)
-				let debounceTime = this.options.throttle || 50;
+				eventName = "transitionrun";
+				debounceTime = this.options.throttle || 50;
 				let times = getTimesFor(event.propertyName, getComputedStyle(this.target).transition);
 				debounceTime = Math.max(debounceTime, times.duration + times.delay + 16);
-
-				this.target.removeEventListener("transitionrun", this);
-				await delay(debounceTime);
-				this.target.addEventListener("transitionrun", this);
 			}
 			else {
-				this.target.removeEventListener("transitionstart", this);
-				await delay(this.options.throttle);
-				this.target.addEventListener("transitionstart", this);
+				eventName = "transitionstart";
+				debounceTime = this.options.throttle;
 			}
+
+			this.target.removeEventListener(eventName, this);
+			await delay(debounceTime);
+			this.target.addEventListener(eventName, this);
 		}
 
 		let cs = getComputedStyle(this.target);
