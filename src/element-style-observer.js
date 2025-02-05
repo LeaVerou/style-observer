@@ -99,7 +99,7 @@ export default class ElementStyleObserver {
 			}
 
 			this.target.removeEventListener(eventName, this);
-			await delay(debounceTime);
+			await wait(debounceTime);
 			this.target.addEventListener(eventName, this);
 		}
 
