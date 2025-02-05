@@ -88,7 +88,8 @@ export default class ElementStyleObserver {
 		}
 
 		if (TRANSITIONRUN_EVENT_LOOP_BUG && event.type === "transitionrun" || this.options.throttle > 0) {
-			let eventName, debounceTime;
+			let eventName =  TRANSITIONRUN_EVENT_LOOP_BUG ? "transitionrun" : "transitionstart";
+			let debounceTime = this.options.throttle;
 
 			if (TRANSITIONRUN_EVENT_LOOP_BUG) {
 				// Safari < 18.2 fires `transitionrun` events too often, so we need to debounce.
