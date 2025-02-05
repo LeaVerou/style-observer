@@ -1,5 +1,5 @@
 // In Safari < 18.2, transitioning custom properties of syntax `*` or `<string>`
-// causes an infinite loop of `transitionrun` events.
+// causes an infinite loop of `transitionrun` or `transitionstart` events.
 // We use this test to detect the bug.
 let dummy = document.createElement("div");
 document.body.appendChild(dummy);
