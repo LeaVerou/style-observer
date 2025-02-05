@@ -1,3 +1,21 @@
+const INITIAL_VALUES = {
+	"<angle>": "0deg",
+	"<color>": "transparent",
+	"<custom-ident>": "none",
+	"<image>": "none",
+	"<integer>": "0",
+	"<length>": "0px",
+	"<length-percentage>": "0px",
+	"<number>": "0",
+	"<percentage>": "0%",
+	"<resolution>": "1dppx",
+	"<string>": '""',
+	"<time>": "0s",
+	"<transform-function>": "none",
+	"<transform-list>": "none",
+	"<url>": "none",
+};
+
 /**
  * Register a CSS custom property if it’s not already registered
  * @param {string} property - Property name
@@ -19,6 +37,9 @@ export default function gentleRegisterProperty (property, meta = {}) {
 
 	if (meta.initialValue !== undefined) {
 		definition.initialValue = meta.initialValue;
+	}
+	else if (definition.syntax !== "*" && definition.syntax in INITIAL_VALUES) {
+		definition.initialValue = INITIAL_VALUES[definition.syntax];
 	}
 
 	try {
