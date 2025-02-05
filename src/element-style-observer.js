@@ -222,7 +222,7 @@ export default class ElementStyleObserver {
 			transition = "";
 		}
 
-		// Note that in Safari < 18.2 this fires no `transitionrun` events:
+		// Note that in Safari < 18.2 this fires no `transitionrun` or `transitionstart` events:
 		// transition: all, var(--style-observer-transition, all);
 		// so we can't just concatenate with whatever the existing value is
 		const prefix = transition ? transition + ", " : "";
