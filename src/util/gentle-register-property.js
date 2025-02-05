@@ -1,5 +1,3 @@
-import TRANSITIONRUN_EVENT_LOOP_BUG from "./detect-transitionrun-loop.js";
-
 /**
  * Register a CSS custom property if it’s not already registered
  * @param {string} property - Property name
@@ -35,10 +33,7 @@ export default function gentleRegisterProperty (property, meta = {}) {
 				// Property is already registered, which is fine
 				rethrow = false;
 			}
-			else if (e.name === "SyntaxError" && (
-				TRANSITIONRUN_EVENT_LOOP_BUG && definition.syntax === "<string>" ||
-				e.message.includes("not a valid custom property syntax")
-			)) {
+			else if (e.name === "SyntaxError") {
 				// In Safari < 18.2 (where we face the infinite loop bug),
 				// there is no way to provide an initial value for a custom property with a syntax of "<string>".
 				// There will always be an error: “The given initial value does not parse for the given syntax.”
