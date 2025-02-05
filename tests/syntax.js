@@ -95,7 +95,12 @@ export default {
 					let syntax = type === "*" ? "*" : `<${ type }>`;
 					let name = type === "*" ? "--prop-star" : `--prop-${ type }`; // `--prop-*` makes the test fail
 
-					gentleRegisterProperty(name, { syntax, initialValue: value });
+					try {
+						gentleRegisterProperty(name, { syntax, initialValue: value });
+					}
+					catch (e) {
+						console.error(e);
+					}
 				}
 			},
 
