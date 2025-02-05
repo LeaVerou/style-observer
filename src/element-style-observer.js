@@ -51,13 +51,6 @@ export default class ElementStyleObserver {
 	 */
 	#initialized = false;
 
-	/**
-	 * Events to listen for
-	 * @type {string[]}
-	 * @private
-	 */
-	#events = [];
-
 	constructor (target, callback, options = {}) {
 		this.constructor.all.add(target, this);
 		this.properties = new Map();
@@ -79,13 +72,6 @@ export default class ElementStyleObserver {
 			return;
 		}
 
-		if (TRANSITIONRUN_EVENT_LOOP_BUG) {
-			this.#events.push("transitionrun");
-		}
-		else {
-			this.#events.push("transitionstart", "transitionend");
-		}
-
 		let firstTime = this.constructor.all.get(this.target).size === 1;
 		this.updateTransition({firstTime});
 
@@ -102,20 +88,24 @@ export default class ElementStyleObserver {
 		}
 
 		if (TRANSITIONRUN_EVENT_LOOP_BUG || this.options.throttle > 0) {
-			let throttle = this.options.throttle || 50;
-			// Safari < 18.2 fires `transitionrun` events too often, so we need to debounce
-			this.#events.forEach(event => {
-				this.target.removeEventListener(event, this);
-			});
 			if (TRANSITIONRUN_EVENT_LOOP_BUG) {
+				// Safari < 18.2 fires `transitionrun` events too often, so we need to debounce.
 				// Wait at least the amount of time needed for the transition to run + 1 frame (~16ms)
-				let { duration, delay} = getTimesFor(event.propertyName, getComputedStyle(this.target).transition);
-				throttle = Math.max(throttle, duration + delay + 16);
+				let throttle = this.options.throttle || 50;
+				let times = getTimesFor(event.propertyName, getComputedStyle(this.target).transition);
+				throttle = Math.max(throttle, times.duration + times.delay + 16);
+
+				this.target.removeEventListener("transitionrun", this);
+				await wait(throttle);
+				this.target.addEventListener("transitionrun", this);
 			}
-			await wait(throttle);
-			this.#events.forEach(event => {
-				this.target.addEventListener(event, this);
-			});
+			else {
+				this.target.removeEventListener("transitionstart", this);
+				this.target.removeEventListener("transitionend", this);
+				await delay(this.options.throttle);
+				this.target.addEventListener("transitionstart", this);
+				this.target.addEventListener("transitionend", this);
+			}
 		}
 
 		let cs = getComputedStyle(this.target);
@@ -168,9 +158,13 @@ export default class ElementStyleObserver {
 			this.properties.set(property, value);
 		}
 
-		this.#events.forEach(event => {
-			this.target.addEventListener(event, this);
-		});
+		if (TRANSITIONRUN_EVENT_LOOP_BUG) {
+			this.target.addEventListener("transitionrun", this);
+		}
+		else {
+			this.target.addEventListener("transitionstart", this);
+			this.target.addEventListener("transitionend", this);
+		}
 
 		this.updateTransitionProperties();
 	}
@@ -254,9 +248,9 @@ export default class ElementStyleObserver {
 		}
 
 		if (this.properties.size === 0) {
-			this.#events.forEach(event => {
-				this.target.removeEventListener(event, this);
-			});
+			this.target.removeEventListener("transitionrun", this);
+			this.target.removeEventListener("transitionstart", this);
+			this.target.removeEventListener("transitionend", this);
 		}
 
 		this.updateTransitionProperties();
