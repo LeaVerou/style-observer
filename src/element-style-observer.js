@@ -2,7 +2,7 @@ import TRANSITIONSTART_EVENT_LOOP_BUG from "./util/detect-transitionstart-loop.j
 import UNREGISTERED_TRANSITION_BUG from "./util/detect-unregistered-transition.js";
 import gentleRegisterProperty from "./util/gentle-register-property.js";
 import MultiWeakMap from "./util/MultiWeakMap.js";
-import { toArray, delay } from "./util.js";
+import { toArray, wait } from "./util.js";
 
 // We register this as non-inherited so that nested targets work as expected
 gentleRegisterProperty("--style-observer-transition", { inherits: false });
@@ -90,7 +90,7 @@ export default class ElementStyleObserver {
 		if (TRANSITIONSTART_EVENT_LOOP_BUG && event.type === "transitionstart" || this.options.throttle > 0) {
 			// Safari < 18.2 fires `transitionstart` events too often, so we need to debounce
 			this.target.removeEventListener("transitionstart", this);
-			await delay(this.options.throttle || 50);
+			await wait(this.options.throttle || 50);
 			this.target.addEventListener("transitionstart", this);
 		}
 

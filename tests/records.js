@@ -1,5 +1,5 @@
 import StyleObserver from "../index.js";
-import { delay } from "../src/util.js";
+import { wait } from "../src/util.js";
 import gentleRegisterProperty from "../src/util/gentle-register-property.js";
 import commonTests from "./tests.js";
 
@@ -39,7 +39,7 @@ export default {
 
 			for (let i = 0; i < properties.length; i++) {
 				if (pause) {
-					await delay(pause);
+					await wait(pause);
 				}
 				this.dummy.style.setProperty(properties[i], values[i]);
 			}
