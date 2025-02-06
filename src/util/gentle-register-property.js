@@ -9,11 +9,11 @@ const INITIAL_VALUES = {
 	"<number>": "0",
 	"<percentage>": "0%",
 	"<resolution>": "1dppx",
-	"<string>": '""',
+	"<string>": "''",
 	"<time>": "0s",
-	"<transform-function>": "none",
-	"<transform-list>": "none",
-	"<url>": "none",
+	"<transform-function>": "scale(1)",
+	"<transform-list>": "scale(1)",
+	"<url>": "url('')",
 };
 
 /**
