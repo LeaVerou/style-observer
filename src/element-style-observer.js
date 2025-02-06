@@ -1,8 +1,8 @@
-import TRANSITIONSTART_EVENT_LOOP_BUG from "./util/detect-transitionstart-loop.js";
+import TRANSITIONRUN_EVENT_LOOP_BUG from "./util/detect-transitionrun-loop.js";
 import UNREGISTERED_TRANSITION_BUG from "./util/detect-unregistered-transition.js";
 import gentleRegisterProperty from "./util/gentle-register-property.js";
 import MultiWeakMap from "./util/MultiWeakMap.js";
-import { toArray, wait } from "./util.js";
+import { toArray, wait, getTimesFor } from "./util.js";
 
 // We register this as non-inherited so that nested targets work as expected
 gentleRegisterProperty("--style-observer-transition", { inherits: false });
@@ -87,11 +87,20 @@ export default class ElementStyleObserver {
 			return;
 		}
 
-		if (TRANSITIONSTART_EVENT_LOOP_BUG && event.type === "transitionstart" || this.options.throttle > 0) {
-			// Safari < 18.2 fires `transitionstart` events too often, so we need to debounce
-			this.target.removeEventListener("transitionstart", this);
-			await wait(this.options.throttle || 50);
-			this.target.addEventListener("transitionstart", this);
+		if (TRANSITIONRUN_EVENT_LOOP_BUG && event.type === "transitionrun" || this.options.throttle > 0) {
+			let eventName = TRANSITIONRUN_EVENT_LOOP_BUG ? "transitionrun" : "transitionstart";
+			let delay = Math.max(this.options.throttle, 50);
+
+			if (TRANSITIONRUN_EVENT_LOOP_BUG) {
+				// Safari < 18.2 fires `transitionrun` events too often, so we need to debounce.
+				// Wait at least the amount of time needed for the transition to run + 1 frame (~16ms)
+				let times = getTimesFor(event.propertyName, getComputedStyle(this.target).transition);
+				delay = Math.max(delay, times.duration + times.delay + 16);
+			}
+
+			this.target.removeEventListener(eventName, this);
+			await wait(delay);
+			this.target.addEventListener(eventName, this);
 		}
 
 		let cs = getComputedStyle(this.target);
@@ -142,6 +151,10 @@ export default class ElementStyleObserver {
 
 			let value = cs.getPropertyValue(property);
 			this.properties.set(property, value);
+		}
+
+		if (TRANSITIONRUN_EVENT_LOOP_BUG) {
+			this.target.addEventListener("transitionrun", this);
 		}
 
 		this.target.addEventListener("transitionstart", this);
@@ -203,7 +216,7 @@ export default class ElementStyleObserver {
 			transition = "";
 		}
 
-		// Note that in Safari < 18.2 this fires no `transitionstart` events:
+		// Note that in Safari < 18.2 this fires no `transitionrun` or `transitionstart` events:
 		// transition: all, var(--style-observer-transition, all);
 		// so we can't just concatenate with whatever the existing value is
 		const prefix = transition ? transition + ", " : "";
@@ -228,6 +241,7 @@ export default class ElementStyleObserver {
 		}
 
 		if (this.properties.size === 0) {
+			this.target.removeEventListener("transitionrun", this);
 			this.target.removeEventListener("transitionstart", this);
 			this.target.removeEventListener("transitionend", this);
 		}
