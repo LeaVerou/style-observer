@@ -74,11 +74,7 @@ export function getTimesFor (property, transitions) {
 		propertyRegex = /\b\w+\b/g;
 	}
 	else {
-		let properties = getLonghands(property);
-		if (!properties.includes(property)) {
-			properties.push(property);
-		}
-		properties.push("all");
+		let properties = [...new Set([...getLonghands(property), property, "all"])];
 		propertyRegex = RegExp(`(?<=^|\\s)(${ properties.join("|") })\\b`);
 	}
 
