@@ -2,7 +2,7 @@ const INITIAL_VALUES = {
 	"<angle>": "0deg",
 	"<color>": "transparent",
 	"<custom-ident>": "none",
-	"<image>": "none",
+	"<image>": "linear-gradient(transparent 0% 100%)",
 	"<integer>": "0",
 	"<length>": "0px",
 	"<length-percentage>": "0px",
