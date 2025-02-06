@@ -66,7 +66,8 @@ const dummy = document.createElement("div");
  * @returns { { duration: number, delay: number } } The duration and delay, in milliseconds
  */
 export function getTimesFor (property, transitions) {
-	transitions = transitions.split(/,\s*/);
+	// Split on commas that are not inside parentheses
+	transitions = transitions.split(/,(?![^(]*\))/);
 	let propertyRegex;
 
 	if (property === "all") {
