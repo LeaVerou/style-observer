@@ -44,6 +44,8 @@ Compatibility:
 <small class="compat wa-caption-m"><wa-icon name="circle-info" variant="regular"></wa-icon> Same compat as [`transition-behavior`](https://caniuse.com/mdn-css_properties_transition-behavior) i.e. <strong>~90% of global users</strong>
 </small>
 
+<baseline-status featureId="transition-behavior"></baseline-status>
+
 - <span>✅</span> Observe changes to custom properties on any element
 - <span>✅</span> Observe changes to standard properties on any element (except `display`, `transition`, `animation`)
 - <span>✅</span> [Lightweight](https://bundlephobia.com/package/style-observer), ESM-only code, with no dependencies
