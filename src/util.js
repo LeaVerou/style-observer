@@ -18,8 +18,11 @@ export function wait (ms) {
 	return new Promise(resolve => requestAnimationFrame(resolve));
 }
 
+let dummy;
+
 // https://lea.verou.me/blog/2020/07/introspecting-css-via-the-css-om-getting-supported-properties-shorthands-longhands/
 export function getLonghands (property) {
+	dummy ??= document.createElement("div");
 	let style = dummy.style;
 	style[property] = "inherit"; // a value that works in every property
 	let ret = [...style];
@@ -56,8 +59,6 @@ export function parseTimes (cssTime) {
 
 	return ret;
 }
-
-const dummy = document.createElement("div");
 
 /**
  * Get the duration and delay of a CSS transition for a given property
