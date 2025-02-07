@@ -67,7 +67,7 @@ export function parseTimes (cssTime) {
  * @returns { { duration: number, delay: number } } The duration and delay, in milliseconds
  */
 export function getTimesFor (property, transitions) {
-	transitions = split(transitions);
+	transitions = splitCommas(transitions);
 	let propertyRegex;
 
 	if (property === "all") {
@@ -99,6 +99,43 @@ export function getTimesFor (property, transitions) {
  */
 export function regexEscape (string) {
 	return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
+}
+
+/**
+ * Split a value by commas, ignoring commas within parentheses and trimming whitespace.
+ * @param {string} value - The value to split.
+ * @returns {string[]} The split values.
+ */
+export function splitCommas (value) {
+	let ret = [];
+	let lastIndex = 0;
+	let stack = [];
+
+	for (let match of value.matchAll(/[,()]/g)) {
+		let char = match[0];
+
+		if (char === ",") {
+			if (stack.length === 0) {
+				let item = value.slice(lastIndex, match.index);
+				ret.push(item.trim());
+				lastIndex = match.index + 1;
+			}
+		}
+		else if (char === "(") {
+			stack.push("(");
+		}
+		else if (char === ")") {
+			stack.pop();
+		}
+	}
+
+	if (lastIndex < value.length) {
+		// Push any remaining string
+		let item = value.slice(lastIndex);
+		ret.push(item.trim());
+	}
+
+	return ret;
 }
 
 /**
