@@ -43,8 +43,7 @@ export function getLonghands (property) {
  * @return { number[] } Any times found, in milliseconds
  */
 export function parseTimes (cssTime) {
-	// Why not regex literal? To avoid throwing in browsers that don't support lookbehind
-	let matches = cssTime.matchAll(RegExp("(?<=^|\\s)([+-]?(?:\\d+|\\d*\\.\\d+))\\s*(ms|s)?(?=\\s|$)", "g"));
+	let matches = cssTime.matchAll(/(?:^|\s)([+-]?(?:\d+|\d*\.\d+))\s*(ms|s)?(?=\s|$)/g);
 	let ret = [];
 
 	for (let match of matches) {
@@ -76,7 +75,7 @@ export function getTimesFor (property, transitions) {
 	}
 	else {
 		let properties = [...new Set([...getLonghands(property), property, "all"])];
-		propertyRegex = RegExp(`(?<=^|\\s)(${ properties.join("|") })\\b`);
+		propertyRegex = RegExp(`(?:^|\\s)(${ properties.join("|") })\\b`);
 	}
 
 	let lastRelevantTransition = transitions.findLast(transition => propertyRegex.test(transition));
