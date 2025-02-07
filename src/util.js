@@ -93,15 +93,6 @@ export function getTimesFor (property, transitions) {
 }
 
 /**
- * Escape special characters in a string for use in a regular expression.
- * @param {string} string
- * @returns {string} The escaped string.
- */
-export function regexEscape (string) {
-	return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
-}
-
-/**
  * Split a value by commas, ignoring commas within parentheses and trimming whitespace.
  * @param {string} value - The value to split.
  * @returns {string[]} The split values.
@@ -136,59 +127,4 @@ export function splitCommas (value) {
 	}
 
 	return ret;
-}
-
-/**
- * Split a value by a separator, respecting parentheses.
- * @param {string} value - The value to split.
- * @param {string} [separator] - The separator to split on. Defaults to `,`.
- * @returns {string[]} The split values.
- */
-export function split (value, separator = ",") {
-	value = value.trim();
-
-	// Make whitespace optional and flexible
-	separator = separator.trim();
-	let separatorRegex = RegExp(regexEscape(separator).replace(/^\s*|\s*$/g, "\\s*"), "g");
-	let parensRegex = /\(|\)/g;
-
-	if (!parensRegex.test(value)) {
-		// value contains no parentheses, just split
-		return value.trim().split(separatorRegex);
-	}
-
-	let splitter = RegExp([separatorRegex.source, parensRegex.source].join("|"), "g");
-	let stack = [];
-	let items = [];
-	let item = "";
-	let matches = [...value.matchAll(splitter)];
-	let lastIndex = 0;
-
-	for (let i = 0; i < matches.length; i++) {
-		let match = matches[i];
-		let index = match.index;
-		let matched = match[0];
-		let part = value.slice(lastIndex, index);
-
-		if (matched.trim() === separator) {
-			if (stack.length === 0) {
-				// No open parentheses, add to items
-				items.push(part.trim());
-				lastIndex = index + matched.length;
-			}
-		}
-		else if (matched === "(") {
-			stack.push("(");
-		}
-		else if (matched === ")") {
-			stack.pop();
-		}
-	}
-
-	if (lastIndex < value.length || item.length > 0) {
-		item += value.slice(lastIndex);
-		items.push(item.trim());
-	}
-
-	return items;
 }
