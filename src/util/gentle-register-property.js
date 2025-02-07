@@ -7,7 +7,7 @@
  * @param {*} [meta.initialValue]
  */
 export default function gentleRegisterProperty (property, meta = {}) {
-	if (!property.startsWith("--")) {
+	if (!property.startsWith("--") || !CSS.registerProperty) {
 		return;
 	}
 
