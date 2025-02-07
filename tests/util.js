@@ -1,10 +1,18 @@
-import { getTimesFor } from "../src/util.js";
+import { getTimesFor, splitCommas } from "../src/util.js";
 
 export default {
 	name: "Utility functions",
+	getName() {
+		// TODO use first arg for level 2 tests with no name
+		if (this.level === 1) {
+			return this.run.name + "()";
+		}
+		else {
+			return this.args[0];
+		}
+	},
 	tests: [
 		{
-			name: "getTimesFor()",
 			run: getTimesFor,
 			tests: [
 				// Basic single property cases
@@ -174,6 +182,23 @@ export default {
 					},
 				},
 			],
-		}
+		},
+		{
+			run: splitCommas,
+			tests: [
+				{
+					arg: 'a, b, c',
+					expect: ['a', 'b', 'c'],
+				},
+				{
+					arg: "a",
+					expect: ["a"],
+				},
+				{
+					arg: 'a, b, (c, d), e',
+					expect: ['a', 'b', '(c, d)', 'e'],
+				}
+			],
+		},
 	],
 };

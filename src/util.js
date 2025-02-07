@@ -18,8 +18,11 @@ export function wait (ms) {
 	return new Promise(resolve => requestAnimationFrame(resolve));
 }
 
+let dummy;
+
 // https://lea.verou.me/blog/2020/07/introspecting-css-via-the-css-om-getting-supported-properties-shorthands-longhands/
 export function getLonghands (property) {
+	dummy ??= document.createElement("div");
 	let style = dummy.style;
 	style[property] = "inherit"; // a value that works in every property
 	let ret = [...style];
@@ -57,8 +60,6 @@ export function parseTimes (cssTime) {
 	return ret;
 }
 
-const dummy = document.createElement("div");
-
 /**
  * Get the duration and delay of a CSS transition for a given property
  * @param {string} property - The CSS property name
@@ -66,15 +67,14 @@ const dummy = document.createElement("div");
  * @returns { { duration: number, delay: number } } The duration and delay, in milliseconds
  */
 export function getTimesFor (property, transitions) {
-	transitions = transitions.split(/,\s*/);
+	transitions = splitCommas(transitions);
 	let propertyRegex;
 
 	if (property === "all") {
 		propertyRegex = /\b\w+\b/g;
 	}
 	else {
-		let properties = getLonghands(property);
-		properties.push("all");
+		let properties = [...new Set([...getLonghands(property), property, "all"])];
 		propertyRegex = RegExp(`(?<=^|\\s)(${ properties.join("|") })\\b`);
 	}
 
@@ -90,4 +90,41 @@ export function getTimesFor (property, transitions) {
 
 	let [duration, delay] = times;
 	return { duration, delay };
+}
+
+/**
+ * Split a value by commas, ignoring commas within parentheses and trimming whitespace.
+ * @param {string} value - The value to split.
+ * @returns {string[]} The split values.
+ */
+export function splitCommas (value) {
+	let ret = [];
+	let lastIndex = 0;
+	let stack = [];
+
+	for (let match of value.matchAll(/[,()]/g)) {
+		let char = match[0];
+
+		if (char === ",") {
+			if (stack.length === 0) {
+				let item = value.slice(lastIndex, match.index);
+				ret.push(item.trim());
+				lastIndex = match.index + 1;
+			}
+		}
+		else if (char === "(") {
+			stack.push("(");
+		}
+		else if (char === ")") {
+			stack.pop();
+		}
+	}
+
+	if (lastIndex < value.length) {
+		// Push any remaining string
+		let item = value.slice(lastIndex);
+		ret.push(item.trim());
+	}
+
+	return ret;
 }
