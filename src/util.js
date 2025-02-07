@@ -43,7 +43,7 @@ export function getLonghands (property) {
  * @return { number[] } Any times found, in milliseconds
  */
 export function parseTimes (cssTime) {
-	// Why not regex literal? Safari < 16.4 doesn't support lookbehind in regex literals.
+	// Why not regex literal? To avoid throwing in browsers that don't support lookbehind
 	let matches = cssTime.matchAll(RegExp("(?<=^|\\s)([+-]?(?:\\d+|\\d*\\.\\d+))\\s*(ms|s)?(?=\\s|$)", "g"));
 	let ret = [];
 
