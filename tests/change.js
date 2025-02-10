@@ -1,89 +1,23 @@
 import StyleObserver from "../index.js";
 import gentleRegisterProperty from "../src/util/gentle-register-property.js";
 import adoptCss from "../src/util/adopt-css.js";
-import commonTests from "./tests.js";
 
-let tests = [
-	{
-		name: "Inherited interpolable built-in",
-		arg: {
-			property: "color",
-			value: "rgb(128, 128, 128)",
-		},
-		expect: "rgb(128, 128, 128)",
-	},
-	{
-		name: "Non-inherited interpolable built-in",
-		arg: {
-			property: "opacity",
-			value: "0.5",
-		},
-		expect: "No change",
-	},
-	{
-		name: "Inherited discrete built-in",
-		arg: {
-			property: "font-family",
-			initial: "serif",
-			value: "monospace",
-		},
-		expect: "monospace",
-	},
-	{
-		name: "Non-inherited discrete built-in",
-		arg: {
-			property: "position",
-			value: "relative",
-		},
-		expect: "No change",
-	},
-	{
-		name: "Not registered (inherited) custom property",
-		arg: {
-			property: "--not-registered",
-			initial: "bar",
-			value: "baz",
-		},
-		expect: "baz",
-	},
-	{
-		name: "Non-inherited registered custom property",
-		arg: {
-			property: "--registered-non-inherited",
-			meta: {
-				syntax: "<color>",
-				inherits: false,
-				initialValue: "black",
-			},
-			value: "transparent",
-		},
-		expect: "No change",
-	},
-	{
-		name: "Inherited registered custom property",
-		arg: {
-			property: "--registered",
-			initial: "42deg",
-			value: "0.5turn",
-		},
-		expect: "180deg",
-	},
-];
 
 export default {
 	name: "Different ways to change a property",
 
 	beforeAll () {
 		gentleRegisterProperty("--registered", { syntax: "<angle>", initialValue: "0deg" });
+		gentleRegisterProperty("--registered-non-inherited", { syntax: "<color>", initialValue: "black", inherits: false });
 
 		adoptCss(`
-			[data-test$="-pseudo"] {
+			[class$="-pseudo"] {
 				color: transparent;
 			}
 		`);
 	},
 
-	run ({ property, value }) {
+	run (property, value) {
 		let child = this.container.children[0];
 		let target = child ?? this.container;
 
@@ -123,14 +57,10 @@ export default {
 			name: "Inheritance",
 
 			beforeEach () {
-				let { property, meta, initial } = this.arg;
+				let [property, value, initial] = this.args;
 
 				this.container = document.createElement("div")
 				this.container.append(document.createElement("div"));
-
-				if (meta) {
-					gentleRegisterProperty(property, meta);
-				}
 				
 				if (initial !== undefined) {
 					this.container.style.setProperty(property, initial);
@@ -139,62 +69,187 @@ export default {
 				document.body.append(this.container);
 			},
 
-			tests,
+			tests: [
+				{
+					name: "Inherited interpolable built-in",
+					args: ["color", "rgb(128, 128, 128)"],
+					expect: "rgb(128, 128, 128)",
+				},
+				{
+					name: "Non-inherited interpolable built-in",
+					args: ["opacity", "0.5"],
+					expect: "No change",
+				},
+				{
+					name: "Inherited discrete built-in",
+					args: ["font-family", "monospace", "serif"],
+					expect: "monospace",
+				},
+				{
+					name: "Non-inherited discrete built-in",
+					args: ["position", "fixed", "relative"],
+					expect: "No change",
+				},
+				{
+					name: "Not registered (inherited) custom property",
+					args: ["--not-registered", "baz", "bar"],
+					expect: "baz",
+				},
+				{
+					name: "Non-inherited registered custom property",
+					args: ["--registered-non-inherited", "transparent"],
+					expect: "No change",
+				},
+				{
+					name: "Inherited registered custom property",
+					args: ["--registered", "0.5turn", "42deg"],
+					expect: "180deg",
+				},
+			],
 		},
 		{
 			name: "Pseudo-class",
 
 			beforeEach () {
-				let { property, value, initial } = this.arg;
+				let [property, css] = this.args;
+				let className = property.replace(/^--/, "") + "-pseudo";
 
-				adoptCss(`
-					[data-test="${ property }-pseudo"] {
-						${ initial !== undefined ? `${ property }: ${ initial };` : "" }
-					}
+				adoptCss(css);
 
-					[data-test="${ property }-pseudo"]:empty {
-						${ property }: ${ value };
-					}
-				`);
-
-				this.container = Object.assign(document.createElement("div"), { textContent: "foo" });
-				this.container.dataset.test = `${ property }-pseudo`;
-
+				this.container = Object.assign(document.createElement("div"), { textContent: "foo", className });
 				document.body.append(this.container);
 			},
 
-			tests: commonTests,
+			tests: [
+				{
+					name: "Interpolable built-in",
+					args: [
+						"opacity",
+						`.opacity-pseudo:empty {
+							opacity: 0.5;
+						}
+						`,
+					],
+					expect: "0.5",
+				},
+				{
+					name: "Discrete built-in",
+					args: [
+						"position",
+						`.position-pseudo:empty {
+							position: fixed;
+						}`,
+					],
+					expect: "fixed",
+				},
+				{
+					name: "Not registered custom property",
+					args: [
+						"--custom",
+						`.custom-pseudo {
+							--custom: 0;
+
+							&:empty {
+								--custom: foo;
+							}
+						}`,
+					],
+					expect: "foo",
+				},
+				{
+					name: "Registered custom property",
+					args: [
+						"--registered",
+						`.registered-pseudo {
+							--registered: 42deg;
+
+							&:empty {
+								--registered: 1turn;
+							}
+						}`,
+					],
+					expect: "360deg",
+				},
+			],
 		},
 		{
 			name: "Media query",
 
 			beforeEach () {
-				let { property, initial, value } = this.arg;
+				let [property, css, mediaQuery] = this.args;
+				let className = property.replace(/^--/, "") + "-media";
 
-				this.container = document.createElement("div");
-				this.container.dataset.test = `${ property }-media`;
+				if (!mediaQuery) {
+					mediaQuery = css;
+				}
+				else {
+					adoptCss(css);
+				}
+
+				this.container = Object.assign(document.createElement("div"), { className });
 				document.body.append(this.container);
-
-				adoptCss(`
-					[data-test="${ property }-media"] {
-						${ initial !== undefined ? `${ property }: ${ initial };` : "" }
-					}
-				`);
 
 				// We don't want the media query to kick in immediately;
 				// the style observer should be created first.
-				setTimeout(()=> {
-					adoptCss(`
-						@media (min-width: 10px) {
-							[data-test="${ property }-media"] {
-								${ property }: ${ value };
-							}
-						}
-					`);
-				}, 100);
+				setTimeout(()=> adoptCss(mediaQuery), 100);
 			},
 
-			tests: commonTests,
+			tests: [
+				{
+					name: "Interpolable built-in",
+					args: [
+						"opacity",
+						`@media (min-width: 10px) {
+							.opacity-media {
+								opacity: 0.5;
+							}
+						}`,
+					],
+					expect: "0.5",
+				},
+				{
+					name: "Discrete built-in",
+					args: [
+						"position",
+						`@media (min-width: 10px) {
+							.position-media {
+								position: fixed;
+							}
+						}`,
+					],
+					expect: "fixed",
+				},
+				{
+					name: "Not registered custom property",	
+					args: [
+						"--custom",
+						`.custom-media {
+							--custom: 0;
+						}`,
+						`@media (min-width: 10px) {
+							.custom-media {
+								--custom: foo;
+							}
+						}`,
+					],
+					expect: "foo",
+				},
+				{
+					name: "Registered custom property",
+					args: [
+						"--registered",
+						`.registered-media {
+							--registered: 42deg;
+						}`,
+						`@media (min-width: 10px) {
+							.registered-media {
+								--registered: 1turn;
+							}
+						}`,
+					],
+					expect: "360deg",
+				},
+			],
 		},
 		{
 			name: "Container query",
@@ -205,31 +260,84 @@ export default {
 			},
 
 			beforeEach () {
-				let { property, initial, value } = this.arg;
+				let [property, css] = this.args;
 
-				adoptCss(`
-					[data-test="${ property }-container"] {
-						container-type: inline-size;
+				let className = property.replace(/^--/, "") + "-container";
+				adoptCss(css);
 
-						> div {
-							${ initial !== undefined ? `${ property }: ${ initial };` : "" }
-						}
-					}
-
-					@container (width < 10px) {
-						[data-test="${ property }-container"] > div {
-							${ property }: ${ value };
-						}
-					}
-				`);
-
-				this.container = document.createElement("div")
-				this.container.dataset.test = `${ property }-container`;
+				this.container = Object.assign(document.createElement("div"), { className });
 				this.container.append(document.createElement("div"));
 				document.body.append(this.container);
 			},
 
-			tests: commonTests,
+			tests: [
+				{
+					name: "Interpolable built-in",
+					args: [
+						"opacity",
+						`.opacity-container {
+							container-type: inline-size;
+						}
+
+						@container (width < 10px) {
+							.opacity-container > div {
+								opacity: 0.5;
+							}
+						}`,
+					],
+					expect: "0.5",
+				},
+				{
+					name: "Discrete built-in",
+					args: [
+						"text-align",
+						`.text-align-container {
+							container-type: inline-size;
+						}
+
+						@container (width < 10px) {
+							.text-align-container > div {
+								text-align: center;
+							}
+						}`,
+					],
+					expect: "center",
+				},
+				{
+					name: "Not registered custom property",
+					args: [
+						"--custom",
+						`.custom-container {
+							--custom: 0;
+							container-type: inline-size;
+						}
+
+						@container (width < 10px) {
+							.custom-container > div {
+								--custom: 42;
+							}
+						}`,
+					],
+					expect: "42",
+				},
+				{
+					name: "Registered custom property",
+					args: [
+						"--registered",
+						`.registered-container {
+							--registered: 42deg;
+							container-type: inline-size;
+						}
+
+						@container (width < 10px) {
+							.registered-container > div {
+								--registered: 1turn;
+							}
+						}`,
+					],
+					expect: "360deg",
+				},
+			],
 		},
 	],
 };
