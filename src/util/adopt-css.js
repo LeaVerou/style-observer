@@ -4,7 +4,12 @@ export default function adoptCSS (css) {
 	if (document.adoptedStyleSheets) {
 		let sheet = new CSSStyleSheet();
 		sheet.replaceSync(css);
-		document.adoptedStyleSheets.push(sheet);
+		if (Object.isFrozen(document.adoptedStyleSheets)) {
+			document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
+		}
+		else {
+			document.adoptedStyleSheets.push(sheet);
+		}
 	}
 	else {
 		style ??= document.head.appendChild(document.createElement("style"));
