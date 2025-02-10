@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Old browser compatibility tests</title>
+	<script type="module">
+		import adoptCSS from "../src/util/adopt-css.js";
+
+		// Old browsers don't support CSS nesting,
+		// so to run this testsuite in old browsers,
+		// we need to transform the CSS used by hTest with PostCSS
+		import postcss from "https://esm.sh/postcss";
+		import postcssNesting from "https://esm.sh/postcss-nesting";
+
+		let response = await fetch("https:/htest.dev/htest.css");
+		let css = await response.text();
+		let result = await postcss([
+			postcssNesting,
+		]).process(css);
+
+		adoptCSS(result.css);
+
+		// Import all the tests we have.
+		// Declarative shadow DOM is not supported in old browsers,
+		// so we skip corresponding tests
+		let skip = ["Declarative"];
+		let tests = await import("./index-fn.js").then(m => m.default).then(m => m.tests);
+		tests = tests.map(test => {
+			return {
+				...test,
+				throws: false,
+				tests: test.tests.map(t => {
+					if (!skip.includes(t.name)) {
+						return t;
+					}
+
+					return {
+						...t,
+						skip: true,
+					}
+				}),
+			}
+		});
+
+		let render = await import("https:/htest.dev/src/render.js").then(m => m.default);
+		render({
+			name: "Old browser compatibility tests",
+			tests,
+		});
+
+		// Enable hTest features like test isolation, navigation, etc.
+		import("https:/htest.dev/htest.js");
+	</script>
+</head>
+
+<body>
+	<registered-component></registered-component>
+</body>
+
+</html>
