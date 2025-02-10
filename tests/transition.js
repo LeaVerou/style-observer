@@ -80,6 +80,8 @@ let testsDynamic = [
 	},
 ];
 
+let testIndex = 1;
+
 export default {
 	name: "The existing transition property",
 
@@ -95,9 +97,9 @@ export default {
 			}, 50);
 		}
 		else {
-			let id = crypto.randomUUID();
-			id = property + "-" + id;
+			let id = `transition-${ property }-test-${ testIndex }`;
 			this.target.id = id;
+			testIndex += 1;
 
 			// Avoid race condition in Safari < 18.2
 			setTimeout(() => {
