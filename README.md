@@ -4,6 +4,7 @@
 
 <nav class="wa-gap-m">
 	<a href="/api">API</a>
+	<span class="readme-only">·</span>
 	<a href="/tests">Tests</a>
 	<wa-divider vertical></wa-divider>
 	<a href="https://github.com/leaverou/style-observer" target="_blank">
@@ -60,10 +61,10 @@ Detects browser bugs and works around them, so you don't have to.
 </tr>
 <tr>
 	<td>Custom properties (registered with an animatable type)</td>
-	<td>117</td>
-	<td>17.4</td>
-	<td>129</td>
-	<td>89%</td>
+	<td>97</td>
+	<td>16.4</td>
+	<td>128</td>
+	<td><a href="https://caniuse.com/mdn-api_css_registerproperty_static">93%</a></td>
 </tr>
 <tr>
 	<td>Standard properties (discrete)
