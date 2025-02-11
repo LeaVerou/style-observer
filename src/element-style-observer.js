@@ -181,7 +181,7 @@ export default class ElementStyleObserver {
 		// Only add properties not already present and not excluded
 		let transition = properties
 			.filter(property => !transitionProperties.has(property))
-			.map(property => `${ property } 1ms step-start allow-discrete`).join(", ");
+			.map(property => `${ property } 1ms step-start`).join(", ");
 
 		this.target.style.setProperty("--style-observer-transition", transition);
 	}
@@ -221,6 +221,9 @@ export default class ElementStyleObserver {
 		// so we can't just concatenate with whatever the existing value is
 		const prefix = transition ? transition + ", " : "";
 		this.target.style.setProperty("transition", prefix + sot, "important");
+
+		// Set separately to maximize browser support
+		this.target.style.setProperty("transition-behavior", "allow-discrete", "important");
 
 		this.updateTransitionProperties();
 	}
