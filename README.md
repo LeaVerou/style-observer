@@ -1,4 +1,4 @@
-<header slot="header" class="wa-split">
+<header class="wa-split">
 
 # Style Observer
 
@@ -15,7 +15,7 @@
 
 </header>
 
-<aside slot="aside">
+<aside>
 
 - [Install](#install)
 - [Usage](#usage)
@@ -93,7 +93,7 @@ Detects browser bugs and works around them, so you don't have to.
 The quickest way is to just include straight from the [Netlify](https://www.netlify.com/) CDN:
 
 ```js
-import StyleObserver from 'https://observe.style/index.js';
+import StyleObserver from "https://observe.style/index.js";
 ```
 
 This will always point to the latest version, so it may be a good idea to eventually switch to a local version that you can control.
@@ -106,13 +106,13 @@ npm install style-observer
 and then, if you use a bundler like Rollup or Webpack:
 
 ```js
-import StyleObserver from 'style-observer';
+import StyleObserver from "style-observer";
 ```
 
 and if you don’t:
 
 ```js
-import StyleObserver from 'node_modules/style-observer/dist/index.js';
+import StyleObserver from "node_modules/style-observer/dist/index.js";
 ```
 
 ## Usage
@@ -120,11 +120,11 @@ import StyleObserver from 'node_modules/style-observer/dist/index.js';
 You can first create the observer instance and then observe, like a `MutationObserver`:
 
 ```js
-import StyleObserver from 'style-observer';
+import StyleObserver from "style-observer";
 
 const observer = new StyleObserver(callback);
-const properties = ['color', '--my-custom-property'];
-const targets = document.querySelectorAll('.my-element');
+const properties = ["color", "--my-custom-property"];
+const targets = document.querySelectorAll(".my-element");
 observer.observe(targets, properties);
 ```
 
@@ -132,11 +132,11 @@ Alternatively, you can provide both targets and properties when creating the obs
 which will also call `observe()` for you:
 
 ```js
-import StyleObserver from 'style-observer';
+import StyleObserver from "style-observer";
 
 const observer = new StyleObserver(callback, {
-	targets: document.querySelectorAll('.my-element'),
-	properties: ['color', '--my-custom-property'],
+	targets: document.querySelectorAll(".my-element"),
+	properties: ["color", "--my-custom-property"],
 });
 ```
 
@@ -199,7 +199,7 @@ This is not a fork of either. It was written from scratch and has several differ
 [Read the blog post](https://lea.verou.me/2025/style-observer/) for more details.
 
 </main>
-<footer slot=footer>
+<footer>
 
 By [Lea Verou](https://lea.verou.me/) and [Dmitry Sharabin](https://d12n.me/).
 </footer>
