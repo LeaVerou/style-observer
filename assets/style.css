@@ -1,7 +1,18 @@
-@import url('prism.css');
+@import url("prism.css");
 
 :root {
-	--max-page-width: 120ch;
+	--max-page-width: min(120ch, 100%);
+	--body-padding: 1em;
+}
+
+body {
+	display: grid;
+	grid-template-areas:
+		"header header header header"
+		". main aside ."
+		"footer footer footer footer";
+	grid-template-columns: var(--body-padding) minmax(0, 1fr) auto var(--body-padding);
+	grid-template-rows: auto 1fr auto;
 }
 
 header, main, footer {
@@ -9,7 +20,8 @@ header, main, footer {
 }
 
 main {
-	max-width: 80ch;
+	grid-area: main;
+	max-width: min(80ch, 100%);
 	padding: var(--wa-space-xl);
 	margin-inline: auto;
 }
@@ -19,6 +31,7 @@ wa-badge.browser {
 }
 
 header {
+	grid-area: header;
 	border-bottom: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-surface-border);
 
 	h1 {
@@ -76,9 +89,13 @@ nav {
 }
 
 aside {
+	grid-area: aside;
 	border-left: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-surface-border);
 
 	ul {
+		margin-block: var(--wa-space-l) 0;
+		position: sticky;
+		top: 0;
 		list-style: none;
 		line-height: var(--wa-line-height-expanded);
 	}
@@ -110,5 +127,32 @@ main {
 }
 
 footer {
+	grid-area: footer;
 	border-top: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-surface-border);
+}
+
+.scrollable,
+pre:has(code) {
+	max-width: 100%;
+	overflow-x: auto;
+}
+
+@media (width <= 625px) {
+	body {
+		grid-template-areas:
+			"header"
+			"aside"
+			"main"
+			"footer";
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-rows: auto 1fr auto auto;
+	}
+
+	aside {
+		border-left: none;
+
+		ul {
+			position: static;
+		}
+	}
 }

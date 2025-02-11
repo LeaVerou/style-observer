@@ -1,4 +1,4 @@
-<header slot="header" class="wa-split">
+<header class="wa-split">
 
 # Style Observer
 
@@ -15,13 +15,13 @@
 
 </header>
 
-<aside slot="aside">
+<aside>
 
 - [Install](#install)
 - [Usage](#usage)
 - [Future Work](#future-work)
+- [Limitations & Caveats](#limitations-%26-caveats)
 - [Prior Art](#prior-art)
-- [Limitations & Caveats](#limitations--caveats)
 
 </aside>
 <main>
@@ -41,6 +41,7 @@ Detects browser bugs and works around them, so you don't have to.
 
 ## Compatibility
 
+<div class="scrollable">
 <table>
 <thead>
 <tr>
@@ -84,6 +85,7 @@ Detects browser bugs and works around them, so you don't have to.
 </tr>
 </tbody>
 </table>
+</div>
 
 <small class="compat wa-caption-m"><wa-icon name="circle-info" variant="regular"></wa-icon> Observing discrete properties has the same compat as [`transition-behavior`](https://caniuse.com/mdn-css_properties_transition-behavior) i.e. <strong>~90% of global users</strong>
 </small>
@@ -93,7 +95,7 @@ Detects browser bugs and works around them, so you don't have to.
 The quickest way is to just include straight from the [Netlify](https://www.netlify.com/) CDN:
 
 ```js
-import StyleObserver from 'https://observe.style/index.js';
+import StyleObserver from "https://observe.style/index.js";
 ```
 
 This will always point to the latest version, so it may be a good idea to eventually switch to a local version that you can control.
@@ -106,13 +108,13 @@ npm install style-observer
 and then, if you use a bundler like Rollup or Webpack:
 
 ```js
-import StyleObserver from 'style-observer';
+import StyleObserver from "style-observer";
 ```
 
 and if you don’t:
 
 ```js
-import StyleObserver from 'node_modules/style-observer/dist/index.js';
+import StyleObserver from "node_modules/style-observer/dist/index.js";
 ```
 
 ## Usage
@@ -120,11 +122,11 @@ import StyleObserver from 'node_modules/style-observer/dist/index.js';
 You can first create the observer instance and then observe, like a `MutationObserver`:
 
 ```js
-import StyleObserver from 'style-observer';
+import StyleObserver from "style-observer";
 
 const observer = new StyleObserver(callback);
-const properties = ['color', '--my-custom-property'];
-const targets = document.querySelectorAll('.my-element');
+const properties = ["color", "--my-custom-property"];
+const targets = document.querySelectorAll(".my-element");
 observer.observe(targets, properties);
 ```
 
@@ -132,11 +134,11 @@ Alternatively, you can provide both targets and properties when creating the obs
 which will also call `observe()` for you:
 
 ```js
-import StyleObserver from 'style-observer';
+import StyleObserver from "style-observer";
 
 const observer = new StyleObserver(callback, {
-	targets: document.querySelectorAll('.my-element'),
-	properties: ['color', '--my-custom-property'],
+	targets: document.querySelectorAll(".my-element"),
+	properties: ["color", "--my-custom-property"],
 });
 ```
 
@@ -162,11 +164,15 @@ Note that the observer will not fire immediately for the initial state of the el
 
 Observing `display` is inconsistent across browsers (see [relevant tests](tests/?test=display)):
 
+<div class="scrollable">
+
 | Rule | Chrome | Firefox | Safari | Safari (iOS) | Samsung Internet |
 | --- | --- | --- | --- | --- | --- |
 | From `display: none` | ❌ | ❌ | ❌ | ❌ | ❌ |
 | To `display: none` | ❌ | ❌ | ✅ | ✅ | ❌ |
 | From not `none` to not `none` |  ✅ | ❌ | ✅ | ✅ | ✅ |
+
+</div>
 
 To observe elements becoming visible or not visible, you may want to take a look at [`IntersectionObserver`](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API).
 
@@ -199,7 +205,7 @@ This is not a fork of either. It was written from scratch and has several differ
 [Read the blog post](https://lea.verou.me/2025/style-observer/) for more details.
 
 </main>
-<footer slot=footer>
+<footer>
 
 By [Lea Verou](https://lea.verou.me/) and [Dmitry Sharabin](https://d12n.me/).
 </footer>
