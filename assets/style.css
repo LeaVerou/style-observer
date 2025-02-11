@@ -11,7 +11,7 @@ body {
 		"header header header header"
 		". main aside ."
 		"footer footer footer footer";
-	grid-template-columns: var(--body-padding) 1fr auto var(--body-padding);
+	grid-template-columns: var(--body-padding) minmax(0, 1fr) auto var(--body-padding);
 	grid-template-rows: auto 1fr auto;
 }
 
@@ -21,7 +21,7 @@ header, main, footer {
 
 main {
 	grid-area: main;
-	max-width: 80ch;
+	max-width: min(80ch, 100%);
 	padding: var(--wa-space-xl);
 	margin-inline: auto;
 }
@@ -131,19 +131,28 @@ footer {
 	border-top: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-surface-border);
 }
 
-@media (width <=425px) {
+.scrollable,
+pre:has(code) {
+	max-width: 100%;
+	overflow-x: auto;
+}
+
+@media (width <= 625px) {
 	body {
-		grid-template-areas: "header"
+		grid-template-areas:
+			"header"
 			"aside"
 			"main"
 			"footer";
-		grid-template-columns: 1fr;
+		grid-template-columns: minmax(0, 1fr);
 		grid-template-rows: auto 1fr auto auto;
 	}
 
 	aside {
-		position: static;
-		block-size: auto;
 		border-left: none;
+
+		ul {
+			position: static;
+		}
 	}
 }

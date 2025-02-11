@@ -41,6 +41,7 @@ Detects browser bugs and works around them, so you don't have to.
 
 ## Compatibility
 
+<div class="scrollable">
 <table>
 <thead>
 <tr>
@@ -84,6 +85,7 @@ Detects browser bugs and works around them, so you don't have to.
 </tr>
 </tbody>
 </table>
+</div>
 
 <small class="compat wa-caption-m"><wa-icon name="circle-info" variant="regular"></wa-icon> Observing discrete properties has the same compat as [`transition-behavior`](https://caniuse.com/mdn-css_properties_transition-behavior) i.e. <strong>~90% of global users</strong>
 </small>
@@ -162,11 +164,15 @@ Note that the observer will not fire immediately for the initial state of the el
 
 Observing `display` is inconsistent across browsers (see [relevant tests](tests/?test=display)):
 
+<div class="scrollable">
+
 | Rule | Chrome | Firefox | Safari | Safari (iOS) | Samsung Internet |
 | --- | --- | --- | --- | --- | --- |
 | From `display: none` | ❌ | ❌ | ❌ | ❌ | ❌ |
 | To `display: none` | ❌ | ❌ | ✅ | ✅ | ❌ |
 | From not `none` to not `none` |  ✅ | ❌ | ✅ | ✅ | ✅ |
+
+</div>
 
 To observe elements becoming visible or not visible, you may want to take a look at [`IntersectionObserver`](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API).
 
