@@ -20,8 +20,8 @@
 - [Install](#install)
 - [Usage](#usage)
 - [Future Work](#future-work)
-- [Prior Art](#prior-art)
 - [Limitations & Caveats](#limitations--caveats)
+- [Prior Art](#prior-art)
 
 </aside>
 <main>
