@@ -10,7 +10,7 @@
 	<a href="https://github.com/leaverou/style-observer" target="_blank">
 		<wa-icon name="github" label="GitHub" family="brands"></wa-icon>
 	</a>
-
+	<hr class="readme-only" />
 </nav>
 
 </header>
