@@ -35,9 +35,9 @@ let tests = [
 		expect: "No change",
 	},
 	{
-		name: "Unregistered (non-inherited) custom property",
+		name: "Not registered (non-inherited) custom property",
 		arg: {
-			property: "--unregistered",
+			property: "--not-registered",
 			initial: "foo",
 			value: "bar",
 		},
