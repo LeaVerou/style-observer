@@ -1,6 +1,6 @@
 export default [
 	{
-		name: "Interpolable built-in",
+		name: "Animatable built-in",
 		arg: {
 			property: "opacity",
 			value: "0.5",

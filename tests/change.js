@@ -122,7 +122,7 @@ export default {
 
 			tests: [
 				{
-					name: "Interpolable built-in",
+					name: "Animatable built-in",
 					args: [
 						"opacity",
 						`.opacity-pseudo:empty {
@@ -196,7 +196,7 @@ export default {
 
 			tests: [
 				{
-					name: "Interpolable built-in",
+					name: "Animatable built-in",
 					args: [
 						"opacity",
 						`@media (min-width: 10px) {
@@ -272,7 +272,7 @@ export default {
 
 			tests: [
 				{
-					name: "Interpolable built-in",
+					name: "Animatable built-in",
 					args: [
 						"opacity",
 						`.opacity-container {

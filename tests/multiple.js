@@ -65,7 +65,7 @@ export default {
 			name: "Without properties overlap",
 			tests: [
 				{
-					name: "Interpolable built-in (from first observer)",
+					name: "Animatable built-in (from first observer)",
 					arg: {
 						props1: ["opacity", "text-align"],
 						props2: ["padding", "background-color"],
@@ -110,7 +110,7 @@ export default {
 			name: "With properties overlap",
 			tests: [
 				{
-					name: "Interpolable built-in",
+					name: "Animatable built-in",
 					arg: {
 						props1: ["opacity", "text-align"],
 						props2: ["opacity", "color"],
