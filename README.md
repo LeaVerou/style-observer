@@ -152,7 +152,8 @@ Note that the observer will not fire immediately for the initial state of the el
 
 ## Prior Art
 
-- [css-variable-observer](https://github.com/fluorumlabs/css-variable-observer) by [Artem Godin](https://github.com/fluorumlabs) paved the way,
+- [css-var-listener](https://github.com/propjockey/css-var-listener) by [Jane Ori](https://propjockey.io)
+- [css-variable-observer](https://github.com/fluorumlabs/css-variable-observer) by [Artem Godin](https://github.com/fluorumlabs) first used transition events for this,
 using an ingenious hack based on `font-variation-settings` to observe CSS property changes.
 - Four years, later [Bramus Van Damme](https://github.com/bramus) pioneered a way to do it "properly" in [style-observer](https://github.com/bramus/style-observer),
 thanks to [`transition-behavior: allow-discrete`](https://caniuse.com/mdn-css_properties_transition-behavior) becoming Baseline and even [blogged about all the bugs he encountered along the way](https://www.bram.us/2024/08/31/introducing-bramus-style-observer-a-mutationobserver-for-css/).

@@ -3,7 +3,7 @@ import gentleRegisterProperty from "../src/util/gentle-register-property.js";
 
 let tests = [
 	{
-		name: "Inherited interpolable built-in",
+		name: "Inherited animatable built-in",
 		arg: {
 			property: "color",
 			value: "green",
@@ -11,7 +11,7 @@ let tests = [
 		expect: "rgb(0, 128, 0)",
 	},
 	{
-		name: "Non-inherited interpolable built-in",
+		name: "Non-inherited animatable built-in",
 		arg: {
 			property: "opacity",
 			value: "0.5",

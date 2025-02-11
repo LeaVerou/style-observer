@@ -61,7 +61,7 @@ export default {
 
 				this.container = document.createElement("div")
 				this.container.append(document.createElement("div"));
-				
+
 				if (initial !== undefined) {
 					this.container.style.setProperty(property, initial);
 				}
@@ -71,12 +71,12 @@ export default {
 
 			tests: [
 				{
-					name: "Inherited interpolable built-in",
+					name: "Inherited animatable built-in",
 					args: ["color", "rgb(128, 128, 128)"],
 					expect: "rgb(128, 128, 128)",
 				},
 				{
-					name: "Non-inherited interpolable built-in",
+					name: "Non-inherited animatable built-in",
 					args: ["opacity", "0.5"],
 					expect: "No change",
 				},
@@ -220,7 +220,7 @@ export default {
 					expect: "fixed",
 				},
 				{
-					name: "Not registered custom property",	
+					name: "Not registered custom property",
 					args: [
 						"--custom",
 						`.custom-media {
