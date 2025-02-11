@@ -55,6 +55,18 @@ header {
 
 wa-icon {
 	vertical-align: -.1em;
+
+	&[name="chrome"] {
+		color: var(--wa-color-green);
+	}
+
+	&[name="firefox"] {
+		color: color-mix(in oklch, var(--wa-color-red) 30%, var(--wa-color-yellow));
+	}
+
+	&[name="safari"] {
+		color: var(--wa-color-blue);
+	}
 }
 
 nav {

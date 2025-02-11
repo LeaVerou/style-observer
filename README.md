@@ -9,9 +9,7 @@
 	<a href="https://github.com/leaverou/style-observer" target="_blank">
 		<wa-icon name="github" label="GitHub" family="brands"></wa-icon>
 	</a>
-	<a href="https://www.npmjs.com/package/style-observer" target="_blank">
-		<wa-icon name="npm" label="NPM" family="brands"></wa-icon>
-	</a>
+
 </nav>
 
 </header>
@@ -30,25 +28,64 @@
 [![npm](https://img.shields.io/npm/v/style-observer)](https://www.npmjs.com/package/style-observer)
 [![npm bundle size](https://img.shields.io/bundlephobia/minzip/style-observer)](https://bundlephobia.com/package/style-observer)
 
-A robust, production-ready library to observe CSS property changes on any element.
+A robust, production-ready library to observe CSS property changes.
 Detects browser bugs and works around them, so you don't have to.
 
-Compatibility:
-<wa-badge class="browser" variant="success" pill appearance="filled"><wa-icon name="chrome" family="brands">Chrome</wa-icon> **117+**
-</wa-badge>
-<wa-badge class="browser" pill appearance="filled"><wa-icon name="safari" family="brands">Safari</wa-icon> **17.4+**
-</wa-badge>
-<wa-badge class="browser" variant="warning" pill appearance="filled"><wa-icon name="firefox" family="brands">Firefox</wa-icon> **129+**
-</wa-badge>
-
-<small class="compat wa-caption-m"><wa-icon name="circle-info" variant="regular"></wa-icon> Same compat as [`transition-behavior`](https://caniuse.com/mdn-css_properties_transition-behavior) i.e. <strong>~90% of global users</strong>
-</small>
-
-- <span>✅</span> Observe changes to custom properties on any element
-- <span>✅</span> Observe changes to standard properties on any element (except `display`, `transition`, `animation`)
+- <span>✅</span> Observe changes to custom properties
+- <span>✅</span> Observe changes to standard properties (except `display`, `transition`, `animation`)
+- <span>✅</span> Observe changes on any element (including those in Shadow DOM)
 - <span>✅</span> [Lightweight](https://bundlephobia.com/package/style-observer), ESM-only code, with no dependencies
-- <span>✅</span> [Tests](tests) you can run in your browser of choice to verify compatibility
+- <span>✅</span> [150+ unit tests](tests) you can run in your browser of choice
 - <span>✅</span> Throttling (per element)
+
+## Compatibility
+
+<table>
+<thead>
+<tr>
+	<th>Feature</th>
+	<th><wa-icon name="chrome" family="brands"></wa-icon> Chrome</th>
+	<th><wa-icon name="safari" family="brands"></wa-icon> Safari</th>
+	<th><wa-icon name="firefox" family="brands"></wa-icon> Firefox</th>
+	<th>% of global users</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+	<td>Custom properties</td>
+	<td>117</td>
+	<td>17.4</td>
+	<td>129</td>
+	<td><a href="https://caniuse.com/mdn-css_properties_transition-behavior">89%</a></td>
+</tr>
+<tr>
+	<td>Custom properties (registered with an animatable type)</td>
+	<td>117</td>
+	<td>17.4</td>
+	<td>129</td>
+	<td>89%</td>
+</tr>
+<tr>
+	<td>Standard properties (discrete)
+	<br><small class="compat wa-caption-s">Except <code>display</code>, <code>transition</code>, <code>animation</code></small>
+	</td>
+	<td>117</td>
+	<td>17.4</td>
+	<td>129</td>
+	<td><a href="https://caniuse.com/mdn-css_properties_transition-behavior">89%</a></td>
+</tr>
+<tr>
+	<td>Standard properties (animatable)</td>
+	<td>97</td>
+	<td>15.4</td>
+	<td>104</td>
+	<td>95%</td>
+</tr>
+</tbody>
+</table>
+
+<small class="compat wa-caption-m"><wa-icon name="circle-info" variant="regular"></wa-icon> Observing discrete properties has the same compat as [`transition-behavior`](https://caniuse.com/mdn-css_properties_transition-behavior) i.e. <strong>~90% of global users</strong>
+</small>
 
 ## Install
 
@@ -71,7 +108,11 @@ and then, if you use a bundler like Rollup or Webpack:
 import StyleObserver from 'style-observer';
 ```
 
-and if you don’t, you can just include the file from `node_modules/style-observer/dist/index.js`.
+and if you don’t:
+
+```js
+import StyleObserver from 'node_modules/style-observer/dist/index.js';
+```
 
 ## Usage
 
