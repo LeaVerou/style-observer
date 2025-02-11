@@ -1,3 +1,5 @@
+import markdownItAnchor from "markdown-it-anchor";
+
 export default config => {
 	let data = {
 		layout: "page.njk",
@@ -7,6 +9,14 @@ export default config => {
 	for (let p in data) {
 		config.addGlobalData(p, data[p]);
 	}
+
+	config.amendLibrary("md", md => {
+		md.options.typographer = true;
+		md.use(markdownItAnchor, {
+			permalink: markdownItAnchor.permalink.headerLink(),
+			level: 2,
+		});
+	});
 
 	return {
 		markdownTemplateEngine: "njk",
