@@ -150,21 +150,6 @@ Note that the observer will not fire immediately for the initial state of the el
 - Option to fire callback at the *end* of a transition
 - Option to fire callback *during* transitions
 
-## Prior Art
-
-- [css-var-listener](https://github.com/propjockey/css-var-listener) by [Jane Ori](https://propjockey.io)
-- [css-variable-observer](https://github.com/fluorumlabs/css-variable-observer) by [Artem Godin](https://github.com/fluorumlabs) first used transition events for this,
-using an ingenious hack based on `font-variation-settings` to observe CSS property changes.
-- Four years, later [Bramus Van Damme](https://github.com/bramus) pioneered a way to do it "properly" in [style-observer](https://github.com/bramus/style-observer),
-thanks to [`transition-behavior: allow-discrete`](https://caniuse.com/mdn-css_properties_transition-behavior) becoming Baseline and even [blogged about all the bugs he encountered along the way](https://www.bram.us/2024/08/31/introducing-bramus-style-observer-a-mutationobserver-for-css/).
-
-This is not a fork of either. It was written from scratch and has several differences, including:
-- Actually detects browser bugs, so it doesn't need to tread carefully around them
-- Integrates better with existing transitions
-- Throttling and coalescing of changes
-
-[Read the blog post](https://lea.verou.me/2025/style-observer/) for more details.
-
 ## Limitations & Caveats
 
 ### Transitions & Animations
@@ -182,12 +167,35 @@ Observing `display` is inconsistent across browsers (see [relevant tests](tests/
 | To `display: none` | ❌ | ❌ | ✅ | ✅ | ❌ |
 | From not `none` to not `none` |  ✅ | ❌ | ✅ | ✅ | ✅ |
 
+To observe elements becoming visible or not visible, you may want to take a look at [`IntersectionObserver`](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API).
+
 ### Changing `transition` properties after observing
 
 If you change the `transition`/`transition-*` properties dynamically on elements you are observing after you start observing them,
-you need to do **one** of these two things:
-1. In JS, call `observer.updateTransition(targets)` to regenerate the `transition` property the observer uses to detect changes.
-2. Add `, var(--style-observer-transition, --style-observer-noop)` at the end of your `transition` property. E.g. if instead of `transition: 1s background` you'd set `transition: 1s background, var(--style-observer-transition, --style-observer-noop)`.
+the easiest way to ensure the observer continues working as expected is to call `observer.updateTransition(targets)` to regenerate the `transition` property the observer uses to detect changes.
+
+If running JS is not an option, you can also do it manually:
+1. Add `, var(--style-observer-transition, --style-observer-noop)` at the end of your `transition` property.
+E.g. if instead of `transition: 1s background` you'd set `transition: 1s background, var(--style-observer-transition, --style-observer-noop)`.
+2. Make sure to also set `transition-behavior: allow-discrete;`.
+
+## Prior Art
+
+The quest for a JS style observer has been long and torturous.
+
+- Early attempts used polling. Notable examples were [`ComputedStyleObserver` by Keith Clark](https://github.com/keithclark/ComputedStyleObserver)
+and [`StyleObserver` by PixelsCommander](https://github.com/PixelsCommander/StyleObserver)
+- [css-var-listener](https://github.com/propjockey/css-var-listener) by [Jane Ori](https://propjockey.io) was the first to do better than polling, using a combination of observers and events.
+- [css-variable-observer](https://github.com/fluorumlabs/css-variable-observer) by [Artem Godin](https://github.com/fluorumlabs) pioneered using transition events to observe property changes, and used an ingenious hack based on `font-variation-settings` to observe CSS property changes.
+- Four years, later [Bramus Van Damme](https://github.com/bramus) pioneered a way to do it "properly" in [style-observer](https://github.com/bramus/style-observer),
+thanks to [`transition-behavior: allow-discrete`](https://caniuse.com/mdn-css_properties_transition-behavior) becoming Baseline and even [blogged about all the bugs he encountered along the way](https://www.bram.us/2024/08/31/introducing-bramus-style-observer-a-mutationobserver-for-css/).
+
+This is not a fork of either. It was written from scratch and has several differences, including:
+- Actually detects browser bugs, so it doesn't need to tread carefully around them
+- Integrates better with existing transitions
+- Throttling and coalescing of changes
+
+[Read the blog post](https://lea.verou.me/2025/style-observer/) for more details.
 
 </main>
 <footer slot=footer>
