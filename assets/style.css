@@ -40,6 +40,7 @@ main {
 header {
 	grid-area: header;
 	border-bottom: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-surface-border);
+	padding-block: var(--wa-space-s);
 
 	h1 {
 		font-size: var(--wa-font-size-l);
@@ -56,7 +57,6 @@ header {
 			font-weight: var(--wa-font-weight-bold);
 			color: var(--wa-color-on-quiet);
 			font-size: var(--wa-font-size-m);
-
 		}
 
 		a:has(> .fa-github) {
@@ -116,8 +116,13 @@ main {
 		list-style: "✅ ";
 		padding-inline-start: 0;
 
-		span {
+		span:first-of-type {
 			display: none;
+		}
+
+		li::marker {
+			font: var(--fa-font-solid);
+			color: var(--wa-color-green);
 		}
 	}
 
