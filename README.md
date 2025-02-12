@@ -6,9 +6,8 @@
 	<a href="/api">API</a>
 	<span class="readme-only">·</span>
 	<a href="/tests">Tests</a>
-	<wa-divider vertical></wa-divider>
 	<a href="https://github.com/leaverou/style-observer" target="_blank">
-		<wa-icon name="github" label="GitHub" family="brands"></wa-icon>
+		<i class="fab fa-github"></i>
 	</a>
 	<hr class="readme-only" />
 </nav>
@@ -46,9 +45,9 @@ Detects browser bugs and works around them, so you don't have to.
 <thead>
 <tr>
 	<th>Feature</th>
-	<th><wa-icon name="chrome" family="brands"></wa-icon> Chrome</th>
-	<th><wa-icon name="safari" family="brands"></wa-icon> Safari</th>
-	<th><wa-icon name="firefox" family="brands"></wa-icon> Firefox</th>
+	<th><i class="fab fa-chrome"></i> Chrome</th>
+	<th><i class="fab fa-safari"></i> Safari</th>
+	<th><i class="fab fa-firefox"></i> Firefox</th>
 	<th>% of global users</th>
 </tr>
 </thead>

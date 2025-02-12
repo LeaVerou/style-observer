@@ -1,4 +1,5 @@
 @import url("prism.css");
+@import url("https://kit.fontawesome.com/5956551eb3.css");
 
 :root {
 	--max-page-width: min(120ch, 100%);
@@ -36,10 +37,6 @@ main {
 	margin-inline: auto;
 }
 
-wa-badge.browser {
-	font-size: var(--wa-font-size-m);
-}
-
 header {
 	grid-area: header;
 	border-bottom: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-surface-border);
@@ -58,42 +55,33 @@ header {
 			color: var(--wa-color-text-normal);
 			font-weight: var(--wa-font-weight-bold);
 			color: var(--wa-color-on-quiet);
-		}
-
-		a:has(~ wa-divider) {
 			font-size: var(--wa-font-size-m);
 
 		}
 
-		a:is(wa-divider ~ *) {
+		a:has(> .fa-github) {
+			margin-inline-start: var(--wa-space-m);
 			font-size: var(--wa-font-size-xl);
-		}
-
-		wa-divider {
-			/* The default height: 100% doesn't work because nav has display: flex, and its children are center-aligned */
-			block-size: 1lh;
 		}
 	}
 }
 
-wa-icon {
-	vertical-align: -.1em;
-
-	&[name="chrome"] {
+i {
+	&.fa-chrome {
 		color: var(--wa-color-green);
 	}
 
-	&[name="firefox"] {
+	&.fa-firefox {
 		color: color-mix(in oklch, var(--wa-color-red) 30%, var(--wa-color-yellow));
 	}
 
-	&[name="safari"] {
+	&.fa-safari {
 		color: var(--wa-color-blue);
 	}
 }
 
 nav {
-	a:not(:hover) > wa-icon {
+	a:not(:hover) > i {
 		color: var(--wa-color-on-quiet);
 	}
 }
@@ -135,12 +123,6 @@ main {
 
 	p:has(+ p > .compat) {
 		margin-block-end: var(--wa-space-s);
-	}
-
-	.compat {
-		wa-icon {
-			vertical-align: -.1em;
-		}
 	}
 }
 
