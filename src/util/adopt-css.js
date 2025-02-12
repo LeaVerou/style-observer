@@ -1,5 +1,8 @@
 let style;
 
+/**
+ * @param {string} css
+ */
 export default function adoptCSS (css) {
 	if (document.adoptedStyleSheets) {
 		let sheet = new CSSStyleSheet();

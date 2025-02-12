@@ -17,12 +17,12 @@ const INITIAL_VALUES = {
 };
 
 /**
- * Register a CSS custom property if it’s not already registered
- * @param {string} property - Property name
- * @param {Object} [meta] - Property definition
- * @param {string} [meta.syntax]
- * @param {boolean} [meta.inherits]
- * @param {*} [meta.initialValue]
+ * Register a CSS custom property if it’s not already registered.
+ * @param {string} property - Property name.
+ * @param {Object} [meta] - Property definition.
+ * @param {string} [meta.syntax] - Property syntax.
+ * @param {boolean} [meta.inherits] - Whether the property inherits.
+ * @param {*} [meta.initialValue] - Initial value.
  */
 export default function gentleRegisterProperty (property, meta = {}) {
 	if (!property.startsWith("--") || !CSS.registerProperty) {
