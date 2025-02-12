@@ -2,12 +2,24 @@
 @import url("https://kit.fontawesome.com/5956551eb3.css");
 @import url("https://early.webawesome.com/webawesome@3.0.0-alpha.10/dist/styles/themes/default.css");
 @import url("https://early.webawesome.com/webawesome@3.0.0-alpha.10/dist/styles/webawesome.css");
+@import url("default.css");
 @import url("prism.css");
 
 :root {
 	--max-page-width: min(120ch, 100% - 2em);
 	--max-content-width: min(80ch, 100% - 2em);
 	--body-padding: 1em;
+	--rainbow: conic-gradient(in oklch,
+		var(--wa-color-red-60),
+		var(--wa-color-yellow-80),
+		var(--wa-color-green-70),
+		var(--wa-color-cyan-70),
+		var(--wa-color-blue-60),
+		var(--wa-color-indigo-60),
+		var(--wa-color-purple-60),
+		var(--wa-color-pink-60),
+		var(--wa-color-red-60)
+	);
 }
 
 body {
@@ -52,8 +64,25 @@ header {
 	padding-block: var(--wa-space-s);
 
 	h1 {
-		font-size: var(--wa-font-size-l);
+		position: relative;
+		font-size: var(--wa-font-size-2xl);
+		font-weight: 900;
 		line-height: 1;
+		letter-spacing: -.02em;
+
+		.logo {
+			position: absolute;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 1.6em;
+			right: 100%;
+			margin-right: var(--wa-space-s);
+		}
+
+		span {
+			color: var(--wa-color-pink);
+			font-weight: 400;
+		}
 	}
 
 	nav {
@@ -164,3 +193,9 @@ pre:has(code) {
 	overflow-x: auto;
 }
 
+
+.blurb {
+	font-size: var(--wa-font-size-l);
+	font-weight: var(--wa-font-weight-semibold);
+	line-height: var(--wa-line-height-condensed);
+}

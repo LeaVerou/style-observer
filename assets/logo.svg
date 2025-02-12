@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+<style>
+div {
+	width: 100px;
+	height: 100px;
+	background: conic-gradient(in oklch, #f3676c, #fac22b, #5dc36f, #2fbedc, #3e96ff, #808aff, #b678f5, #e66ba3, #f3676c);
+	border-radius: 50%;
+}
+@media (max-width: 50px) {
+	#iris {
+		transform: scale(0.8);
+		transform-box: fill-box;
+		transform-origin: center;
+	}
+}
+</style>
+<foreignObject x="0" y="0" width="100" height="100">
+	<div xmlns="http://www.w3.org/1999/xhtml"></div>
+</foreignObject>
+<g id="iris">
+	<circle cx="50" cy="50" r="33" fill="black" />
+	<circle cx="59" cy="36" r="7" fill="white" />
+</g>
+</svg>

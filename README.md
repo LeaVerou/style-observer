@@ -1,6 +1,6 @@
 <header class="wa-split">
 
-# Style Observer
+# <img src="assets/logo.svg" class="logo"> Style <span>Observer</span>
 
 <nav>
 	<a href="/api">API</a>
@@ -25,8 +25,10 @@
 </aside>
 <main>
 
+<p class="blurb">
 A robust, production-ready library to observe CSS property changes.
 Detects browser bugs and works around them, so you don't have to.
+</p>
 
 [![npm](https://img.shields.io/npm/v/style-observer)](https://www.npmjs.com/package/style-observer)
 [![npm bundle size](https://img.shields.io/bundlephobia/minzip/style-observer)](https://bundlephobia.com/package/style-observer)
@@ -119,9 +121,7 @@ import StyleObserver from "node_modules/style-observer/dist/index.js";
 You can first create the observer instance and then observe, like a `MutationObserver`:
 
 ```js
-import StyleObserver from "style-observer";
-
-const observer = new StyleObserver(callback);
+const observer = new StyleObserver(records => console.log(records));
 const properties = ["color", "--my-custom-property"];
 const targets = document.querySelectorAll(".my-element");
 observer.observe(targets, properties);
