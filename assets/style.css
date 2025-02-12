@@ -13,6 +13,16 @@ body {
 		"footer footer footer footer";
 	grid-template-columns: var(--body-padding) minmax(0, 1fr) auto var(--body-padding);
 	grid-template-rows: auto 1fr auto;
+
+	@media (width <= 625px) {
+		grid-template-areas:
+			"header"
+			"aside"
+			"main"
+			"footer";
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-rows: auto 1fr auto auto;
+	}
 }
 
 header, main, footer {
@@ -99,6 +109,14 @@ aside {
 		list-style: none;
 		line-height: var(--wa-line-height-expanded);
 	}
+
+	@media (width <= 625px) {
+		border-left: none;
+
+		ul {
+			position: static;
+		}
+	}
 }
 
 .readme-only {
@@ -137,22 +155,3 @@ pre:has(code) {
 	overflow-x: auto;
 }
 
-@media (width <= 625px) {
-	body {
-		grid-template-areas:
-			"header"
-			"aside"
-			"main"
-			"footer";
-		grid-template-columns: minmax(0, 1fr);
-		grid-template-rows: auto 1fr auto auto;
-	}
-
-	aside {
-		border-left: none;
-
-		ul {
-			position: static;
-		}
-	}
-}
