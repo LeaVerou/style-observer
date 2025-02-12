@@ -89,18 +89,24 @@ export default {
 		this.target = document.createElement("div");
 
 		if (this.data.inline) {
-			this.target.style.setProperty("transition", transition, important);
+			// Avoid race condition in Safari < 18.2
+			setTimeout(() => {
+				this.target.style.setProperty("transition", transition, important);
+			}, 50);
 		}
 		else {
 			let id = crypto.randomUUID();
 			id = property + "-" + id;
 			this.target.id = id;
 
-			adoptCSS(`
-				#${ id } {
-					transition: ${ transition } ${ important ? "!important" : "" };
-				}
-			`);
+			// Avoid race condition in Safari < 18.2
+			setTimeout(() => {
+				adoptCSS(`
+					#${ id } {
+						transition: ${ transition } ${ important ? "!important" : "" };
+					}
+				`);
+			}, 50);
 		}
 
 		document.body.append(this.target);
