@@ -13,7 +13,7 @@
 </nav>
 
 </header>
-
+<div class="page">
 <aside>
 
 - [Install](#install)
@@ -25,18 +25,19 @@
 </aside>
 <main>
 
-[![npm](https://img.shields.io/npm/v/style-observer)](https://www.npmjs.com/package/style-observer)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/style-observer)](https://bundlephobia.com/package/style-observer)
-
 A robust, production-ready library to observe CSS property changes.
 Detects browser bugs and works around them, so you don't have to.
+
+[![npm](https://img.shields.io/npm/v/style-observer)](https://www.npmjs.com/package/style-observer)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/style-observer)](https://bundlephobia.com/package/style-observer)
 
 - <span>✅</span> Observe changes to custom properties
 - <span>✅</span> Observe changes to standard properties (except `display`, `transition`, `animation`)
 - <span>✅</span> Observe changes on any element (including those in Shadow DOM)
 - <span>✅</span> [Lightweight](https://bundlephobia.com/package/style-observer), ESM-only code, with no dependencies
 - <span>✅</span> [150+ unit tests](tests) you can run in your browser of choice
-- <span>✅</span> Throttling (per element)
+- <span>✅</span> Throttling per element
+- <span>✅</span> Does not overwrite existing transitions
 
 ## Compatibility
 
@@ -196,6 +197,7 @@ It was written from scratch with the explicit goal of extending browser support 
 [Read the blog post](https://lea.verou.me/2025/style-observer/) for more details.
 
 </main>
+</div>
 <footer>
 <hr class="readme-only" />
 

@@ -5,39 +5,43 @@
 @import url("prism.css");
 
 :root {
-	--max-page-width: min(120ch, 100%);
+	--max-page-width: min(120ch, 100% - 2em);
+	--max-content-width: min(80ch, 100% - 2em);
 	--body-padding: 1em;
 }
 
 body {
-	display: grid;
-	grid-template-areas:
-		"header header header header"
-		". main aside ."
-		"footer footer footer footer";
-	grid-template-columns: var(--body-padding) minmax(0, 1fr) auto var(--body-padding);
-	grid-template-rows: auto 1fr auto;
-
-	@media (width <= 625px) {
-		grid-template-areas:
-			"header"
-			"aside"
-			"main"
-			"footer";
-		grid-template-columns: minmax(0, 1fr);
-		grid-template-rows: auto 1fr auto auto;
-	}
+	display: flex;
+	flex-flow: column;
 }
 
-header, main, footer {
-	padding-inline: clamp(1em, var(--max-page-width) / 2 - 40ch, 50vw);
+header, footer {
+	box-sizing: content-box;
+	padding-inline: clamp(1em, 50vw - var(--max-page-width) / 2, 50vw);
+	max-width: var(--max-page-width);
+}
+
+.page {
+	display: flex;
+	max-width: var(--max-page-width);
+	margin-inline: auto;
+
+	@media (width <= 625px) {
+		flex-direction: column;
+	}
 }
 
 main {
 	grid-area: main;
-	max-width: min(80ch, 100%);
+	max-width: var(--max-content-width);
 	padding: var(--wa-space-xl);
-	margin-inline: auto;
+	margin-inline-end: auto;
+}
+
+:is(nav, aside) a,
+:is(h2, h3, h4) > a:only-child {
+	text-decoration: none;
+	color: inherit;
 }
 
 header {
@@ -58,8 +62,6 @@ header {
 		align-items: center;
 
 		a {
-			text-decoration: none;
-			color: var(--wa-color-text-normal);
 			font-weight: var(--wa-font-weight-bold);
 			color: var(--wa-color-on-quiet);
 			font-size: var(--wa-font-size-m);
@@ -94,10 +96,13 @@ nav {
 
 aside {
 	grid-area: aside;
-	border-left: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-surface-border);
+	border-inline-end: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-surface-border);
+	padding-block: var(--wa-space-l);
+	padding-inline: var(--wa-space-l);
+
 
 	ul {
-		margin-block: var(--wa-space-l) 0;
+		margin: 0;
 		position: sticky;
 		top: 0;
 		list-style: none;
@@ -110,6 +115,17 @@ aside {
 		ul {
 			position: static;
 		}
+	}
+
+	@media (width > 625px) {
+		padding-inline-start: 0;
+	}
+
+	a {
+		color: inherit;
+		text-decoration: none;
+		font-size: var(--wa-font-size-s);
+		font-weight: var(--wa-font-weight-semibold);
 	}
 }
 
