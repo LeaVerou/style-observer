@@ -31,12 +31,12 @@ Detects browser bugs and works around them, so you don't have to.
 </p>
 
 [![npm](https://img.shields.io/npm/v/style-observer)](https://www.npmjs.com/package/style-observer)
-[![package size](https://packagephobia.com/badge?p=style-observer)](https://packagephobia.com/result?p=style-observer)
+[![gzip size](https://img.shields.io/badge/gzip-2.6kB-blue)](https://pkg-size.dev/style-observer)
 
 - <span>✅</span> Observe changes to custom properties
 - <span>✅</span> Observe changes to standard properties (except `display`, `transition`, `animation`)
 - <span>✅</span> Observe changes on any element (including those in Shadow DOM)
-- <span>✅</span> [Lightweight](https://packagephobia.com/result?p=style-observer), ESM-only code, with no dependencies
+- <span>✅</span> [Lightweight](https://pkg-size.dev/style-observer), ESM-only code, with no dependencies
 - <span>✅</span> [150+ unit tests](tests) you can run in your browser of choice
 - <span>✅</span> Throttling per element
 - <span>✅</span> Does not overwrite existing transitions
