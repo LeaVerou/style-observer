@@ -208,7 +208,7 @@ The quest for a JS style observer has been long and torturous.
 and [`StyleObserver` by PixelsCommander](https://github.com/PixelsCommander/StyleObserver)
 - [Jane Ori](https://propjockey.io) was the first to do better than polling, her [css-var-listener](https://github.com/propjockey/css-var-listener) using a combination of observers and events.
 - [css-variable-observer](https://github.com/fluorumlabs/css-variable-observer) by [Artem Godin](https://github.com/fluorumlabs) pioneered using transition events to observe property changes, and used an ingenious hack based on `font-variation-settings` to observe CSS property changes.
-- Four years, later [Bramus Van Damme](https://github.com/bramus) pioneered a way to do it "properly" in [style-observer](https://github.com/bramus/style-observer),
+- Four years later, [Bramus Van Damme](https://github.com/bramus) pioneered a way to do it "properly" in [style-observer](https://github.com/bramus/style-observer),
 thanks to [`transition-behavior: allow-discrete`](https://caniuse.com/mdn-css_properties_transition-behavior) becoming Baseline and even [blogged about all the bugs he encountered along the way](https://www.bram.us/2024/08/31/introducing-bramus-style-observer-a-mutationobserver-for-css/).
 
 While `StyleObserver` builds on this body of work, it is not a fork of any of them.
