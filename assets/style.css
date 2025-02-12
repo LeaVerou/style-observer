@@ -1,5 +1,8 @@
-@import url("prism.css");
+
 @import url("https://kit.fontawesome.com/5956551eb3.css");
+@import url("https://early.webawesome.com/webawesome@3.0.0-alpha.10/dist/styles/themes/default.css");
+@import url("https://early.webawesome.com/webawesome@3.0.0-alpha.10/dist/styles/webawesome.css");
+@import url("prism.css");
 
 :root {
 	--max-page-width: min(120ch, 100%);
@@ -38,6 +41,8 @@ main {
 }
 
 header {
+	display: flex;
+	align-items: center;
 	grid-area: header;
 	border-bottom: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-surface-border);
 	padding-block: var(--wa-space-s);
@@ -49,6 +54,7 @@ header {
 
 	nav {
 		display: flex;
+		gap: var(--wa-space-m);
 		align-items: center;
 
 		a {

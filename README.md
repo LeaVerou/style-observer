@@ -2,7 +2,7 @@
 
 # Style Observer
 
-<nav class="wa-gap-m">
+<nav>
 	<a href="/api">API</a>
 	<span class="readme-only">·</span>
 	<a href="/tests">Tests</a>
