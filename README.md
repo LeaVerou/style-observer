@@ -1,6 +1,6 @@
 <header class="wa-split">
 
-# <img src="assets/logo.svg" class="logo"> Style <span>Observer</span>
+# <img src="assets/logo.svg" class="logo" width="60"> Style <span>Observer</span>
 
 <nav>
 	<a href="/api">API</a>
