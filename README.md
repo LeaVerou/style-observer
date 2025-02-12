@@ -160,7 +160,7 @@ Each record is an object with the following properties:
 - `target`: The element that changed
 - `property`: The property that changed
 - `value`: The new value of the property
-- `previousValue`: The previous value of the property
+- `oldValue`: The previous value of the property
 
 ## Future Work
 
