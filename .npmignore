@@ -1,7 +1,17 @@
+# Common gitignored
+node_modules
+.DS_Store
+Thumbs.db
+
 # Website files
 _build
 assets
+typedoc.json
+*.html
 
 # Build artifacts
 api/
 index.html
+
+# Tests
+tests/
