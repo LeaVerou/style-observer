@@ -2,23 +2,13 @@ import ElementStyleObserver, {resolveOptions} from "./element-style-observer.js"
 import { toArray } from "./util.js";
 
 /**
- * @callback StyleObserverCallback
- * @param {Record[]} records
- * @returns {void}
+ * @typedef {import("./element-style-observer.js").StyleObserverCallback} StyleObserverCallback
  */
 
 /**
  * @typedef { Object } StyleObserverOptions
  * @property {string | string[]} [properties] - The properties to observe.
  * @property {Element | Element[]} [targets] - The elements to observe.
- */
-
-/**
- * @typedef { Object } Record
- * @property {Element} target - The element that changed.
- * @property {string} property - The property that changed.
- * @property {string} value - The new value of the property.
- * @property {string} oldValue - The old value of the property.
  */
 
 export default class StyleObserver {
@@ -48,6 +38,9 @@ export default class StyleObserver {
 		}
 	}
 
+	/**
+	 * @type {StyleObserverCallback}
+	 */
 	changed (records) {
 		// TODO throttle & combine records
 		this.callback(records);
