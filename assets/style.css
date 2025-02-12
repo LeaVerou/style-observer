@@ -20,6 +20,7 @@
 		var(--wa-color-pink-60),
 		var(--wa-color-red-60)
 	);
+	--header-height: 5.5rem;
 }
 
 body {
@@ -79,11 +80,15 @@ h1 {
 }
 
 header {
+	position: sticky;
+	top: 0;
+	z-index: 1;
 	display: flex;
 	align-items: center;
 	grid-area: header;
 	border-bottom: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-surface-border);
 	padding-block: var(--wa-space-s);
+	background: var(--wa-color-surface-default);
 
 	nav {
 		display: flex;
@@ -129,11 +134,10 @@ aside {
 	padding-block: var(--wa-space-l);
 	padding-inline: var(--wa-space-l);
 
-
 	ul {
 		margin: 0;
 		position: sticky;
-		top: 0;
+		top: var(--header-height);
 		list-style: none;
 		line-height: var(--wa-line-height-expanded);
 	}
