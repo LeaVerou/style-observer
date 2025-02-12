@@ -15,15 +15,29 @@ gentleRegisterProperty("--style-observer-transition", { inherits: false });
  * @typedef { StyleObserverOptionsObject | string | string[] } StyleObserverOptions
  */
 
+/**
+ * @callback StyleObserverCallback
+ * @param {Record[]} records
+ * @returns {void}
+ */
+
+/**
+ * @typedef { Object } Record
+ * @property {Element} target - The element that changed.
+ * @property {string} property - The property that changed.
+ * @property {string} value - The new value of the property.
+ * @property {string} oldValue - The old value of the property.
+ */
+
 export default class ElementStyleObserver {
 	/**
-	 * Observed properties to their old values
+	 * Observed properties to their old values.
 	 * @type {Map<string, string>}
 	 */
 	properties;
 
 	/**
-	 * Get the names of all properties currently being observed
+	 * Get the names of all properties currently being observed.
 	 * @type { string[] }
 	 */
 	get propertyNames () {
@@ -31,26 +45,35 @@ export default class ElementStyleObserver {
 	}
 
 	/**
-	 * @param {Element} target
+	 * The element being observed.
+	 * @type {Element}
 	 */
 	target;
 
 	/**
-	 * @param {function} callback
+	 * The callback to call when the element's style changes.
+	 * @type {StyleObserverCallback}
 	 */
 	callback;
 
 	/**
-	 * @param {StyleObserverOptions} options
+	 * The observer options.
+	 * @type {StyleObserverOptions}
 	 */
 	options;
 
 	/**
+	 * Whether the observer has been initialized.
 	 * @type {boolean}
 	 * @private
 	 */
 	#initialized = false;
 
+	/**
+	 * @param {Element} target
+	 * @param {StyleObserverCallback} callback
+	 * @param {StyleObserverOptions} options
+	 */
 	constructor (target, callback, options = {}) {
 		this.constructor.all.add(target, this);
 		this.properties = new Map();
@@ -65,7 +88,7 @@ export default class ElementStyleObserver {
 	}
 
 	/**
-	 * Called the first time observe() is called to initialize the target
+	 * Called the first time observe() is called to initialize the target.
 	 */
 	#init() {
 		if (this.#initialized) {
@@ -82,6 +105,9 @@ export default class ElementStyleObserver {
 		return Object.assign(resolveOptions(options), this.options);
 	}
 
+	/**
+	 * @param {TransitionEvent} event
+	 */
 	async handleEvent (event) {
 		if (!this.properties.has(event.propertyName)) {
 			return;
@@ -123,7 +149,7 @@ export default class ElementStyleObserver {
 	}
 
 	/**
-	 * Observe the target for changes to one or more CSS properties
+	 * Observe the target for changes to one or more CSS properties.
 	 * @param {string | string[]} properties
 	 * @return {void}
 	 */
@@ -163,7 +189,7 @@ export default class ElementStyleObserver {
 	}
 
 	/**
-	 * Update the --style-observer-transition property to include all observed properties
+	 * Update the `--style-observer-transition` property to include all observed properties.
 	 */
 	updateTransitionProperties () {
 		// Clear our own transition
@@ -192,9 +218,9 @@ export default class ElementStyleObserver {
 	#inlineTransition;
 
 	/**
-	 * Update the target's transition property or refresh it if it was overwritten
+	 * Update the target's transition property or refresh it if it was overwritten.
 	 * @param {object} options
-	 * @param {boolean} [options.firstTime] - Whether this is the first time the transition is being set
+	 * @param {boolean} [options.firstTime] - Whether this is the first time the transition is being set.
 	 */
 	updateTransition ({firstTime} = {}) {
 		const sot = "var(--style-observer-transition, --style-observer-noop)";
@@ -257,15 +283,20 @@ export default class ElementStyleObserver {
 		this.updateTransitionProperties();
 	}
 
-	/** All properties ever observed by this class */
+	/** All properties ever observed by this class. */
 	static properties = new Set();
 
 	/**
-	 * All instances ever observed by this class
+	 * All instances ever observed by this class.
 	 */
 	static all = new MultiWeakMap();
 }
 
+/**
+ * Resolve the observer options.
+ * @param {StyleObserverOptions} options
+ * @returns {StyleObserverOptionsObject}
+ */
 export function resolveOptions (options) {
 	if (!options) {
 		return {};

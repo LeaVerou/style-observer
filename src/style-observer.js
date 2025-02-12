@@ -2,6 +2,12 @@ import ElementStyleObserver, {resolveOptions} from "./element-style-observer.js"
 import { toArray } from "./util.js";
 
 /**
+ * @callback StyleObserverCallback
+ * @param {Record[]} records
+ * @returns {void}
+ */
+
+/**
  * @typedef { Object } StyleObserverOptions
  * @property {string | string[]} [properties] - The properties to observe.
  * @property {Element | Element[]} [targets] - The elements to observe.
@@ -9,10 +15,10 @@ import { toArray } from "./util.js";
 
 /**
  * @typedef { Object } Record
- * @property {Element} target - The element that changed
- * @property {string} property - The property that changed
- * @property {string} value - The new value of the property
- * @property {string} oldValue - The old value of the property
+ * @property {Element} target - The element that changed.
+ * @property {string} property - The property that changed.
+ * @property {string} value - The new value of the property.
+ * @property {string} oldValue - The old value of the property.
  */
 
 export default class StyleObserver {
@@ -22,7 +28,7 @@ export default class StyleObserver {
 	elementObservers = new WeakMap();
 
 	/**
-	 * @param {(records: Record[] => any) } callback
+	 * @param {StyleObserverCallback} callback
 	 * @param {StyleObserverOptions | string | string[]} options
 	 */
 	constructor (callback, options) {
@@ -48,7 +54,7 @@ export default class StyleObserver {
 	}
 
 	/**
-	 * Observe one or more targets for changes to one or more CSS properties
+	 * Observe one or more targets for changes to one or more CSS properties.
 	 * @param {Element | Element[]} targets
 	 * @param {string | string[]} properties
 	 *
@@ -118,6 +124,11 @@ export default class StyleObserver {
 		}
 	}
 
+	/**
+	 * Update the transition for one or more targets.
+	 * @param {Element | Element[]} targets
+	 * @returns {void}
+	 */
 	updateTransition (targets) {
 		for (let target of toArray(targets)) {
 			let observer = this.elementObservers.get(target);
@@ -129,6 +140,12 @@ export default class StyleObserver {
 	}
 }
 
+/**
+ * Resolve the targets and properties from the arguments.
+ * @param {Element | Element[] | string | string[]} targets
+ * @param {Element | Element[] | string | string[]} properties
+ * @returns {{ targets: Element[], properties: string[] }}
+ */
 function resolveArgs (targets, properties) {
 	let args = [...toArray(targets), ...toArray(properties)];
 	targets = [];

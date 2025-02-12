@@ -1,3 +1,9 @@
+
+/**
+ * Convert a value to an array. `undefined` and `null` values are converted to an empty array.
+ * @param {*} value - The value to convert.
+ * @returns {any[]} The converted array.
+ */
 export function toArray(value) {
 	if (Array.isArray(value)) {
 		return value;
@@ -10,6 +16,11 @@ export function toArray(value) {
 	return [value];
 }
 
+/**
+ * Wait for a given number of milliseconds or a `requestAnimationFrame`.
+ * @param {number} ms - The number of milliseconds to wait.
+ * @returns {Promise<void>}
+ */
 export function wait (ms) {
 	if (ms) {
 		return new Promise(resolve => setTimeout(resolve, ms));
@@ -20,7 +31,12 @@ export function wait (ms) {
 
 let dummy;
 
-// https://lea.verou.me/blog/2020/07/introspecting-css-via-the-css-om-getting-supported-properties-shorthands-longhands/
+/**
+ * Get the longhands for a given property.
+ * @param {string} property - The property to get the longhands for.
+ * @returns {string[]} The longhands.
+ * @see https://lea.verou.me/blog/2020/07/introspecting-css-via-the-css-om-getting-supported-properties-shorthands-longhands/
+ */
 export function getLonghands (property) {
 	dummy ??= document.createElement("div");
 	let style = dummy.style;
@@ -38,9 +54,9 @@ export function getLonghands (property) {
 }
 
 /**
- * Parse a CSS <time> value
- * @param {string } cssTime - A string that contains CSS <time> values
- * @return { number[] } Any times found, in milliseconds
+ * Parse a CSS `<time>` value.
+ * @param {string } cssTime - A string that contains CSS `<time>` values.
+ * @return { number[] } Any times found, in milliseconds.
  */
 export function parseTimes (cssTime) {
 	let matches = cssTime.matchAll(/(?:^|\s)([+-]?(?:\d+|\d*\.\d+))\s*(ms|s)?(?=\s|$)/g);
@@ -61,10 +77,10 @@ export function parseTimes (cssTime) {
 }
 
 /**
- * Get the duration and delay of a CSS transition for a given property
- * @param {string} property - The CSS property name
- * @param {string} transitions - The computed value of the `transition` property
- * @returns { { duration: number, delay: number } } The duration and delay, in milliseconds
+ * Get the duration and delay of a CSS transition for a given property.
+ * @param {string} property - The CSS property name.
+ * @param {string} transitions - The computed value of the `transition` property.
+ * @returns { { duration: number, delay: number } } The duration and delay, in milliseconds.
  */
 export function getTimesFor (property, transitions) {
 	transitions = splitCommas(transitions);

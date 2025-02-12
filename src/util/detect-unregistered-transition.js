@@ -4,6 +4,11 @@ document.body.appendChild(dummy);
 let property = "--foo-" + Date.now();
 dummy.style.cssText = `${property}: 1; transition: ${property} 1ms step-start allow-discrete`;
 
+/**
+ * Detect if the browser is affected by the unregistered transition bug.
+ * @see https://issues.chromium.org/issues/360159391
+ * @type {boolean}
+ */
 export default await new Promise(resolve => {
 	requestAnimationFrame(() => {
 		setTimeout(_ => resolve(true), 30);
