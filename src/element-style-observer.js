@@ -163,7 +163,7 @@ export default class ElementStyleObserver {
 	}
 
 	/**
-	 * Update the transition property to include all observed properties
+	 * Update the --style-observer-transition property to include all observed properties
 	 */
 	updateTransitionProperties () {
 		// Clear our own transition
@@ -191,6 +191,11 @@ export default class ElementStyleObserver {
 	 */
 	#inlineTransition;
 
+	/**
+	 * Update the target's transition property or refresh it if it was overwritten
+	 * @param {object} options
+	 * @param {boolean} [options.firstTime] - Whether this is the first time the transition is being set
+	 */
 	updateTransition ({firstTime} = {}) {
 		const sot = "var(--style-observer-transition, --style-observer-noop)";
 		const inlineTransition = this.target.style.transition;

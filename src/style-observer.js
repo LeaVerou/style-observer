@@ -7,6 +7,14 @@ import { toArray } from "./util.js";
  * @property {Element | Element[]} [targets] - The elements to observe.
  */
 
+/**
+ * @typedef { Object } Record
+ * @property {Element} target - The element that changed
+ * @property {string} property - The property that changed
+ * @property {string} value - The new value of the property
+ * @property {string} oldValue - The old value of the property
+ */
+
 export default class StyleObserver {
 	/**
 	 * @type { WeakMap<Element, ElementStyleObserver> }
@@ -14,7 +22,7 @@ export default class StyleObserver {
 	elementObservers = new WeakMap();
 
 	/**
-	 * @param {function} callback
+	 * @param {(records: Record[] => any) } callback
 	 * @param {StyleObserverOptions | string | string[]} options
 	 */
 	constructor (callback, options) {

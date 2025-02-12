@@ -118,7 +118,15 @@ import StyleObserver from "node_modules/style-observer/dist/index.js";
 
 ## Usage
 
-You can first create the observer instance and then observe, like a `MutationObserver`:
+You can first create the observer instance and then observe, like a `MutationObserver`.
+The simplest use is observing a single property on a single element:
+
+```js
+const observer = new StyleObserver(records => console.log(records));
+observer.observe(document.querySelector("#my-element"), "--my-custom-property");
+```
+
+You can also observe multiple properties on multiple elements:
 
 ```js
 const observer = new StyleObserver(records => console.log(records));
@@ -127,7 +135,7 @@ const targets = document.querySelectorAll(".my-element");
 observer.observe(targets, properties);
 ```
 
-Alternatively, you can provide both targets and properties when creating the observer,
+You can also provide both targets and properties when creating the observer,
 which will also call `observe()` for you:
 
 ```js
@@ -141,7 +149,18 @@ const observer = new StyleObserver(callback, {
 
 Both targets and properties can be either a single value or an iterable.
 
-Note that the observer will not fire immediately for the initial state of the elements.
+Note that the observer will not fire immediately for the initial state of the elements (i.e. it behaves like `MutationObserver`, not like `ResizeObserver`).
+
+### Records
+
+Just like other observers, changes that happen too close together (set the `throttle` option to configure) will only invoke the callback once,
+with an array of records, one for each change.
+
+Each record is an object with the following properties:
+- `target`: The element that changed
+- `property`: The property that changed
+- `value`: The new value of the property
+- `previousValue`: The previous value of the property
 
 ## Future Work
 
