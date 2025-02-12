@@ -87,9 +87,6 @@ Detects browser bugs and works around them, so you don't have to.
 </table>
 </div>
 
-<small class="compat wa-caption-m"><wa-icon name="circle-info" variant="regular"></wa-icon> Observing discrete properties has the same compat as [`transition-behavior`](https://caniuse.com/mdn-css_properties_transition-behavior) i.e. <strong>~90% of global users</strong>
-</small>
-
 ## Install
 
 The quickest way is to just include straight from the [Netlify](https://www.netlify.com/) CDN:
@@ -150,8 +147,6 @@ Note that the observer will not fire immediately for the initial state of the el
 
 - Observe pseudo-elements
 - `immediate` convenience option that fires the callback immediately for every observed element
-- Option to fire callback at the *end* of a transition
-- Option to fire callback *during* transitions
 
 ## Limitations & Caveats
 
@@ -192,20 +187,18 @@ The quest for a JS style observer has been long and torturous.
 
 - Early attempts used polling. Notable examples were [`ComputedStyleObserver` by Keith Clark](https://github.com/keithclark/ComputedStyleObserver)
 and [`StyleObserver` by PixelsCommander](https://github.com/PixelsCommander/StyleObserver)
-- [css-var-listener](https://github.com/propjockey/css-var-listener) by [Jane Ori](https://propjockey.io) was the first to do better than polling, using a combination of observers and events.
+- [Jane Ori](https://propjockey.io) was the first to do better than polling, her [css-var-listener](https://github.com/propjockey/css-var-listener) using a combination of observers and events.
 - [css-variable-observer](https://github.com/fluorumlabs/css-variable-observer) by [Artem Godin](https://github.com/fluorumlabs) pioneered using transition events to observe property changes, and used an ingenious hack based on `font-variation-settings` to observe CSS property changes.
 - Four years, later [Bramus Van Damme](https://github.com/bramus) pioneered a way to do it "properly" in [style-observer](https://github.com/bramus/style-observer),
 thanks to [`transition-behavior: allow-discrete`](https://caniuse.com/mdn-css_properties_transition-behavior) becoming Baseline and even [blogged about all the bugs he encountered along the way](https://www.bram.us/2024/08/31/introducing-bramus-style-observer-a-mutationobserver-for-css/).
 
-This is not a fork of either. It was written from scratch and has several differences, including:
-- Actually detects browser bugs, so it doesn't need to tread carefully around them
-- Integrates better with existing transitions
-- Throttling and coalescing of changes
-
+While `StyleObserver` builds on this body of work, it is not a fork of any of them.
+It was written from scratch with the explicit goal of extending browser support and robustness.
 [Read the blog post](https://lea.verou.me/2025/style-observer/) for more details.
 
 </main>
 <footer>
+<hr class="readme-only" />
 
 By [Lea Verou](https://lea.verou.me/) and [Dmitry Sharabin](https://d12n.me/).
 </footer>
