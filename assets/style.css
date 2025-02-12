@@ -59,23 +59,22 @@ main {
 
 h1 {
 	position: relative;
+	display: flex;
+	align-items: center;
 	font-size: var(--wa-font-size-2xl);
 	font-weight: 900;
 	line-height: 1;
 	letter-spacing: -.02em;
 
 	.logo {
-		position: absolute;
-		top: 50%;
-		transform: translateY(-50%);
 		width: 1.6em;
-		right: 100%;
 		margin-right: var(--wa-space-s);
 
-		@media (width <= 625px) {
-			position: relative;
-			inset: initial;
-			transform: translateY(25%);
+		@media (width > 1360px) {
+			position: absolute;
+			top: 50%;
+			transform: translateY(-50%);
+			right: 100%;
 		}
 	}
 
