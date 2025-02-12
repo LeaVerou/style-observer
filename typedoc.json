@@ -12,4 +12,12 @@
 	"entryPointStrategy": "expand",
 	"excludeExternals": true,
 	"includeVersion": true,
+	"markdownItOptions": {
+		"html": true,
+		"linkify": true,
+		"typographer": true
+	},
+	"favicon": "assets/logo.svg",
+	"hostedBaseUrl": "https://observe.style/api",
+	"readme": "none"
 }
