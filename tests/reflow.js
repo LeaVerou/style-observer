@@ -16,6 +16,17 @@ export default {
 			iframe.contentDocument.body.append(dummy);
 		}
 
+		iframe.contentDocument.head.insertAdjacentHTML(
+			"beforeend",
+			`<style>
+				@property --registered-custom-property {
+					syntax: "<number>";
+					inherits: true;
+					initial-value: 1;
+				}
+			</style>`,
+		);
+
 		this.iframe = iframe;
 	},
 
@@ -82,6 +93,10 @@ export default {
 					args: ["--custom-property", "bar"],
 					expect: [false, "bar"],
 					skip: true,
+				},
+				{
+					args: ["--registered-custom-property", 42],
+					expect: [false, "42"],
 				},
 				{
 					args: ["color", "red"],
