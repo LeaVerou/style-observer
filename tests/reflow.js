@@ -16,6 +16,7 @@ export default {
 			iframe.contentDocument.body.append(dummy);
 		}
 
+		// TODO: Use adoptCSS when https://github.com/LeaVerou/style-observer/issues/74 is fixed
 		iframe.contentDocument.head.insertAdjacentHTML(
 			"beforeend",
 			`<style>
@@ -34,7 +35,7 @@ export default {
 		let target = this.iframe.contentDocument.body.children[0];
 
 		let styleObserver;
-		let stylePromise = new Promise(resolve => {
+		let stylePromise = new Promise((resolve, reject) => {
 			styleObserver = new StyleObserver(records => resolve(records[0]), {
 				target,
 				properties: [property],
@@ -42,7 +43,7 @@ export default {
 
 			styleObserver.observe();
 
-			setTimeout(resolve, 300, {});
+			setTimeout(reject, 300, new Error(`Expected ${ property } to change, but it didn't.`));
 		}).finally(() => {
 			styleObserver.unobserve();
 		});
@@ -73,57 +74,50 @@ export default {
 			target.style.setProperty(property, value);
 		}, 50);
 
-		return Promise.all([reflowPromise, stylePromise]).then(([reflow, change]) => [
-			reflow,
-			change.value,
-		]);
+		return Promise.all([reflowPromise, stylePromise]).then(([reflow, change]) => reflow);
 	},
 
 	afterEach () {
 		this.iframe.remove();
 	},
 
+	skip: !PerformanceObserver.supportedEntryTypes.includes("layout-shift"),
+
 	tests: [
 		{
 			name: "Properties not causing reflow",
 			description:
 				"Check whether observing a CSS property does not cause reflow (layout recalculation).",
+			expect: false,
 			tests: [
 				{
 					args: ["--custom-property", "bar"],
-					expect: [false, "bar"],
-					skip: true,
 				},
 				{
 					args: ["--registered-custom-property", 42],
-					expect: [false, "42"],
 				},
 				{
 					args: ["color", "red"],
-					expect: [false, "rgb(255, 0, 0)"],
 				},
 				{
 					args: ["visibility", "hidden"],
-					expect: [false, "hidden"],
 				},
 			],
 		},
 		{
 			name: "Properties causing reflow",
 			description:
-				"Don't skip these tests to make sure that changing a CSS property causes reflow (layout recalculation)",
+				"We need these tests to make sure that changing a CSS property causes reflow (layout recalculation).",
+			expect: true,
 			tests: [
 				{
 					args: ["height", "100px"],
-					expect: [true, "100px"],
 				},
 				{
 					args: ["position", "absolute"],
-					expect: [true, "absolute"],
 				},
 				{
 					args: ["text-align", "center"],
-					expect: [true, "center"],
 				},
 			],
 		},
