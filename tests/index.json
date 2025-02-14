@@ -9,5 +9,6 @@
 	"records": "Number of records",
 	"change": "Property change",
 	"transition": "The transition property",
-	"util": "Utility functions"
+	"util": "Utility functions",
+	"reflow": "Reflow (layout recalculation)"
 }
