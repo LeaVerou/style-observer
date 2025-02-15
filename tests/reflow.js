@@ -41,8 +41,6 @@ export default {
 				properties: [property],
 			});
 
-			styleObserver.observe();
-
 			setTimeout(reject, 300, new Error(`Expected ${property} to change, but it didn't.`));
 		}).finally(() => {
 			styleObserver.unobserve();
