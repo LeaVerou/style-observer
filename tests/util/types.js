@@ -50,13 +50,12 @@ const types = {
 	resolution: {
 		initialValue: "96dpi",
 		values: ["42dppx", "42dpi"],
-		property: "resolution",
+		property: "image-resolution",
 	},
 
 	time: {
 		initialValue: "0s",
 		values: ["42s", "42ms"],
-		property: "transition-duration",
 	},
 
 	string: {

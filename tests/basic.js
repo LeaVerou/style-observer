@@ -11,7 +11,6 @@ export default {
 		if (this.data.property) {
 			dummy.style.setProperty(this.data.property, value);
 			let computed = getComputedStyle(dummy).getPropertyValue(this.data.property);
-			console.log(computed, value);
 			return computed;
 		}
 
@@ -65,8 +64,9 @@ export default {
 	tests: [
 		{
 			name: "Built-in properties",
-			tests: Object.entries(types).map(([id, meta]) => {
+			tests: Object.entries(types).filter(([id, meta]) => meta.property).map(([id, meta]) => {
 				return {
+					skip: !CSS.supports(meta.property, "inherit"),
 					data: meta,
 					args: [meta.property, meta.values[0], meta.initialValue],
 					expect: meta.values[0],
@@ -96,11 +96,10 @@ export default {
 							this.skip = true;
 						}
 
-						// FIXME Why did I need two .parent here?
 						// Also, should I need to do this in the first place?
 						// I had expected this would automatically run the parent's beforeEach as well
 						// But maybe that's not a good idea, because then how would you override?
-						this.parent.parent.beforeEach.call(this);
+						this.parent.beforeEach.call(this);
 					},
 					data: meta,
 					args: [property, meta.values[0], meta.initialValue],
