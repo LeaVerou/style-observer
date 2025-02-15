@@ -1,4 +1,5 @@
-import { getTimesFor, splitCommas, isRegisteredProperty } from "../src/util.js";
+import { getTimesFor, splitCommas } from "../src/util.js";
+import { isRegisteredProperty } from "../src/util/properties.js";
 
 export default {
 	name: "Utility functions",

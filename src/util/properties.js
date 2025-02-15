@@ -1,5 +1,3 @@
-import { isRegisteredProperty } from "../util.js";
-
 const INITIAL_VALUES = {
 	"<angle>": "0deg",
 	"<color>": "transparent",
@@ -26,7 +24,7 @@ const INITIAL_VALUES = {
  * @param {boolean} [meta.inherits] - Whether the property inherits.
  * @param {*} [meta.initialValue] - Initial value.
  */
-export default function gentleRegisterProperty (property, meta = {}, window = globalThis) {
+export function gentleRegisterProperty (property, meta = {}, window = globalThis) {
 	let CSS = window.CSS;
 
 	if (
@@ -87,4 +85,25 @@ export default function gentleRegisterProperty (property, meta = {}, window = gl
 			});
 		}
 	}
+}
+
+/**
+ * Check if a CSS custom property is registered.
+ * @param {string} property - The property to check.
+ * @param {Window} [window] - The window to check in.
+ * @returns {boolean} Whether the property is registered.
+ */
+export function isRegisteredProperty (property, window = globalThis) {
+	let document = window.document;
+
+	let dummy = document.createElement("div");
+	document.body.append(dummy);
+
+	let currentValue = getComputedStyle(document.documentElement).getPropertyValue(property);
+	dummy.style.setProperty(property, "foo(bar)"); // a value that is invalid for any registered syntax
+	let newValue = getComputedStyle(dummy).getPropertyValue(property);
+
+	dummy.remove();
+
+	return currentValue === newValue;
 }
