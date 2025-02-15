@@ -1,5 +1,5 @@
 import StyleObserver from "../index.js";
-import adoptCSS from "../src/util/adopt-css.js";
+import gentleRegisterProperty from "./util/gentle-register-property.js";
 
 export default {
 	name: "Reflow (layout recalculation)",
