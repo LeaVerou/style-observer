@@ -1,4 +1,5 @@
 import StyleObserver from "../index.js";
+import adoptCSS from "../src/util/adopt-css.js";
 
 export default {
 	name: "Reflow (layout recalculation)",
@@ -17,15 +18,13 @@ export default {
 		}
 
 		// TODO: Use adoptCSS when https://github.com/LeaVerou/style-observer/issues/74 is fixed
-		iframe.contentDocument.head.insertAdjacentHTML(
-			"beforeend",
-			`<style>
-				@property --registered-custom-property {
-					syntax: "<number>";
-					inherits: true;
-					initial-value: 1;
-				}
-			</style>`,
+		adoptCSS(
+			`@property --registered-custom-property {
+				syntax: "<number>";
+				inherits: true;
+				initial-value: 1;
+			}`,
+			iframe.contentDocument,
 		);
 
 		this.iframe = iframe;
@@ -43,7 +42,7 @@ export default {
 
 			styleObserver.observe();
 
-			setTimeout(reject, 300, new Error(`Expected ${ property } to change, but it didn't.`));
+			setTimeout(reject, 300, new Error(`Expected ${property} to change, but it didn't.`));
 		}).finally(() => {
 			styleObserver.unobserve();
 		});
