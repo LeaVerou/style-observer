@@ -35,6 +35,9 @@
     "@11ty/eleventy": "^3.0.0",
     "htest.dev": "^0.0.17",
     "markdown-it-anchor": "^9.2.0",
+    "prettier-plugin-brace-style": "^0.7.2",
+    "prettier-plugin-merge": "^0.7.2",
+    "prettier-plugin-space-before-function-paren": "^0.0.5",
     "release-it": "^18.0.0",
     "typedoc": "^0.27.6",
     "typedoc-plugin-rename-defaults": "^0.7.2"
