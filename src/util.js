@@ -164,7 +164,7 @@ export function isRegisteredProperty (property, window = globalThis) {
 	}
 
 	let currentValue = getComputedStyle(document.documentElement).getPropertyValue(property);
-	dummy.style.setProperty(property, "foo(bar)"); // set it to a value that would be invalid for any registered syntax
+	dummy.style.setProperty(property, "foo(bar)"); // a value that is invalid for any registered syntax
 	let newValue = getComputedStyle(dummy).getPropertyValue(property);
 	dummy.remove();
 
