@@ -2,8 +2,26 @@ import StyleObserver from "../index.js";
 import gentleRegisterProperty from "./util/gentle-register-property.js";
 import types from "./util/types.js";
 
+let dummy;
+
 export default {
 	name: "Basic",
+
+	map (value) {
+		if (this.data.property) {
+			dummy.style.setProperty(this.data.property, value);
+			let computed = getComputedStyle(dummy).getPropertyValue(this.data.property);
+			console.log(computed, value);
+			return computed;
+		}
+
+		return value;
+	},
+
+	beforeAll () {
+		dummy = document.createElement("div");
+		document.body.append(dummy);
+	},
 
 	beforeEach () {
 		let element = document.createElement("div");
@@ -45,6 +63,7 @@ export default {
 			name: "Built-in properties",
 			tests: Object.entries(types).map(([id, meta]) => {
 				return {
+					data: meta,
 					args: [meta.property, meta.values[0], meta.initialValue],
 					expect: meta.values[0],
 				};
@@ -56,6 +75,7 @@ export default {
 				return this.data.syntax;
 			},
 			tests: Object.entries(types).map(([id, meta]) => {
+				let property = `--registered-${meta.id}`;
 				return {
 					beforeEach () {
 						let definition = {
@@ -64,7 +84,7 @@ export default {
 							initialValue: meta.initialValue,
 						};
 						try {
-							gentleRegisterProperty(`--registered-${meta.id}`, meta);
+							gentleRegisterProperty(property, meta);
 						}
 						catch (e) {
 							// Unsupported syntax?
@@ -79,14 +99,14 @@ export default {
 						this.parent.parent.beforeEach.call(this);
 					},
 					data: meta,
-					args: [meta.property, meta.values[0], meta.initialValue],
+					args: [property, meta.values[0], meta.initialValue],
 					expect: meta.values[0],
 				};
 			}),
 		},
 		{
 			name: "Unregistered custom properties",
-			args: ["--not-registered", "0", "1"],
+			args: ["--not-registered", "1", "0"],
 			expect: "1",
 		},
 	],

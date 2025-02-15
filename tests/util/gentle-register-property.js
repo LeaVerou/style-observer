@@ -14,7 +14,12 @@ export default function gentleRegisterProperty (property, meta = {}, global = gl
 	}
 
 	try {
-		global.CSS.registerProperty({ name: property, inherits: true, ...meta });
+		global.CSS.registerProperty({
+			name: property,
+			inherits: true,
+			syntax: meta.syntax,
+			initialValue: meta.initialValue,
+		});
 		return true;
 	}
 	catch (e) {
