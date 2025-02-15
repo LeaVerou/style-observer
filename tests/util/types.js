@@ -85,7 +85,7 @@ const types = {
 
 	"transform-list": {
 		initialValue: "scale(1) rotate(0deg)",
-		values: ["matrix(1, 0, 0, 1, 0, 0)", "scale(0) rotate(0deg)"],
+		values: ["matrix(1, 0, 1, 1, 0, 0)", "scale(0) rotate(0deg)"],
 		property: "transform",
 	},
 
