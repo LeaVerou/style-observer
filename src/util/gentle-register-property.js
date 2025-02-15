@@ -24,7 +24,9 @@ const INITIAL_VALUES = {
  * @param {boolean} [meta.inherits] - Whether the property inherits.
  * @param {*} [meta.initialValue] - Initial value.
  */
-export default function gentleRegisterProperty (property, meta = {}) {
+export default function gentleRegisterProperty (property, meta = {}, window = globalThis) {
+	let CSS = window.CSS;
+
 	if (!property.startsWith("--") || !CSS.registerProperty) {
 		return;
 	}
@@ -49,7 +51,7 @@ export default function gentleRegisterProperty (property, meta = {}) {
 		let error = e;
 		let rethrow = true;
 
-		if (e instanceof DOMException) {
+		if (e instanceof window.DOMException) {
 			if (e.name === "InvalidModificationError") {
 				// Property is already registered, which is fine
 				rethrow = false;
@@ -74,7 +76,9 @@ export default function gentleRegisterProperty (property, meta = {}) {
 
 		if (rethrow) {
 			// Re-throw any other errors
-			throw new Error(`Failed to register custom property ${ property }: ${ error.message }`, { cause: error });
+			throw new Error(`Failed to register custom property ${property}: ${error.message}`, {
+				cause: error,
+			});
 		}
 	}
 }
