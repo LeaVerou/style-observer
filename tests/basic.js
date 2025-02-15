@@ -58,6 +58,10 @@ export default {
 		this.data.element.remove();
 	},
 
+	afterAll () {
+		dummy.remove();
+	},
+
 	tests: [
 		{
 			name: "Built-in properties",
