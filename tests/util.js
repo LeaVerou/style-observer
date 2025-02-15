@@ -1,4 +1,4 @@
-import { getTimesFor, splitCommas } from "../src/util.js";
+import { getTimesFor, splitCommas, isRegisteredProperty } from "../src/util.js";
 
 export default {
 	name: "Utility functions",
@@ -198,6 +198,58 @@ export default {
 					arg: 'a, b, (c, d), e',
 					expect: ['a', 'b', '(c, d)', 'e'],
 				}
+			],
+		},
+		{
+			run: isRegisteredProperty,
+			tests: [
+				{
+					beforeAll () {
+						document.head.insertAdjacentHTML(
+							"beforeend",
+							`<link rel="stylesheet" href="./util/custom-property.css" />`,
+						);
+
+						document.head.insertAdjacentHTML(
+							"beforeend",
+							`<style>
+								@property --inline-style {
+									syntax: "<color>";
+									inherits: false;
+									initial-value: red;
+								}
+							</style>`,
+						);
+
+						let sheet = new CSSStyleSheet();
+						sheet.replaceSync(`
+							@property --adopted-stylesheet {
+								syntax: "<number>";
+								inherits: true;
+								initial-value: 1;
+							}
+						`);
+						document.adoptedStyleSheets.push(sheet);
+
+						CSS.registerProperty({
+							name: "--registered-property",
+							syntax: "small | medium | large",
+							inherits: false,
+							initialValue: "medium",
+						});
+					},
+					expect: true,
+					tests: [
+						"--external-stylesheet",
+						"--inline-style",
+						"--adopted-stylesheet",
+						"--registered-property",
+					].map(arg => ({ arg })),
+				},
+				{
+					arg: "--not-registered-property",
+					expect: false,
+				},
 			],
 		},
 	],

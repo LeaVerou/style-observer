@@ -148,3 +148,25 @@ export function splitCommas (value) {
 
 	return ret;
 }
+
+/**
+ * Check if a CSS custom property is registered.
+ * @param {string} property - The property to check.
+ * @param {Window} [window] - The window to check in.
+ * @returns {boolean} Whether the property is registered.
+ */
+export function isRegisteredProperty (property, window = globalThis) {
+	let document = window.document;
+
+	dummy ??= document.createElement("div");
+	if (!dummy.parentNode) {
+		document.body.append(dummy);
+	}
+
+	let currentValue = getComputedStyle(document.documentElement).getPropertyValue(property);
+	dummy.style.setProperty(property, "foo(bar)"); // set it to a value that would be invalid for any registered syntax
+	let newValue = getComputedStyle(dummy).getPropertyValue(property);
+	dummy.remove();
+
+	return currentValue === newValue;
+}
