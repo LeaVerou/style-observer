@@ -41,7 +41,7 @@ export default {
 		Object.assign(this.data, { element, observer, result });
 	},
 
-	run (property, initialValue, value) {
+	run (property, value, initialValue) {
 		let { observer, element, result } = this.data;
 
 		element.style.setProperty(property, initialValue);
