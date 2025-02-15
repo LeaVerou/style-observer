@@ -18,11 +18,14 @@ export default {
 		}
 
 		// TODO: Use adoptCSS when https://github.com/LeaVerou/style-observer/issues/74 is fixed
-		gentleRegisterProperty("--registered-custom-property", {
-			syntax: "<number>",
-			inherits: true,
-			initialValue: 1,
-		}, iframe.contentDocument.defaultView);
+		gentleRegisterProperty(
+			"--registered-custom-property",
+			{
+				syntax: "<number>",
+				inherits: true,
+				initialValue: 1,
+			},
+			iframe.contentDocument.defaultView,
 		);
 
 		this.iframe = iframe;
