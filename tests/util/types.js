@@ -92,7 +92,7 @@ const types = {
 	"custom-ident": {
 		initialValue: "foo",
 		values: ["--foo", "bar"],
-		property: "grid-area",
+		property: "font-family",
 	},
 
 	keywords: {
