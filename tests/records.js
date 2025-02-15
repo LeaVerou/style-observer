@@ -93,8 +93,8 @@ export default {
 						return actual === 1 || actual === 2;
 					},
 					arg: {
-						properties: properties.toReversed(),
-						values: values.toReversed(),
+						properties: [...properties].reverse(),
+						values: [...values].reverse(),
 						pause: TIMEOUT / 2.5
 					},
 					expect: "1 – 2"
