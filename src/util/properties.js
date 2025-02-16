@@ -105,5 +105,6 @@ export function isRegisteredProperty (property, window = globalThis) {
 
 	dummy.remove();
 
+	// FIXME: For registered properties with syntax "*", the function always returns false
 	return currentValue === newValue;
 }
