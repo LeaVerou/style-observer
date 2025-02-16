@@ -1,5 +1,0 @@
-@property --external-stylesheet {
-	syntax: "<percentage>";
-	inherits: true;
-	initial-value: 100%;
-}

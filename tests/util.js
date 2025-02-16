@@ -1,5 +1,7 @@
 import { getTimesFor, splitCommas } from "../src/util.js";
 import { isRegisteredProperty } from "../src/util/properties.js";
+import types from "./util/types.js";
+import adoptCss from "../src/util/adopt-css.js";
 
 export default {
 	name: "Utility functions",
@@ -202,54 +204,86 @@ export default {
 			],
 		},
 		{
-			run: isRegisteredProperty,
+			name: "isRegisteredProperty()",
+
+			beforeEach () {
+				let iframe = document.createElement("iframe");
+				document.body.append(iframe);
+
+				this.data.iframe = iframe;
+			},
+
+			async run (source, ...properties) {
+				if (source === "inline-style" || source === "adopted-stylesheet") {
+					let rules = properties.map(property => `
+						@property --${property.id} {
+							syntax: "${property.syntax}";
+							inherits: true;
+							initial-value: ${property.initialValue};
+						}`).join("\n");
+
+					if (source === "inline-style") {
+						this.data.iframe.contentDocument.head.insertAdjacentHTML(
+							"beforeend",
+							`<style> ${ rules } </style>`,
+						);
+					}
+					else {
+						adoptCss(rules, this.data.iframe.contentDocument);
+					}
+				}
+				else if (source === "external-stylesheet") {
+					let link = Object.assign(document.createElement("link"), {
+						rel: "stylesheet",
+						href: "./util/properties.css",
+					});
+
+					this.data.iframe.contentDocument.head.append(link);
+					await new Promise(resolve => link.onload = () => resolve());
+				}
+				else if (source === "register-property") {
+					for (let property of properties) {
+						this.data.iframe.contentWindow.CSS.registerProperty(
+							{
+								name: `--${property.id}`,
+								syntax: property.syntax,
+								inherits: true,
+								initialValue: property.initialValue,
+							}
+						);
+					}
+				}
+
+				let results = properties.map(property => isRegisteredProperty(`--${property.id}`, this.data.iframe.contentWindow));
+
+				return results.every(result => result === true);
+			},
+
+			afterEach () {
+				this.data.iframe.remove();
+			},
+
 			tests: [
 				{
-					beforeAll () {
-						document.head.insertAdjacentHTML(
-							"beforeend",
-							`<link rel="stylesheet" href="./util/custom-property.css" />`,
-						);
-
-						document.head.insertAdjacentHTML(
-							"beforeend",
-							`<style>
-								@property --inline-style {
-									syntax: "<color>";
-									inherits: false;
-									initial-value: red;
-								}
-							</style>`,
-						);
-
-						let sheet = new CSSStyleSheet();
-						sheet.replaceSync(`
-							@property --adopted-stylesheet {
-								syntax: "<number>";
-								inherits: true;
-								initial-value: 1;
-							}
-						`);
-						document.adoptedStyleSheets.push(sheet);
-
-						CSS.registerProperty({
-							name: "--registered-property",
-							syntax: "small | medium | large",
-							inherits: false,
-							initialValue: "medium",
-						});
-					},
 					expect: true,
 					tests: [
-						"--external-stylesheet",
-						"--inline-style",
-						"--adopted-stylesheet",
-						"--registered-property",
-					].map(arg => ({ arg })),
-				},
-				{
-					arg: "--not-registered-property",
-					expect: false,
+						{
+							args: ["external-stylesheet", { id: "any" }, { id: "color" }],
+						},
+						{
+							args: ["inline-style", types.any, types.color],
+						},
+						{
+							args: ["adopted-stylesheet", types.any, types.color],
+						},
+						{
+							args: ["register-property", types.any, types.color],
+						},
+						{
+							args: ["--not-registered-property", { id: "not-registered-property" }],
+							expect: false,
+						},
+					],
 				},
 			],
 		},

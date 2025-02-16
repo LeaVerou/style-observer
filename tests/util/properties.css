@@ -1,0 +1,11 @@
+@property --any {
+	syntax: "*";
+	inherits: true;
+	initial-value: 0;
+}
+
+@property --color {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: hsl(0, 100%, 50%);
+}
