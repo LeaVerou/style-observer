@@ -1,6 +1,41 @@
 import isRegisteredProperty from "../../src/util/is-registered-property.js";
 import adoptCss from "../../src/util/adopt-css.js";
-import types, { registerProperties } from "../util/types.js";
+
+let properties = {
+	"--any-inherited": {
+		syntax: "*",
+		inherits: true,
+	},
+	"--any-non-inherited": {
+		syntax: "*",
+		inherits: false,
+	},
+	"--number": {
+		syntax: "<number>",
+		inherits: true,
+	},
+};
+
+let css = Object.entries(properties)
+	.map(([property, meta]) => {
+		return `@property ${property} {
+		syntax: "${meta.syntax}";
+		inherits: ${meta.inherits};
+		initial-value: 0;
+	}`;
+	})
+	.join("\n");
+
+let tests = Object.entries(properties).map(([property, spec]) => {
+	let typed = spec.syntax !== "*";
+	let inherited = spec.inherits === true;
+
+	return {
+		name: (typed ? "Typed, " : "") + (inherited ? "Inherited" : "Non-inherited"),
+		arg: property,
+		expect: typed || !inherited,
+	};
+});
 
 export default {
 	name: "isRegisteredProperty()",
@@ -10,13 +45,15 @@ export default {
 		document.body.append(iframe);
 
 		this.data.iframe = iframe;
+
+		if (this.data.srcdoc !== undefined) {
+			iframe.srcdoc = this.data.srcdoc;
+		}
+
+		return new Promise(resolve => (iframe.onload = resolve));
 	},
 
 	run (property) {
-		if (typeof property === "object") {
-			property = "--" + property.id;
-		}
-
 		return isRegisteredProperty(property, this.data.iframe.contentWindow);
 	},
 
@@ -24,125 +61,52 @@ export default {
 		this.data.iframe.remove();
 	},
 
-	getName () {
-		let suffix = "";
-		if (typeof this.arg === "object") {
-			suffix = " (--" + this.arg.id + ")";
-		}
-
-		return this.parent.name + suffix;
-	},
-
 	expect: true,
+
+	data: {
+		srcdoc: "",
+	},
 
 	tests: [
 		{
-			name: "Inline style",
-			beforeEach () {
-				this.parent.parent.beforeEach.call(this);
-				let property = this.arg;
-				this.data.iframe.contentDocument.head.insertAdjacentHTML(
-					"beforeend",
-					`<style>
-						@property --${property.id} {
-							syntax: "${property.syntax}";
-							inherits: ${property.inherits ?? "true"};
-							initial-value: ${property.initialValue};
-						}
-					</style>`,
-				);
+			name: "Style element",
+			data: {
+				srcdoc: `<style>${css}</style>`,
 			},
-			tests: [
-				{
-					arg: types.any,
-					expect: false,
-				},
-				{
-					arg: {
-						...types.any,
-						id: types.any.id + "-non-inherited",
-						inherits: false,
-					},
-				},
-				{
-					arg: types.number,
-				},
-			],
+			tests,
 		},
 		{
 			name: "Adopted stylesheet",
 			beforeEach () {
 				this.parent.parent.beforeEach.call(this);
-				let property = this.arg;
-				adoptCss(
-					`@property --${property.id} {
-					syntax: "${property.syntax}";
-					inherits: ${property.inherits ?? "true"};
-					initial-value: ${property.initialValue};
-				}`,
-					this.data.iframe.contentDocument,
-				);
+				adoptCss(css, this.data.iframe.contentDocument);
 			},
-			tests: [
-				{
-					arg: types.any,
-					expect: false,
-				},
-				{
-					arg: {
-						...types.any,
-						id: types.any.id + "-non-inherited",
-						inherits: false,
-					},
-				},
-				{
-					arg: types.number,
-				},
-			],
+			tests,
 		},
 		{
 			name: "External stylesheet",
-			async beforeEach () {
-				this.parent.parent.beforeEach.call(this);
-				let link = Object.assign(document.createElement("link"), {
-					rel: "stylesheet",
-					href: "./util/properties.css",
-				});
-
-				this.data.iframe.contentDocument.head.append(link);
-				await new Promise(resolve => (link.onload = () => resolve()));
+			data: {
+				srcdoc: `<link rel="stylesheet" href="${URL.createObjectURL(new Blob([css], { type: "text/css" }))}">`,
 			},
-			tests: [
-				{
-					arg: "--any-inherited",
-					expect: false,
-				},
-				{
-					arg: "--any-non-inherited",
-				},
-				{
-					arg: "--number",
-				},
-			],
+			tests,
 		},
 		{
 			name: "CSS.registerProperty()",
 			beforeEach () {
 				this.parent.parent.beforeEach.call(this);
-				registerProperties({ globalThis: this.data.iframe.contentWindow });
+				const CSS = this.data.iframe.contentWindow.CSS;
+
+				for (let property in properties) {
+					let spec = properties[property];
+					CSS.registerProperty({
+						name: property,
+						syntax: spec.syntax,
+						inherits: spec.inherits,
+						initialValue: "0",
+					});
+				}
 			},
-			tests: [
-				{
-					arg: "--registered-any",
-					expect: false,
-				},
-				{
-					arg: "--registered-any-non-inherited",
-				},
-				{
-					arg: "--registered-number",
-				},
-			],
+			tests,
 		},
 		{
 			name: "Non-registered property",
