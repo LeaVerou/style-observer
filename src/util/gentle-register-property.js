@@ -1,3 +1,5 @@
+import isRegisteredProperty from "./is-registered-property.js";
+
 const INITIAL_VALUES = {
 	"<angle>": "0deg",
 	"<color>": "transparent",
@@ -27,7 +29,11 @@ const INITIAL_VALUES = {
 export default function gentleRegisterProperty (property, meta = {}, window = globalThis) {
 	let CSS = window.CSS;
 
-	if (!property.startsWith("--") || !CSS.registerProperty) {
+	if (
+		!property.startsWith("--") ||
+		!CSS.registerProperty ||
+		isRegisteredProperty(property, window)
+	) {
 		return;
 	}
 

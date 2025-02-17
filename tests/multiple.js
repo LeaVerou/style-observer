@@ -1,5 +1,5 @@
 import StyleObserver from "../index.js";
-import gentleRegisterProperty from "../src/util/gentle-register-property.js";
+import gentleRegisterProperty from "./util/gentle-register-property.js";
 
 export default {
 	name: "Multiple observers on the same target",
