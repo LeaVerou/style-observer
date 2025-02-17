@@ -259,12 +259,7 @@ export default {
 					name: "External stylesheet",
 					async beforeEach () {
 						this.parent.beforeEach.call(this);
-						let link = Object.assign(document.createElement("link"), {
-							rel: "stylesheet",
-							href: "./util/properties.css",
-						});
-
-						this.data.iframe.contentDocument.head.append(link);
+						this.data.iframe.contentDocument.head.insertAdjacentHTML("beforeend", '<link rel="stylesheet" href="util/properties.css" />');
 						await new Promise(resolve => link.onload = () => resolve());
 					},
 					args: [{ id: "any-inherited" }, { id: "any-non-inherited" }, { id: "number" }],
