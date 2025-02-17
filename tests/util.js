@@ -1,5 +1,5 @@
 import { getTimesFor, splitCommas } from "../src/util.js";
-import { isRegisteredProperty } from "../src/util/properties.js";
+import { canRegisterProperty } from "../src/util/properties.js";
 import types from "./util/types.js";
 import adoptCss from "../src/util/adopt-css.js";
 
@@ -204,7 +204,7 @@ export default {
 			],
 		},
 		{
-			name: "isRegisteredProperty()",
+			name: "canRegisterProperty()",
 
 			beforeEach () {
 				let iframe = document.createElement("iframe");
@@ -214,15 +214,15 @@ export default {
 			},
 
 			async run (source, ...properties) {
-				if (source === "inline-style" || source === "adopted-stylesheet") {
+				if (source === "inline style" || source === "adopted stylesheet") {
 					let rules = properties.map(property => `
 						@property --${property.id} {
 							syntax: "${property.syntax}";
-							inherits: true;
+							inherits: ${property.inherits ?? "true"};
 							initial-value: ${property.initialValue};
 						}`).join("\n");
 
-					if (source === "inline-style") {
+					if (source === "inline style") {
 						this.data.iframe.contentDocument.head.insertAdjacentHTML(
 							"beforeend",
 							`<style> ${ rules } </style>`,
@@ -232,7 +232,7 @@ export default {
 						adoptCss(rules, this.data.iframe.contentDocument);
 					}
 				}
-				else if (source === "external-stylesheet") {
+				else if (source === "external stylesheet") {
 					let link = Object.assign(document.createElement("link"), {
 						rel: "stylesheet",
 						href: "./util/properties.css",
@@ -241,49 +241,41 @@ export default {
 					this.data.iframe.contentDocument.head.append(link);
 					await new Promise(resolve => link.onload = () => resolve());
 				}
-				else if (source === "register-property") {
+				else if (source === "registered property") {
 					for (let property of properties) {
 						this.data.iframe.contentWindow.CSS.registerProperty(
 							{
 								name: `--${property.id}`,
 								syntax: property.syntax,
-								inherits: true,
+								inherits: property.inherits ?? true,
 								initialValue: property.initialValue,
 							}
 						);
 					}
 				}
 
-				let results = properties.map(property => isRegisteredProperty(`--${property.id}`, this.data.iframe.contentWindow));
-
-				return results.every(result => result === true);
+				return properties.map(property => canRegisterProperty(`--${property.id}`, this.data.iframe.contentWindow));
 			},
 
 			afterEach () {
 				this.data.iframe.remove();
 			},
 
+			getName () {
+				return "Source: " + this.args[0];
+			},
+
+			expect: [true, false, false],
+
 			tests: [
 				{
-					expect: true,
-					tests: [
-						{
-							args: ["external-stylesheet", { id: "any" }, { id: "color" }],
-						},
-						{
-							args: ["inline-style", types.any, types.color],
-						},
-						{
-							args: ["adopted-stylesheet", types.any, types.color],
-						},
-						{
-							args: ["register-property", types.any, types.color],
-						},
-						{
-							args: ["--not-registered-property", { id: "not-registered-property" }],
-							expect: false,
-						},
-					],
+					args: ["external stylesheet", { id: "any-inherited" }, { id: "any-non-inherited" }, { id: "color" }],
+				},
+				...["inline style", "adopted stylesheet", "registered property"]
+					.map(source => ( { args: [source, types.any, { ...types.any, id: "any-non-inherited", inherits: false }, types.color] })),
+				{
+					args: ["unregistered property", { id: "foo" }],
+					expect: [true],
 				},
 			],
 		},

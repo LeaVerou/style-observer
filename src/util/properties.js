@@ -30,7 +30,7 @@ export function gentleRegisterProperty (property, meta = {}, window = globalThis
 	if (
 		!property.startsWith("--") ||
 		!CSS.registerProperty ||
-		isRegisteredProperty(property, window)
+		!canRegisterProperty(property, window)
 	) {
 		return;
 	}
@@ -88,23 +88,32 @@ export function gentleRegisterProperty (property, meta = {}, window = globalThis
 }
 
 /**
- * Check if a CSS custom property is registered.
+ * Check if a CSS custom property can be registered.
  * @param {string} property - The property to check.
  * @param {Window} [window] - The window to check in.
- * @returns {boolean} Whether the property is registered.
+ * @returns {boolean} Whether the property can be registered.
  */
-export function isRegisteredProperty (property, window = globalThis) {
+export function canRegisterProperty (property, window = globalThis) {
 	let document = window.document;
 
 	let dummy = document.createElement("div");
 	document.body.append(dummy);
 
-	let currentValue = getComputedStyle(document.documentElement).getPropertyValue(property);
-	dummy.style.setProperty(property, "foo(bar)"); // a value that is invalid for any registered syntax
-	let newValue = getComputedStyle(dummy).getPropertyValue(property);
+	let invalidValue = "foo(bar)";
+	dummy.style.setProperty(property, invalidValue); // a value that is invalid for any registered syntax
+	let value = getComputedStyle(dummy).getPropertyValue(property);
+
+	let res = false;
+	if (value === invalidValue) {
+		// We might have either unregistered or registered property with syntax "*".
+		// If it's non-inheritable, we can be sure it's registered.
+		// But if it's inheritable, it's OK if we (re-)register it with syntax "*" in any case.
+		let child = dummy.appendChild(document.createElement("div"));
+		let inheritedValue = getComputedStyle(child).getPropertyValue(property);
+		res = inheritedValue === invalidValue;
+	}
 
 	dummy.remove();
 
-	// FIXME: For registered properties with syntax "*", the function always returns false
-	return currentValue === newValue;
+	return res;
 }

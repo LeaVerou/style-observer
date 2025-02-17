@@ -1,11 +1,17 @@
-@property --any {
+@property --any-inherited {
 	syntax: "*";
 	inherits: true;
+	initial-value: 0;
+}
+
+@property --any-non-inherited {
+	syntax: "*";
+	inherits: false;
 	initial-value: 0;
 }
 
 @property --color {
 	syntax: "<color>";
 	inherits: true;
-	initial-value: hsl(0, 100%, 50%);
+	initial-value: rgb(0, 0, 0, 0);
 }
