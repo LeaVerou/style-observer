@@ -1,5 +1,5 @@
 import { getTimesFor, splitCommas } from "../src/util.js";
-import { canRegisterProperty } from "../src/util/properties.js";
+import { isRegisteredProperty } from "../src/util/properties.js";
 import types from "./util/types.js";
 import adoptCss from "../src/util/adopt-css.js";
 
@@ -204,7 +204,7 @@ export default {
 			],
 		},
 		{
-			name: "canRegisterProperty()",
+			name: "isRegisteredProperty()",
 
 			beforeEach () {
 				let iframe = document.createElement("iframe");
@@ -254,7 +254,7 @@ export default {
 					}
 				}
 
-				return properties.map(property => canRegisterProperty(`--${property.id}`, this.data.iframe.contentWindow));
+				return properties.map(property => isRegisteredProperty(`--${property.id}`, this.data.iframe.contentWindow));
 			},
 
 			afterEach () {
@@ -265,7 +265,7 @@ export default {
 				return "Source: " + this.args[0];
 			},
 
-			expect: [true, false, false],
+			expect: [false, true, true],
 
 			tests: [
 				{
@@ -275,7 +275,7 @@ export default {
 					.map(source => ( { args: [source, types.any, { ...types.any, id: "any-non-inherited", inherits: false }, types.color] })),
 				{
 					args: ["unregistered property", { id: "foo" }],
-					expect: [true],
+					expect: [false],
 				},
 			],
 		},

@@ -30,7 +30,7 @@ export function gentleRegisterProperty (property, meta = {}, window = globalThis
 	if (
 		!property.startsWith("--") ||
 		!CSS.registerProperty ||
-		!canRegisterProperty(property, window)
+		!isRegisteredProperty(property, window)
 	) {
 		return;
 	}
@@ -88,32 +88,33 @@ export function gentleRegisterProperty (property, meta = {}, window = globalThis
 }
 
 /**
- * Check if a CSS custom property can be registered.
+ * Check if a CSS custom property is registered.
+ * This function will return `false` for custom properties that behave identically to non-registered properties (e.g., registered inherited properties with syntax "*").
  * @param {string} property - The property to check.
  * @param {Window} [window] - The window to check in.
- * @returns {boolean} Whether the property can be registered.
+ * @returns {boolean}
  */
-export function canRegisterProperty (property, window = globalThis) {
+export function isRegisteredProperty (property, window = globalThis) {
 	let document = window.document;
 
 	let dummy = document.createElement("div");
 	document.body.append(dummy);
 
-	let invalidValue = "foo(bar)";
-	dummy.style.setProperty(property, invalidValue); // a value that is invalid for any registered syntax
+	let invalidValue = "foo(bar)"; // a value that is invalid for any registered syntax
+	dummy.style.setProperty(property, invalidValue);
 	let value = getComputedStyle(dummy).getPropertyValue(property);
 
-	let res = false;
+	let ret = true;
 	if (value === invalidValue) {
 		// We might have either unregistered or registered custom property with syntax "*".
 		// If it's non-inherited, we can be sure it's registered.
 		// But if it's inherited, it's OK if we (re-)register it with syntax "*" in any case.
 		let child = dummy.appendChild(document.createElement("div"));
 		let inheritedValue = getComputedStyle(child).getPropertyValue(property);
-		res = inheritedValue === invalidValue;
+		ret = inheritedValue !== invalidValue;
 	}
 
 	dummy.remove();
 
-	return res;
+	return ret;
 }
