@@ -1,6 +1,6 @@
 import { getTimesFor, splitCommas } from "../src/util.js";
 import { isRegisteredProperty } from "../src/util/properties.js";
-import types from "./util/types.js";
+import types, { registerProperties } from "./util/types.js";
 import adoptCss from "../src/util/adopt-css.js";
 
 export default {
@@ -213,47 +213,7 @@ export default {
 				this.data.iframe = iframe;
 			},
 
-			async run (source, ...properties) {
-				if (source === "inline style" || source === "adopted stylesheet") {
-					let rules = properties.map(property => `
-						@property --${property.id} {
-							syntax: "${property.syntax}";
-							inherits: ${property.inherits ?? "true"};
-							initial-value: ${property.initialValue};
-						}`).join("\n");
-
-					if (source === "inline style") {
-						this.data.iframe.contentDocument.head.insertAdjacentHTML(
-							"beforeend",
-							`<style> ${ rules } </style>`,
-						);
-					}
-					else {
-						adoptCss(rules, this.data.iframe.contentDocument);
-					}
-				}
-				else if (source === "external stylesheet") {
-					let link = Object.assign(document.createElement("link"), {
-						rel: "stylesheet",
-						href: "./util/properties.css",
-					});
-
-					this.data.iframe.contentDocument.head.append(link);
-					await new Promise(resolve => link.onload = () => resolve());
-				}
-				else if (source === "registered property") {
-					for (let property of properties) {
-						this.data.iframe.contentWindow.CSS.registerProperty(
-							{
-								name: `--${property.id}`,
-								syntax: property.syntax,
-								inherits: property.inherits ?? true,
-								initialValue: property.initialValue,
-							}
-						);
-					}
-				}
-
+			run (...properties) {
 				return properties.map(property => isRegisteredProperty(`--${property.id}`, this.data.iframe.contentWindow));
 			},
 
@@ -261,20 +221,65 @@ export default {
 				this.data.iframe.remove();
 			},
 
-			getName () {
-				return "Source: " + this.args[0];
-			},
-
+			args: [types.any, { ...types.any, id: "any-non-inherited", inherits: false }, types.number],
 			expect: [false, true, true],
-
 			tests: [
 				{
-					args: ["external stylesheet", { id: "any-inherited" }, { id: "any-non-inherited" }, { id: "number" }],
+					name: "Inline style",
+					beforeEach () {
+						this.parent.beforeEach.call(this);
+						this.data.iframe.contentDocument.head.insertAdjacentHTML(
+							"beforeend",
+							`<style>${this.args.map(property => `
+								@property --${property.id} {
+									syntax: "${property.syntax}";
+									inherits: ${property.inherits ?? "true"};
+									initial-value: ${property.initialValue};
+								}`)
+								.join("\n")}
+							</style>`,
+						);
+					},
 				},
-				...["inline style", "adopted stylesheet", "registered property"]
-					.map(source => ( { args: [source, types.any, { ...types.any, id: "any-non-inherited", inherits: false }, types.number] })),
 				{
-					args: ["non-registered property", { id: "foo" }],
+					name: "Adopted stylesheet",
+					beforeEach () {
+						this.parent.beforeEach.call(this);
+						adoptCss(`${this.args.map(property => `
+							@property --${property.id} {
+								syntax: "${property.syntax}";
+								inherits: ${property.inherits ?? "true"};
+								initial-value: ${property.initialValue};
+							}`)
+							.join("\n")
+						}`, this.data.iframe.contentDocument);
+					},
+				},
+				{
+					name: "External stylesheet",
+					async beforeEach () {
+						this.parent.beforeEach.call(this);
+						let link = Object.assign(document.createElement("link"), {
+							rel: "stylesheet",
+							href: "./util/properties.css",
+						});
+
+						this.data.iframe.contentDocument.head.append(link);
+						await new Promise(resolve => link.onload = () => resolve());
+					},
+					args: [{ id: "any-inherited" }, { id: "any-non-inherited" }, { id: "number" }],
+				},
+				{
+					name: "CSS.registerProperty()",
+					beforeEach () {
+						this.parent.beforeEach.call(this);
+						registerProperties({ globalThis: this.data.iframe.contentWindow });
+					},
+					args: ["any", "any-non-inherited", "number"].map(id => ({id: `registered-${id}`})),
+				},
+				{
+					name: "Non-registered property",
+					args: [{ id: "foo" }],
 					expect: [false],
 				},
 			],
