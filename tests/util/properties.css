@@ -10,8 +10,8 @@
 	initial-value: 0;
 }
 
-@property --color {
-	syntax: "<color>";
+@property --number {
+	syntax: "<number>";
 	inherits: true;
-	initial-value: rgb(0, 0, 0, 0);
+	initial-value: 0;
 }

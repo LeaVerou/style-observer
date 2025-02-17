@@ -269,12 +269,12 @@ export default {
 
 			tests: [
 				{
-					args: ["external stylesheet", { id: "any-inherited" }, { id: "any-non-inherited" }, { id: "color" }],
+					args: ["external stylesheet", { id: "any-inherited" }, { id: "any-non-inherited" }, { id: "number" }],
 				},
 				...["inline style", "adopted stylesheet", "registered property"]
-					.map(source => ( { args: [source, types.any, { ...types.any, id: "any-non-inherited", inherits: false }, types.color] })),
+					.map(source => ( { args: [source, types.any, { ...types.any, id: "any-non-inherited", inherits: false }, types.number] })),
 				{
-					args: ["unregistered property", { id: "foo" }],
+					args: ["non-registered property", { id: "foo" }],
 					expect: [false],
 				},
 			],
