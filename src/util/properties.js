@@ -105,9 +105,9 @@ export function canRegisterProperty (property, window = globalThis) {
 
 	let res = false;
 	if (value === invalidValue) {
-		// We might have either unregistered or registered property with syntax "*".
-		// If it's non-inheritable, we can be sure it's registered.
-		// But if it's inheritable, it's OK if we (re-)register it with syntax "*" in any case.
+		// We might have either unregistered or registered custom property with syntax "*".
+		// If it's non-inherited, we can be sure it's registered.
+		// But if it's inherited, it's OK if we (re-)register it with syntax "*" in any case.
 		let child = dummy.appendChild(document.createElement("div"));
 		let inheritedValue = getComputedStyle(child).getPropertyValue(property);
 		res = inheritedValue === invalidValue;
