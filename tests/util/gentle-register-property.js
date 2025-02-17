@@ -16,7 +16,7 @@ export default function gentleRegisterProperty (property, meta = {}, global = gl
 	try {
 		global.CSS.registerProperty({
 			name: property,
-			inherits: true,
+			inherits: meta.inherits ?? true,
 			syntax: meta.syntax,
 			initialValue: meta.initialValue,
 		});
