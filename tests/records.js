@@ -1,6 +1,6 @@
 import StyleObserver from "../index.js";
 import { wait } from "../src/util.js";
-import { gentleRegisterProperty } from "../src/util/properties.js";
+import gentleRegisterProperty from "./util/gentle-register-property.js";
 import commonTests from "./tests.js";
 
 const TIMEOUT = 500;

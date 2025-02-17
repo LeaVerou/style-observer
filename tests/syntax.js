@@ -1,5 +1,5 @@
 import StyleObserver from "../index.js";
-import { gentleRegisterProperty } from "../src/util/properties.js";
+import gentleRegisterProperty from "./util/gentle-register-property.js";
 
 let initialData = {
 	angle: "0deg",
