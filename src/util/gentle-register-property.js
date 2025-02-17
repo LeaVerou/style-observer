@@ -1,3 +1,5 @@
+import adoptCSS from "./adopt-css.js";
+
 const INITIAL_VALUES = {
 	"<angle>": "0deg",
 	"<color>": "transparent",
@@ -31,54 +33,22 @@ export default function gentleRegisterProperty (property, meta = {}, window = gl
 		return;
 	}
 
-	let definition = {
-		name: property,
-		syntax: meta.syntax || "*",
-		inherits: meta.inherits ?? true,
-	};
-
+	let initialValue;
 	if (meta.initialValue !== undefined) {
-		definition.initialValue = meta.initialValue;
+		initialValue = meta.initialValue;
 	}
-	else if (definition.syntax !== "*" && definition.syntax in INITIAL_VALUES) {
-		definition.initialValue = INITIAL_VALUES[definition.syntax];
+	else if (meta.syntax !== "*" && meta.syntax in INITIAL_VALUES) {
+		initialValue = INITIAL_VALUES[meta.syntax];
 	}
 
-	try {
-		CSS.registerProperty(definition);
-	}
-	catch (e) {
-		let error = e;
-		let rethrow = true;
-
-		if (e instanceof window.DOMException) {
-			if (e.name === "InvalidModificationError") {
-				// Property is already registered, which is fine
-				rethrow = false;
+	adoptCSS(
+		`@layer style-observer-layer {
+			@property ${property} {
+				syntax: "${meta.syntax || "*"}";
+				inherits: ${meta.inherits ?? true};
+				${initialValue ? `initial-value: ${meta.initialValue};` : ""}
 			}
-			else if (e.name === "SyntaxError") {
-				// In Safari < 18.2 (where we face the infinite loop bug),
-				// there is no way to provide an initial value for a custom property with a syntax of "<string>".
-				// There will always be an error: “The given initial value does not parse for the given syntax.”
-				// So we try again with universal syntax.
-				// We do the same for any other syntax that is not supported.
-				definition.syntax = "*";
-
-				try {
-					CSS.registerProperty(definition);
-					rethrow = false;
-				}
-				catch (e) {
-					error = e;
-				}
-			}
-		}
-
-		if (rethrow) {
-			// Re-throw any other errors
-			throw new Error(`Failed to register custom property ${property}: ${error.message}`, {
-				cause: error,
-			});
-		}
-	}
+		}`,
+		window.document,
+	);
 }
