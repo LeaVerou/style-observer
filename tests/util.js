@@ -1,4 +1,7 @@
 import { getTimesFor, splitCommas } from "../src/util.js";
+import gentleRegisterProperty from "../src/util/gentle-register-property.js";
+import adoptCss from "../src/util/adopt-css.js";
+import types from "./util/types.js";
 
 export default {
 	name: "Utility functions",
@@ -198,6 +201,97 @@ export default {
 					arg: 'a, b, (c, d), e',
 					expect: ['a', 'b', '(c, d)', 'e'],
 				}
+			],
+		},
+		{
+			name: "gentleRegisterProperty()",
+
+			beforeEach () {
+				let iframe = document.createElement("iframe");
+				document.body.append(iframe);
+
+				this.data.iframe = iframe;
+			},
+
+			async run (source, ...properties) {
+				if (source === "inline style" || source === "adopted stylesheet") {
+					let rules = properties.map(property => `
+						@property --${property.id} {
+							syntax: "${property.syntax}";
+							inherits: true;
+							initial-value: ${property.initialValue};
+						}`).join("\n");
+
+					if (source === "inline style") {
+						this.data.iframe.contentDocument.head.insertAdjacentHTML(
+							"beforeend",
+							`<style> ${ rules } </style>`,
+						);
+					}
+					else {
+						adoptCss(rules, this.data.iframe.contentDocument);
+					}
+				}
+				else if (source === "external stylesheet") {
+					let link = Object.assign(document.createElement("link"), {
+						rel: "stylesheet",
+						href: "./util/properties.css",
+					});
+
+					this.data.iframe.contentDocument.head.append(link);
+					await new Promise(resolve => link.onload = () => resolve());
+				}
+				else if (source === "registered property") {
+					for (let property of properties) {
+						this.data.iframe.contentWindow.CSS.registerProperty(
+							{
+								name: `--${property.id}`,
+								syntax: property.syntax,
+								inherits: true,
+								initialValue: property.initialValue,
+							}
+						);
+					}
+				}
+
+				let results = [];
+				for (let property of properties) {
+					let name = `--${property.id}`;
+					gentleRegisterProperty(name, { initialValue: "foo(bar)" }, this.data.iframe.contentWindow);
+					let value = getComputedStyle(this.data.iframe.contentDocument.documentElement).getPropertyValue(name);
+					results.push(value === "foo(bar)");
+				}
+
+				return results;
+			},
+
+			afterEach () {
+				this.data.iframe.remove();
+			},
+
+			getName () {
+				return "Source: " + this.args[0];
+			},
+
+			expect: [false, false],
+
+			tests: [
+				{
+					args: ["external stylesheet", { id: "any" }, { id: "color" }],
+				},
+				{
+					args: ["inline style", types.any, types.color],
+				},
+				{
+					args: ["adopted stylesheet", types.any, types.color],
+				},
+				{
+					args: ["registered property", types.any, types.color],
+				},
+				{
+					args: ["unregistered property", { id: "unregistered-property" }],
+					expect: [true],
+				},
 			],
 		},
 	],

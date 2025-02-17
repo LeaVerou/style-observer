@@ -1,0 +1,11 @@
+@property --any {
+	syntax: "*";
+	inherits: true;
+	initial-value: 0;
+}
+
+@property --color {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: rgba(0, 0, 0, 0);
+}
