@@ -1,6 +1,6 @@
 import TRANSITIONRUN_EVENT_LOOP_BUG from "./util/detect-transitionrun-loop.js";
 import UNREGISTERED_TRANSITION_BUG from "./util/detect-unregistered-transition.js";
-import { gentleRegisterProperty } from "./util/properties.js";
+import gentleRegisterProperty from "./util/gentle-register-property.js";
 import MultiWeakMap from "./util/MultiWeakMap.js";
 import { toArray, wait, getTimesFor } from "./util.js";
 

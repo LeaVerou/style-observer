@@ -1,5 +1,5 @@
 import { getTimesFor, splitCommas } from "../src/util.js";
-import { isRegisteredProperty } from "../src/util/properties.js";
+import isRegisteredProperty from "../src/util/is-registered-property.js";
 import types, { registerProperties } from "./util/types.js";
 import adoptCss from "../src/util/adopt-css.js";
 
