@@ -30,7 +30,7 @@ export function gentleRegisterProperty (property, meta = {}, window = globalThis
 	if (
 		!property.startsWith("--") ||
 		!CSS.registerProperty ||
-		!isRegisteredProperty(property, window)
+		isRegisteredProperty(property, window)
 	) {
 		return;
 	}
