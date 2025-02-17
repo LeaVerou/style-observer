@@ -294,11 +294,13 @@ export default {
 					name: "External stylesheet",
 					async beforeEach () {
 						this.parent.parent.beforeEach.call(this);
-						this.data.iframe.contentDocument.head.insertAdjacentHTML("beforeend", '<link rel="stylesheet" href="./util/properties.css" />');
-						await new Promise(resolve => {
-							let link = this.data.iframe.contentDocument.head.querySelector("link");
-							link.onload = () => resolve();
+						let link = Object.assign(document.createElement("link"), {
+							rel: "stylesheet",
+							href: "./util/properties.css",
 						});
+
+						this.data.iframe.contentDocument.head.append(link);
+						await new Promise(resolve => link.onload = () => resolve());
 					},
 					tests: [
 						{
