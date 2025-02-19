@@ -169,6 +169,10 @@ Each record is an object with the following properties:
 
 ## Limitations & Caveats
 
+### Disconnected elements
+
+You cannot observe changes on elements not connected to a document.
+
 ### Transitions & Animations
 
 - You cannot observe `transition` and `animation` properties.
