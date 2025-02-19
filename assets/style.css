@@ -45,7 +45,6 @@ header, footer {
 }
 
 main {
-	grid-area: main;
 	max-width: var(--max-content-width);
 	padding: var(--wa-space-xl);
 	margin-inline-end: auto;
@@ -99,7 +98,6 @@ header {
 	z-index: 1;
 	display: flex;
 	align-items: center;
-	grid-area: header;
 	border-bottom: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-surface-border);
 	padding-block: var(--wa-space-s);
 	background: var(--wa-color-surface-default);
@@ -143,7 +141,6 @@ nav {
 }
 
 aside {
-	grid-area: aside;
 	border-inline-end: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-surface-border);
 	padding-block: var(--wa-space-l);
 	padding-inline: var(--wa-space-l);
@@ -201,7 +198,6 @@ main {
 }
 
 footer {
-	grid-area: footer;
 	border-top: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-surface-border);
 }
 
