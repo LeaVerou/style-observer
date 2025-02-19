@@ -54,7 +54,11 @@ export default {
 	},
 
 	run (property) {
-		return isRegisteredProperty(property, this.data.iframe.contentWindow);
+		return new Promise(resolve => {
+			requestAnimationFrame(() => {
+				resolve(isRegisteredProperty(property, this.data.iframe.contentWindow));
+			});
+		});
 	},
 
 	afterEach () {
