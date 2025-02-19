@@ -165,6 +165,7 @@ aside {
 		text-decoration: none;
 		font-size: var(--wa-font-size-s);
 		font-weight: var(--wa-font-weight-semibold);
+		white-space: nowrap;
 	}
 }
 
