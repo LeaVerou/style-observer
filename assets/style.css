@@ -57,12 +57,7 @@ main {
 }
 
 :is(h1, h2, h3, h4) {
-	--factor: 3;
-	scroll-margin-block-start: calc(var(--wa-space-xl) * var(--factor));
-
-	@media (width <= 450px) {
-		--factor: 6;
-	}
+	scroll-margin-block-start: var(--header-height);
 }
 
 h1 {
