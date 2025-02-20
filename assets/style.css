@@ -45,7 +45,6 @@ header, footer {
 }
 
 main {
-	grid-area: main;
 	max-width: var(--max-content-width);
 	padding: var(--wa-space-xl);
 	margin-inline-end: auto;
@@ -55,6 +54,10 @@ main {
 :is(h2, h3, h4) > a:only-child {
 	text-decoration: none;
 	color: inherit;
+}
+
+:is(h1, h2, h3, h4) {
+	scroll-margin-block-start: var(--header-height);
 }
 
 h1 {
@@ -90,7 +93,6 @@ header {
 	z-index: 1;
 	display: flex;
 	align-items: center;
-	grid-area: header;
 	border-bottom: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-surface-border);
 	padding-block: var(--wa-space-s);
 	background: var(--wa-color-surface-default);
@@ -134,7 +136,6 @@ nav {
 }
 
 aside {
-	grid-area: aside;
 	border-inline-end: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-surface-border);
 	padding-block: var(--wa-space-l);
 	padding-inline: var(--wa-space-l);
@@ -164,6 +165,7 @@ aside {
 		text-decoration: none;
 		font-size: var(--wa-font-size-s);
 		font-weight: var(--wa-font-weight-semibold);
+		white-space: nowrap;
 	}
 }
 
@@ -192,7 +194,6 @@ main {
 }
 
 footer {
-	grid-area: footer;
 	border-top: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-surface-border);
 }
 
