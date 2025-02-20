@@ -31,7 +31,7 @@ Detects browser bugs and works around them, so you don't have to.
 </p>
 
 [![npm](https://img.shields.io/npm/v/style-observer)](https://www.npmjs.com/package/style-observer)
-[![gzip size](https://img.shields.io/badge/gzip-2.73kB-blue)](https://pkg-size.dev/style-observer)
+[![gzip size](https://img.shields.io/badge/gzip-2.7kB-blue)](https://pkg-size.dev/style-observer)
 
 - <span>✅</span> Observe changes to custom properties
 - <span>✅</span> Observe changes to standard properties (except `display`, `transition`, `animation`)

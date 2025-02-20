@@ -11,10 +11,11 @@
     "release": "release-it",
     "build:apidocs": "npx typedoc",
     "build:html": "npx @11ty/eleventy --config=_build/eleventy.js --quiet",
-    "build": "npm run build:html & npm run build:apidocs",
+    "build": "npm run update:size & npm run build:html & npm run build:apidocs",
     "watch:apidocs": "npx typedoc --watch --preserveWatchOutput",
     "watch:html": "npx @11ty/eleventy --config=_build/eleventy.js --serve --quiet",
-    "watch": "npm run watch:html & npm run watch:apidocs"
+    "watch": "npm run watch:html & npm run watch:apidocs",
+    "update:size": "node _build/update-bundle-size.js"
   },
   "keywords": [],
   "contributors": [
@@ -34,6 +35,7 @@
   "devDependencies": {
     "@11ty/eleventy": "^3.0.0",
     "htest.dev": "^0.0.17",
+    "esbuild": "^0.25.0",
     "markdown-it-anchor": "^9.2.0",
     "prettier-plugin-brace-style": "^0.7.2",
     "prettier-plugin-merge": "^0.7.2",
