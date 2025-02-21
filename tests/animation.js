@@ -126,7 +126,8 @@ export default {
 				{
 					name: "Fractional",
 					args: ["opacity", "to { opacity: 0; }", "100ms linear 1.5 forwards"],
-					expect: 0.5, // ???
+					check: { epsilon: 0.2 },
+					expect: 0.5,
 				},
 				{
 					name: "Infinite",
