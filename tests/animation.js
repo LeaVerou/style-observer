@@ -25,8 +25,7 @@ export default {
 		});
 
 		let observer = new StyleObserver(records => {
-			let value = records[0].value;
-			result.resolve(value);
+			this.data.value = records[0].value;
 		});
 
 		Object.assign(this.data, { element, observer, result });
@@ -49,7 +48,13 @@ export default {
 
 		observer.observe(element, property);
 
-		setTimeout(() => result.reject("Timeout"), 500);
+		setTimeout(() => {
+			if (this.data.value === undefined) {
+				result.reject(new Error("Timeout"));
+			}
+
+			result.resolve(this.data.value);
+		}, 500);
 
 		return result.promise;
 	},
@@ -63,7 +68,7 @@ export default {
 		dummy.remove();
 	},
 
-	skip: true,
+	check: { looseTypes: true, epsilon: .2 },
 
 	tests: [
 		{
@@ -126,12 +131,12 @@ export default {
 				{
 					name: "Fractional",
 					args: ["opacity", "to { opacity: 0; }", "100ms linear 1.5 forwards"],
-					check: { epsilon: 0.2 },
 					expect: 0.5,
 				},
 				{
 					name: "Infinite",
 					args: ["opacity", "to { opacity: 0; }", "100ms linear infinite"], // can we observe this?
+					skip: true,
 				},
 			],
 		},
@@ -145,7 +150,7 @@ export default {
 				return computed;
 			},
 
-			// skip: !CSS.supports("animation-composition", "add"),
+			skip: !CSS.supports("animation-composition", "add"),
 
 			tests: [
 				{
