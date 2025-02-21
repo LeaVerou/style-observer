@@ -176,7 +176,7 @@ You cannot observe changes on elements not connected to a document.
 ### Transitions & Animations
 
 - You cannot observe `transition` and `animation` properties.
-- You cannot observe changes caused by CSS animations or transitions.
+- You cannot observe changes caused by CSS animations.
 
 ### Observing `display`
 
