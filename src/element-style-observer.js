@@ -116,7 +116,7 @@ export default class ElementStyleObserver {
 				return;
 			}
 			else {
-				let interval = setInterval(() => {
+				let callback = () => {
 					let cs = getComputedStyle(this.target);
 					let records = [];
 
@@ -132,13 +132,15 @@ export default class ElementStyleObserver {
 					if (records.length > 0) {
 						this.callback(records);
 					}
-				}, 16); // ~60fps
+				};
+				let interval = setInterval(callback, 16); // ~60fps
 
 				let cleanup = event => {
 					if (event.animationName === animation.animationName) {
 						clearInterval(interval);
 						this.target.removeEventListener("animationend", cleanup);
 						this.target.removeEventListener("animationcancel", cleanup);
+						callback();
 					}
 				};
 
