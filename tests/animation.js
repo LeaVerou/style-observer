@@ -68,7 +68,7 @@ export default {
 		dummy.remove();
 	},
 
-	check: { looseTypes: true, epsilon: .2 },
+	check: { looseTypes: true },
 
 	tests: [
 		{
