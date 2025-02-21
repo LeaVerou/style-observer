@@ -109,7 +109,44 @@ export default class ElementStyleObserver {
 	 * @param {TransitionEvent} event
 	 */
 	async handleEvent (event) {
-		if (!this.properties.has(event.propertyName)) {
+		if (event.type === "animationstart") {
+			let animation = document.getAnimations().find(a => a.effect.target === this.target);
+			let properties = this.getObservedAnimationProperties(animation);
+			if (properties.length === 0) {
+				return;
+			}
+			else {
+				let interval = setInterval(() => {
+					let cs = getComputedStyle(this.target);
+					let records = [];
+
+					for (let property of properties) {
+						let value = cs.getPropertyValue(property);
+						let oldValue = this.properties.get(property);
+						if (value !== oldValue) {
+							records.push({ target: this.target, property, value, oldValue });
+							this.properties.set(property, value);
+						}
+					}
+
+					if (records.length > 0) {
+						this.callback(records);
+					}
+				}, 16); // ~60fps
+
+				let cleanup = event => {
+					if (event.animationName === animation.animationName) {
+						clearInterval(interval);
+						this.target.removeEventListener("animationend", cleanup);
+						this.target.removeEventListener("animationcancel", cleanup);
+					}
+				};
+
+				this.target.addEventListener("animationend", cleanup);
+				this.target.addEventListener("animationcancel", cleanup);
+			}
+		}
+		else if (!this.properties.has(event.propertyName)) {
 			return;
 		}
 
@@ -185,6 +222,7 @@ export default class ElementStyleObserver {
 
 		this.target.addEventListener("transitionstart", this);
 		this.target.addEventListener("transitionend", this);
+		this.target.addEventListener("animationstart", this);
 		this.updateTransitionProperties();
 	}
 
@@ -260,6 +298,20 @@ export default class ElementStyleObserver {
 	}
 
 	/**
+	 * Get the observed properties that are being animated by an animation.
+	 * @param {Animation} animation
+	 * @returns {string[]}
+	 */
+	getObservedAnimationProperties (animation) {
+		let keyframes = animation.effect.getKeyframes();
+		let properties = new Set(keyframes.flatMap(frame => 
+			Object.keys(frame).filter(prop => !["offset", "easing", "composite", "computedOffset"].includes(prop))
+		));
+
+		return [...properties].filter(property => this.properties.has(property));
+	}
+
+	/**
 	 * Stop observing a target for changes to one or more CSS properties.
 	 * @param { string | string[] } [properties] Properties to stop observing. Defaults to all observed properties.
 	 * @return {void}
@@ -278,6 +330,7 @@ export default class ElementStyleObserver {
 			this.target.removeEventListener("transitionrun", this);
 			this.target.removeEventListener("transitionstart", this);
 			this.target.removeEventListener("transitionend", this);
+			this.target.removeEventListener("animationstart", this);
 		}
 
 		this.updateTransitionProperties();
