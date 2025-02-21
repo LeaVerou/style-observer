@@ -77,11 +77,11 @@ export default {
 			tests: [
 				{
 					name: "Simple",
-					args: ["opacity", "to { opacity: 0; }", "100ms linear forwards"],
+					args: ["opacity", "to { opacity: 0; }", "160ms linear forwards"],
 				},
 				{
 					name: "Delayed",
-					args: ["opacity", "to { opacity: 0; }", "100ms linear 50ms forwards"],
+					args: ["opacity", "to { opacity: 0; }", "160ms linear 50ms forwards"],
 				},
 			],
 		},
@@ -90,7 +90,7 @@ export default {
 			tests: [
 				{
 					name: "alternate",
-					args: ["opacity", "to { opacity: 0; }", "100ms linear alternate"],
+					args: ["opacity", "to { opacity: 0; }", "160ms linear alternate"],
 					expect: 1,
 				},
 			],
@@ -100,7 +100,7 @@ export default {
 			tests: [
 				{
 					name: "Paused animation",
-					args: ["opacity", "to { opacity: 0; }", "100ms linear paused"], // can we observe this?
+					args: ["opacity", "to { opacity: 0; }", "160ms linear paused"], // can we observe this?
 					throws: true,
 				},
 			],
@@ -110,12 +110,12 @@ export default {
 			tests: [
 				{
 					name: "backwards",
-					args: ["opacity", "to { opacity: 0; }", "100ms linear backwards"],
+					args: ["opacity", "to { opacity: 0; }", "160ms linear backwards"],
 					expect: 1,
 				},
 				{
 					name: "both",
-					args: ["opacity", "to { opacity: 0; }", "100ms linear both"],
+					args: ["opacity", "to { opacity: 0; }", "160ms linear both"],
 					expect: 0,
 				},
 			],
@@ -125,17 +125,17 @@ export default {
 			tests: [
 				{
 					name: "Integer",
-					args: ["opacity", "to { opacity: 0; }", "100ms linear 2 forwards"],
+					args: ["opacity", "to { opacity: 0; }", "160ms linear 2 forwards"],
 					expect: 0,
 				},
 				{
 					name: "Fractional",
-					args: ["opacity", "to { opacity: 0; }", "100ms linear 1.5 forwards"],
+					args: ["opacity", "to { opacity: 0; }", "160ms linear 1.5 forwards"],
 					expect: 0.5,
 				},
 				{
 					name: "Infinite",
-					args: ["opacity", "to { opacity: 0; }", "100ms linear infinite"], // can we observe this?
+					args: ["opacity", "to { opacity: 0; }", "160ms linear infinite"], // can we observe this?
 					skip: true,
 				},
 			],
@@ -161,7 +161,7 @@ export default {
 					args: [
 						"transform",
 						"to { transform: translateX(150px); }",
-						"100ms linear forwards",
+						"160ms linear forwards",
 					],
 					expect: "translateX(30px) rotate(45deg) translateX(150px)",
 				},
@@ -173,7 +173,7 @@ export default {
 					args: [
 						"transform",
 						"to { transform: translateX(150px); }",
-						"100ms linear forwards",
+						"160ms linear forwards",
 					],
 					expect: "translateX(180px) rotate(45deg)",
 				},
