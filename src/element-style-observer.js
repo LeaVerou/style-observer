@@ -116,31 +116,14 @@ export default class ElementStyleObserver {
 				return;
 			}
 			else {
-				let callback = () => {
-					let cs = getComputedStyle(this.target);
-					let records = [];
-
-					for (let property of properties) {
-						let value = cs.getPropertyValue(property);
-						let oldValue = this.properties.get(property);
-						if (value !== oldValue) {
-							records.push({ target: this.target, property, value, oldValue });
-							this.properties.set(property, value);
-						}
-					}
-
-					if (records.length > 0) {
-						this.callback(records);
-					}
-				};
-				let interval = setInterval(callback, 16); // ~60fps
+				let interval = setInterval(() => this.#handleChanges(properties), 16); // ~60fps
 
 				let cleanup = event => {
 					if (event.animationName === animation.animationName) {
 						clearInterval(interval);
 						this.target.removeEventListener("animationend", cleanup);
 						this.target.removeEventListener("animationcancel", cleanup);
-						callback();
+						this.#handleChanges(properties);
 					}
 				};
 
@@ -168,11 +151,15 @@ export default class ElementStyleObserver {
 			this.target.addEventListener(eventName, this);
 		}
 
+		// Other properties may have changed in the meantime
+		this.#handleChanges();
+	}
+
+	#handleChanges (properties = this.propertyNames) {
 		let cs = getComputedStyle(this.target);
 		let records = [];
 
-		// Other properties may have changed in the meantime
-		for (let property of this.propertyNames) {
+		for (let property of properties) {
 			let value = cs.getPropertyValue(property);
 			let oldValue = this.properties.get(property);
 
