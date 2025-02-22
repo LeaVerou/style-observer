@@ -112,7 +112,7 @@ export default {
 			name: "Play state",
 			tests: [
 				{
-					name: "Paused animation",
+					name: "paused",
 					args: ["opacity", "to { opacity: 0; }", "160ms linear paused"], // can we observe this?
 					throws: true,
 				},
