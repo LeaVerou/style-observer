@@ -75,16 +75,26 @@ export default {
 
 	tests: [
 		{
-			name: "Simple animation",
+			name: "Basic animations",
 			expect: 0,
 			tests: [
 				{
-					name: "Simple",
+					name: "One property",
 					args: ["opacity", "to { opacity: 0; }", "160ms linear forwards"],
+				},
+				{
+					name: "Two properties",
+					args: ["text-align", "to { opacity: 0; text-align: center; }", "160ms linear forwards"],
+					expect: "center",
 				},
 				{
 					name: "Delayed",
 					args: ["opacity", "to { opacity: 0; }", "160ms linear 50ms forwards"],
+				},
+				{
+					name: "Not observed property",
+					args: ["text-align", "to { opacity: 0; }", "160ms linear forwards"],
+					throws: true,
 				},
 			],
 		},
@@ -187,7 +197,7 @@ export default {
 			tests: [
 				{
 					name: "Unregistered",
-					args: ["--unregistered", "to { --unregistered: 42; }", "160ms linear 0.5 forwards"],
+					args: ["--unregistered", "from { --unregistered: 0; } to { --unregistered: 42; }", "160ms linear 0.5 forwards"],
 					expect: "42",
 				},
 				{
