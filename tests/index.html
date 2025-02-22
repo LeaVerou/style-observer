@@ -5,8 +5,7 @@
 	<meta charset="UTF-8">
 	<title>Tests</title>
 	<link rel="stylesheet" href="https://htest.dev/htest.css" crossorigin />
-	<script src="https://htest.dev/htest.js" type="module" crossorigin></script>
-	<script>
+	<script type="module">
 		let params = new URLSearchParams(location.search);
 		let test_url = params.get("test");
 
@@ -21,7 +20,7 @@
 				test_url = `./${test_url}`;
 			}
 
-			Promise.all([
+			await Promise.all([
 				import("https://htest.dev/src/render.js").then(m => m.default),
 				import(test_url).then(m => m.default),
 			]).then(([render, test]) => render(test));
@@ -30,7 +29,7 @@
 			document.documentElement.classList.add("index");
 
 			// Index of all tests
-			fetch("./index.json").then(r => r.json()).then(index => {
+			await fetch("./index.json").then(r => r.json()).then(index => {
 				index = Object.entries(index).map(([id, name]) => ({ id, name }));
 
 				document.body.innerHTML = `
@@ -48,6 +47,8 @@
 				`;
 			});
 		}
+
+		import("https://htest.dev/htest.js");
 	</script>
 </head>
 
