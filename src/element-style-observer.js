@@ -111,18 +111,27 @@ export default class ElementStyleObserver {
 	async handleEvent (event) {
 		if (event.type === "animationstart") {
 			let animation = document.getAnimations().find(a => a.effect.target === this.target);
-			let properties = this.getObservedAnimationProperties(animation);
+
+			// Get the observed properties that are being animated by the animation
+			let keyframes = animation.effect.getKeyframes();
+			let properties = new Set(keyframes.flatMap(frame => 
+				Object.keys(frame).filter(property => !["offset", "easing", "composite", "computedOffset"].includes(property))
+			));
+			properties = [...properties].filter(property => this.properties.has(property));
+
 			if (properties.length === 0) {
 				return;
 			}
 			else {
-				let interval = setInterval(() => this.#handleChanges(properties), 16); // ~60fps
+				let interval = setInterval(() => this.#handleChanges(properties), this.options.animationThrottle ?? 16); // 16ms ~ 60fps
 
 				let cleanup = event => {
 					if (event.animationName === animation.animationName) {
 						clearInterval(interval);
 						this.target.removeEventListener("animationend", cleanup);
 						this.target.removeEventListener("animationcancel", cleanup);
+
+						// Pick up the recent changes
 						this.#handleChanges(properties);
 					}
 				};
@@ -284,20 +293,6 @@ export default class ElementStyleObserver {
 		this.target.style.setProperty("transition-behavior", "allow-discrete", "important");
 
 		this.updateTransitionProperties();
-	}
-
-	/**
-	 * Get the observed properties that are being animated by an animation.
-	 * @param {Animation} animation
-	 * @returns {string[]}
-	 */
-	getObservedAnimationProperties (animation) {
-		let keyframes = animation.effect.getKeyframes();
-		let properties = new Set(keyframes.flatMap(frame => 
-			Object.keys(frame).filter(prop => !["offset", "easing", "composite", "computedOffset"].includes(prop))
-		));
-
-		return [...properties].filter(property => this.properties.has(property));
 	}
 
 	/**
