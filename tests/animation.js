@@ -1,5 +1,6 @@
 import StyleObserver from "../src/style-observer.js";
 import adoptCSS from "../src/util/adopt-css.js";
+import gentleRegisterProperty from "../src/util/gentle-register-property.js";
 
 let testIndex = 0;
 let dummy;
@@ -12,6 +13,8 @@ export default {
 	beforeAll () {
 		dummy = document.createElement("div");
 		document.body.append(dummy);
+
+		gentleRegisterProperty("--registered", { syntax: "<number>", initialValue: 0 });
 	},
 
 	beforeEach () {
@@ -176,6 +179,21 @@ export default {
 						"160ms linear forwards",
 					],
 					expect: "translateX(180px) rotate(45deg)",
+				},
+			],
+		},
+		{
+			name: "Custom properties",
+			tests: [
+				{
+					name: "Unregistered",
+					args: ["--unregistered", "to { --unregistered: 42; }", "160ms linear 0.5 forwards"],
+					expect: "42",
+				},
+				{
+					name: "Registered",
+					args: ["--registered", "to { --registered: 42; }", "160ms linear 0.5 forwards"],
+					expect: "21",
 				},
 			],
 		},
