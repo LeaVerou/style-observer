@@ -111,12 +111,15 @@ export default class ElementStyleObserver {
 	async handleEvent (event) {
 		if (event.type === "animationstart") {
 			let animation = document.getAnimations().find(a => a.effect.target === this.target);
-
-			// Get the observed properties that are being animated by the animation
 			let keyframes = animation.effect.getKeyframes();
 			let properties = new Set(keyframes.flatMap(frame => 
 				Object.keys(frame).filter(property => !["offset", "easing", "composite", "computedOffset"].includes(property))
 			));
+
+			// Transform camelCase property names to kebab-case CSS property names
+			properties = [...properties].map(property => property.replace(/([A-Z])/g, "-$1").toLowerCase());
+
+			// Get the observed properties that are being animated by the animation
 			properties = [...properties].filter(property => this.properties.has(property));
 
 			if (properties.length === 0) {
