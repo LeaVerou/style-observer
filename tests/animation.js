@@ -113,7 +113,7 @@ export default {
 			tests: [
 				{
 					name: "paused",
-					args: ["opacity", "to { opacity: 0; }", "160ms linear paused"], // can we observe this?
+					args: ["opacity", "to { opacity: 0; }", "160ms linear paused"],
 					throws: true,
 				},
 			],
