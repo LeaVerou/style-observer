@@ -7,9 +7,9 @@ dummy.style.cssText = `${property}: 1; transition: ${property} 1ms step-start al
 /**
  * Detect if the browser is affected by the unregistered transition bug.
  * @see https://issues.chromium.org/issues/360159391
- * @type {boolean}
+ * @type {Promise<boolean>}
  */
-export default await new Promise(resolve => {
+export default new Promise(resolve => {
 	requestAnimationFrame(() => {
 		setTimeout(_ => resolve(true), 30);
 		dummy.addEventListener("transitionstart", _ => resolve(false));
