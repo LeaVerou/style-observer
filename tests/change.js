@@ -27,16 +27,18 @@ export default {
 				resolve(records);
 			}, { target, properties: [property] });
 
-			if (child) {
-				property = this.data.property ?? property;
-				value = this.data.value ?? value;
+			requestAnimationFrame(() => {
+				if (child) {
+					property = this.data.property ?? property;
+					value = this.data.value ?? value;
 
-				this.container.style.setProperty(property, value);
-			}
-			else {
-				// Pseudo-class tests
-				target.innerHTML = "";
-			}
+					this.container.style.setProperty(property, value);
+				}
+				else {
+					// Pseudo-class tests
+					target.innerHTML = "";
+				}
+			});
 
 			// Timeout after 500ms
 			setTimeout(() => reject(), 500);

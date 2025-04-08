@@ -17,7 +17,9 @@ export default {
 				resolve(records);
 			}, { target: dummy, properties: ["display"] });
 
-			dummy.style.setProperty("display", to);
+			requestAnimationFrame(() => {
+				dummy.style.setProperty("display", to);
+			});
 
 			// Timeout after 500ms
 			setTimeout(() => reject(), 500);

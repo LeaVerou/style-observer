@@ -39,11 +39,13 @@ export default {
 						}
 					}, { target, targets, properties });
 
-					for (let el of [target, ...targets].filter(Boolean)) {
-						for (let property of properties) {
-							el.style.setProperty(property, changes[property]);
+					requestAnimationFrame(() => {
+						for (let el of [target, ...targets].filter(Boolean)) {
+							for (let property of properties) {
+								el.style.setProperty(property, changes[property]);
+							}
 						}
-					}
+					});
 
 					// Timeout after 500ms
 					setTimeout(() => reject(), 500);

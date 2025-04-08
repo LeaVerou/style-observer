@@ -45,7 +45,9 @@ export default {
 			setTimeout(reject, 500, "Second observer timed out");
 		});
 
-		this.dummy.style.setProperty(property, value);
+		requestAnimationFrame(() => {
+			this.dummy.style.setProperty(property, value);
+		});
 
 		return Promise.race([promise1, promise2])
 		.then(records => records.map(record => record.value))

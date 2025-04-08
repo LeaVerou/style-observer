@@ -24,7 +24,7 @@ export default {
 
 	run ({ properties = [], values = [], pause, throttle = 0 }) {
 		let observer;
-		return new Promise(async resolve => {
+		return new Promise(resolve => {
 			let ret = [];
 			observer = new StyleObserver(records => {
 				ret.push(...records);
@@ -33,16 +33,18 @@ export default {
 			// We give the observer TIMEOUT ms to collect records
 			setTimeout(() => resolve(ret), TIMEOUT);
 
-			if (this.data.notObserved) {
-				this.dummy.style.setProperty("--not-observed", "foo");
-			}
-
-			for (let i = 0; i < properties.length; i++) {
-				if (pause) {
-					await wait(pause);
+			requestAnimationFrame(async () => {
+				if (this.data.notObserved) {
+					this.dummy.style.setProperty("--not-observed", "foo");
 				}
-				this.dummy.style.setProperty(properties[i], values[i]);
-			}
+
+				for (let i = 0; i < properties.length; i++) {
+					if (pause) {
+						await wait(pause);
+					}
+					this.dummy.style.setProperty(properties[i], values[i]);
+				}
+			});
 		})
 		.then(records => records.length)
 		.catch(() => "Timed out")

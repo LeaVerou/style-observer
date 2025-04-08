@@ -45,7 +45,10 @@ export default {
 
 		element.style.setProperty(property, initialValue);
 		observer.observe(element, property);
-		element.style.setProperty(property, value);
+
+		requestAnimationFrame(() => {
+			element.style.setProperty(property, value);
+		});
 
 		setTimeout(() => result.reject("Timeout"), 500);
 

@@ -70,7 +70,9 @@ export default {
 				resolve(records);
 			}, { target: this.dummy, properties: [name] });
 
-			this.dummy.style.setProperty(name, value);
+			requestAnimationFrame(() => {
+				this.dummy.style.setProperty(name, value);
+			});
 
 			// Timeout after 500ms
 			setTimeout(() => reject(), 500);

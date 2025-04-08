@@ -120,23 +120,25 @@ export default {
 			observer = new StyleObserver(records => resolve(records));
 			observer.observe(this.target, property);
 
-			let { inline, dynamic } = this.data;
-			if (dynamic) {
-				if (inline) {
-					this.target.style.setProperty("transition", newTransition, newImportant);
-				}
-				else {
-					adoptCSS(`
-						#${ this.target.id } {
-							transition: ${ newTransition } ${ newImportant ? "!important" : "" };
-						}
-					`);
+			requestAnimationFrame(() => {
+				let { inline, dynamic } = this.data;
+				if (dynamic) {
+					if (inline) {
+						this.target.style.setProperty("transition", newTransition, newImportant);
+					}
+					else {
+						adoptCSS(`
+							#${ this.target.id } {
+								transition: ${ newTransition } ${ newImportant ? "!important" : "" };
+							}
+						`);
+					}
+
+					observer.updateTransition(this.target);
 				}
 
-				observer.updateTransition(this.target);
-			}
-
-			this.target.style.setProperty(property, "1");
+				this.target.style.setProperty(property, "1");
+			});
 
 			// Give the test 500ms to run
 			setTimeout(resolve, 500, []);

@@ -37,7 +37,9 @@ export default {
 
 			observer.observe(target, property);
 
-			target.style.setProperty(property, value);
+			requestAnimationFrame(() => {
+				target.style.setProperty(property, value);
+			});
 
 			// Timeout after 500ms
 			setTimeout(() => reject(), 500);

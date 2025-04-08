@@ -121,12 +121,14 @@ export default {
 				}
 			}, { targets, properties: [property] });
 
-			if (this.data.onChild) {
-				child.style.setProperty(property, value);
-			}
-			else {
-				parent.style.setProperty(property, value);
-			}
+			requestAnimationFrame(() => {
+				if (this.data.onChild) {
+					child.style.setProperty(property, value);
+				}
+				else {
+					parent.style.setProperty(property, value);
+				}
+			});
 
 			// Timeout after 500ms
 			// Since we set the property on the parent,
