@@ -113,11 +113,12 @@ export default class ElementStyleObserver {
 			return;
 		}
 
-		if (this.constructor.transitionrunEventLoopBug && event.type === "transitionrun" || this.options.throttle > 0) {
-			let eventName = this.constructor.transitionrunEventLoopBug ? "transitionrun" : "transitionstart";
+		let transitionrunEventLoopBug = await TRANSITIONRUN_EVENT_LOOP_BUG;
+		if (transitionrunEventLoopBug && event.type === "transitionrun" || this.options.throttle > 0) {
+			let eventName = transitionrunEventLoopBug ? "transitionrun" : "transitionstart";
 			let delay = Math.max(this.options.throttle, 50);
 
-			if (this.constructor.transitionrunEventLoopBug) {
+			if (transitionrunEventLoopBug) {
 				// Safari < 18.2 fires `transitionrun` events too often, so we need to debounce.
 				// Wait at least the amount of time needed for the transition to run + 1 frame (~16ms)
 				let times = getTimesFor(event.propertyName, getComputedStyle(this.target).transition);
@@ -166,26 +167,31 @@ export default class ElementStyleObserver {
 
 		this.#init();
 
-		let cs = getComputedStyle(this.target);
+		Promise.all([
+			UNREGISTERED_TRANSITION_BUG,
+			TRANSITIONRUN_EVENT_LOOP_BUG,
+		]).then(([unregisteredTransitionBug, transitionrunEventLoopBug]) => {
+			let cs = getComputedStyle(this.target);
 
-		for (let property of properties) {
-			if (this.constructor.unregisteredTransitionBug && !this.constructor.properties.has(property)) {
-				// Init property
-				gentleRegisterProperty(property, undefined, this.target.ownerDocument.defaultView);
-				this.constructor.properties.add(property);
+			for (let property of properties) {
+				if (unregisteredTransitionBug && !this.constructor.properties.has(property)) {
+					// Init property
+					gentleRegisterProperty(property, undefined, this.target.ownerDocument.defaultView);
+					this.constructor.properties.add(property);
+				}
+
+				let value = cs.getPropertyValue(property);
+				this.properties.set(property, value);
 			}
 
-			let value = cs.getPropertyValue(property);
-			this.properties.set(property, value);
-		}
+			if (transitionrunEventLoopBug) {
+				this.target.addEventListener("transitionrun", this);
+			}
 
-		if (this.constructor.transitionrunEventLoopBug) {
-			this.target.addEventListener("transitionrun", this);
-		}
-
-		this.target.addEventListener("transitionstart", this);
-		this.target.addEventListener("transitionend", this);
-		this.updateTransitionProperties();
+			this.target.addEventListener("transitionstart", this);
+			this.target.addEventListener("transitionend", this);
+			this.updateTransitionProperties();
+		});
 	}
 
 	/**
@@ -290,23 +296,6 @@ export default class ElementStyleObserver {
 	 * All instances ever observed by this class.
 	 */
 	static all = new MultiWeakMap();
-
-	/**
-	 * Whether the browser is affected by the Safari `transitionrun` event loop bug.
-	 * @type {boolean}
-	 */
-	static transitionrunEventLoopBug;
-
-	/**
-	 * Whether the browser is affected by the unregistered transition bug.
-	 * @type {boolean}
-	 */
-	static unregisteredTransitionBug;
-
-	static async detectBrowserBugs () {
-		this.transitionrunEventLoopBug = await TRANSITIONRUN_EVENT_LOOP_BUG;
-		this.unregisteredTransitionBug = await UNREGISTERED_TRANSITION_BUG;
-	}
 }
 
 /**
@@ -328,6 +317,3 @@ export function resolveOptions (options) {
 
 	return options;
 }
-
-// Detect browser bugs when the module is loaded
-ElementStyleObserver.detectBrowserBugs();
