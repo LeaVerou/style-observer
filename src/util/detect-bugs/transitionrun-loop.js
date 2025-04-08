@@ -9,9 +9,9 @@ dummy.style.cssText = `${property}: 1; transition: ${property} 1ms step-start al
 /**
  * Detect if the browser is affected by the Safari transition loop bug.
  * @see https://bugs.webkit.org/show_bug.cgi?id=279012
- * @type {boolean}
+ * @type {Promise<boolean>}
  */
-export default await new Promise(resolve => {
+export default new Promise(resolve => {
 	let eventsCount = 0;
 	requestAnimationFrame(() => {
 		setTimeout(_ => resolve(eventsCount > 1), 50);
