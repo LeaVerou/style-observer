@@ -79,7 +79,7 @@ export default class ElementStyleObserver {
 		this.properties = new Map();
 		this.target = target;
 		this.callback = callback;
-		this.options = {properties: [], ...options};
+		this.options = { properties: [], ...options };
 		let properties = toArray(options.properties);
 
 		if (properties.length > 0) {
@@ -96,7 +96,7 @@ export default class ElementStyleObserver {
 		}
 
 		let firstTime = this.constructor.all.get(this.target).size === 1;
-		this.updateTransition({firstTime});
+		this.updateTransition({ firstTime });
 
 		this.#initialized = true;
 	}
@@ -120,7 +120,10 @@ export default class ElementStyleObserver {
 			if (TRANSITIONRUN_EVENT_LOOP_BUG) {
 				// Safari < 18.2 fires `transitionrun` events too often, so we need to debounce.
 				// Wait at least the amount of time needed for the transition to run + 1 frame (~16ms)
-				let times = getTimesFor(event.propertyName, getComputedStyle(this.target).transition);
+				let times = getTimesFor(
+					event.propertyName,
+					getComputedStyle(this.target).transition,
+				);
 				delay = Math.max(delay, times.duration + times.delay + 16);
 			}
 
@@ -195,7 +198,9 @@ export default class ElementStyleObserver {
 		// Clear our own transition
 		this.target.style.setProperty("--style-observer-transition", "");
 
-		let transitionProperties = new Set(getComputedStyle(this.target).transitionProperty.split(", "));
+		let transitionProperties = new Set(
+			getComputedStyle(this.target).transitionProperty.split(", "),
+		);
 		let properties = [];
 
 		for (let observer of this.constructor.all.get(this.target)) {
@@ -207,7 +212,8 @@ export default class ElementStyleObserver {
 		// Only add properties not already present and not excluded
 		let transition = properties
 			.filter(property => !transitionProperties.has(property))
-			.map(property => `${ property } 1ms step-start`).join(", ");
+			.map(property => `${property} 1ms step-start`)
+			.join(", ");
 
 		this.target.style.setProperty("--style-observer-transition", transition);
 	}
@@ -222,7 +228,7 @@ export default class ElementStyleObserver {
 	 * @param {object} options
 	 * @param {boolean} [options.firstTime] - Whether this is the first time the transition is being set.
 	 */
-	updateTransition ({firstTime} = {}) {
+	updateTransition ({ firstTime } = {}) {
 		const sot = "var(--style-observer-transition, --style-observer-noop)";
 		const inlineTransition = this.target.style.transition;
 		let transition;
