@@ -1,7 +1,7 @@
 {
   "name": "style-observer",
   "description": "Observe CSS property changes on any elements",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "main": "index.js",
   "exports": {
     ".": "./index.js"
