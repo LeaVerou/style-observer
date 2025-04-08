@@ -1,5 +1,4 @@
-import TRANSITIONRUN_EVENT_LOOP_BUG from "./util/detect-transitionrun-loop.js";
-import UNREGISTERED_TRANSITION_BUG from "./util/detect-unregistered-transition.js";
+import bugs from "./util/detect-bugs.js";
 import gentleRegisterProperty from "./util/gentle-register-property.js";
 import MultiWeakMap from "./util/MultiWeakMap.js";
 import { toArray, wait, getTimesFor } from "./util.js";
@@ -113,11 +112,14 @@ export default class ElementStyleObserver {
 			return;
 		}
 
-		if (TRANSITIONRUN_EVENT_LOOP_BUG && event.type === "transitionrun" || this.options.throttle > 0) {
-			let eventName = TRANSITIONRUN_EVENT_LOOP_BUG ? "transitionrun" : "transitionstart";
+		if (
+			(bugs.TRANSITIONRUN_EVENT_LOOP && event.type === "transitionrun") ||
+			this.options.throttle > 0
+		) {
+			let eventName = bugs.TRANSITIONRUN_EVENT_LOOP ? "transitionrun" : "transitionstart";
 			let delay = Math.max(this.options.throttle, 50);
 
-			if (TRANSITIONRUN_EVENT_LOOP_BUG) {
+			if (bugs.TRANSITIONRUN_EVENT_LOOP) {
 				// Safari < 18.2 fires `transitionrun` events too often, so we need to debounce.
 				// Wait at least the amount of time needed for the transition to run + 1 frame (~16ms)
 				let times = getTimesFor(
@@ -172,7 +174,7 @@ export default class ElementStyleObserver {
 		let cs = getComputedStyle(this.target);
 
 		for (let property of properties) {
-			if (UNREGISTERED_TRANSITION_BUG && !this.constructor.properties.has(property)) {
+			if (bugs.UNREGISTERED_TRANSITION && !this.constructor.properties.has(property)) {
 				// Init property
 				gentleRegisterProperty(property, undefined, this.target.ownerDocument.defaultView);
 				this.constructor.properties.add(property);
@@ -182,7 +184,7 @@ export default class ElementStyleObserver {
 			this.properties.set(property, value);
 		}
 
-		if (TRANSITIONRUN_EVENT_LOOP_BUG) {
+		if (bugs.TRANSITIONRUN_EVENT_LOOP) {
 			this.target.addEventListener("transitionrun", this);
 		}
 
