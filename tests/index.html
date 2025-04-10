@@ -18,7 +18,7 @@
 				test_url += ".js";
 			}
 
-			if (/^\w+\.\w+$/.test(test_url)) {
+			if (/^[-\w]+\.\w+$/.test(test_url)) {
 				test_url = `./${test_url}`;
 			}
 
