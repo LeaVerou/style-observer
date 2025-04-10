@@ -12,12 +12,6 @@
  */
 const intersectionObservers = new WeakMap();
 
-/**
- * Elements observed for which their IO has not yet fired
- * @type {WeakSet<Element>}
- **/
-const uninitialized = new WeakSet();
-
 export default class RenderedObserver {
 	/**
 	 * All currently observed targets
@@ -40,18 +34,12 @@ export default class RenderedObserver {
 		if (!io) {
 			io = new IntersectionObserver(
 				entries => {
-					let targets = [];
-					for (const entry of entries) {
-						if (uninitialized.has(entry.target)) {
-							uninitialized.delete(entry.target);
-						}
-						else if (entry.isIntersecting) {
-							targets.push(entry.target);
-						}
-					}
+					let records = entries
+						.filter(e => e.isIntersecting)
+						.map(({ target }) => ({ target }));
 
-					if (targets.length > 0) {
-						this.callback(targets.map(target => ({ target })));
+					if (records.length > 0) {
+						this.callback(records);
 					}
 				},
 				{ root: doc.documentElement },
@@ -60,7 +48,6 @@ export default class RenderedObserver {
 			intersectionObservers.set(doc, io);
 		}
 
-		uninitialized.add(element);
 		this.#targets.add(element);
 		io.observe(element);
 	}
@@ -82,7 +69,6 @@ export default class RenderedObserver {
 		let io = intersectionObservers.get(doc);
 
 		io?.unobserve(element);
-		uninitialized.delete(element);
 		this.#targets.delete(element);
 	}
 }
