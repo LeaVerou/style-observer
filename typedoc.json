@@ -2,7 +2,7 @@
 {
 	"out": "./api",
 	"json": "./api/docs.json",
-	"name": "Style Observer API Docs",
+	"name": "Style Observer API",
 	"entryPoints": [
 		"src/**/*.js"
 	],
@@ -16,6 +16,10 @@
 		"html": true,
 		"linkify": true,
 		"typographer": true
+	},
+	"navigationLinks": {
+		"Home": "https://observe.style",
+		"GitHub": "https://github.com/LeaVerou/style-observer"
 	},
 	"favicon": "assets/logo.svg",
 	"hostedBaseUrl": "https://observe.style/api",
