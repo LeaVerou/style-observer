@@ -82,7 +82,7 @@ export default class ElementStyleObserver {
 		this.options = { properties: [], ...options };
 		let properties = toArray(options.properties);
 
-		this.renderedObserver = new RenderedObserver(() => {
+		this.renderedObserver = new RenderedObserver(records => {
 			if (this.propertyNames.length > 0) {
 				this.handleEvent();
 			}

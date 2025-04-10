@@ -6,18 +6,18 @@
  * - The element becomes visible from display: none
  */
 
-/**
- * Documents to IntersectionObserver instances
- * @type {WeakMap<Document, IntersectionObserver>}
- */
-const intersectionObservers = new WeakMap();
-
 export default class RenderedObserver {
 	/**
 	 * All currently observed targets
 	 * @type {WeakSet<Element>}
 	 */
 	#targets = new Set();
+
+	/**
+	 * Documents to IntersectionObserver instances
+	 * @type {WeakMap<Document, IntersectionObserver>}
+	 */
+	#intersectionObservers = new WeakMap();
 
 	constructor (callback) {
 		this.callback = callback;
@@ -34,23 +34,17 @@ export default class RenderedObserver {
 		}
 
 		let doc = element.ownerDocument;
-		let io = intersectionObservers.get(doc);
+		let io = this.#intersectionObservers.get(doc);
 
 		if (!io) {
 			io = new IntersectionObserver(
 				entries => {
-					let records = entries
-						.filter(e => e.isIntersecting)
-						.map(({ target }) => ({ target }));
-
-					if (records.length > 0) {
-						this.callback(records);
-					}
+					this.callback(entries.map(({ target }) => ({ target })));
 				},
 				{ root: doc.documentElement },
 			);
 
-			intersectionObservers.set(doc, io);
+			this.#intersectionObservers.set(doc, io);
 		}
 
 		this.#targets.add(element);
@@ -71,7 +65,7 @@ export default class RenderedObserver {
 		}
 
 		let doc = element.ownerDocument;
-		let io = intersectionObservers.get(doc);
+		let io = this.#intersectionObservers.get(doc);
 
 		io?.unobserve(element);
 		this.#targets.delete(element);
