@@ -28,6 +28,11 @@ export default class RenderedObserver {
 	 * @param {Element} element - The element to observe.
 	 */
 	observe (element) {
+		if (this.#targets.has(element)) {
+			// Already observing this element
+			return;
+		}
+
 		let doc = element.ownerDocument;
 		let io = intersectionObservers.get(doc);
 

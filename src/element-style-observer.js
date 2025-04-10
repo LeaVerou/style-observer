@@ -82,16 +82,15 @@ export default class ElementStyleObserver {
 		this.options = { properties: [], ...options };
 		let properties = toArray(options.properties);
 
-		if (properties.length > 0) {
-			this.observe(properties);
-		}
-
 		this.renderedObserver = new RenderedObserver(() => {
 			if (this.propertyNames.length > 0) {
 				this.handleEvent();
 			}
 		});
-		this.renderedObserver.observe(this.target);
+
+		if (properties.length > 0) {
+			this.observe(properties);
+		}
 	}
 
 	/**
@@ -201,6 +200,8 @@ export default class ElementStyleObserver {
 		this.target.addEventListener("transitionstart", this);
 		this.target.addEventListener("transitionend", this);
 		this.updateTransitionProperties();
+
+		this.renderedObserver.observe(this.target);
 	}
 
 	/**
@@ -293,9 +294,11 @@ export default class ElementStyleObserver {
 		}
 
 		if (this.properties.size === 0) {
+			// No longer observing any properties
 			this.target.removeEventListener("transitionrun", this);
 			this.target.removeEventListener("transitionstart", this);
 			this.target.removeEventListener("transitionend", this);
+			this.renderedObserver.unobserve(this.target);
 		}
 
 		this.updateTransitionProperties();
