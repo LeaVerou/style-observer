@@ -108,7 +108,41 @@ export default class ElementStyleObserver {
 	 * @param {TransitionEvent} event
 	 */
 	async handleEvent (event) {
-		if (!this.properties.has(event.propertyName)) {
+		if (event.type === "animationstart") {
+			let animation = document.getAnimations().find(a => a.effect.target === this.target);
+			let keyframes = animation.effect.getKeyframes();
+			let properties = new Set(keyframes.flatMap(frame => 
+				Object.keys(frame).filter(property => !["offset", "easing", "composite", "computedOffset"].includes(property))
+			));
+
+			// Transform camelCase property names to kebab-case CSS property names
+			properties = [...properties].map(property => property.replace(/([A-Z])/g, "-$1").toLowerCase());
+
+			// Get the observed properties that are being animated by the animation
+			properties = [...properties].filter(property => this.properties.has(property));
+
+			if (properties.length === 0) {
+				return;
+			}
+			else {
+				let interval = setInterval(() => this.#handleChanges(properties), this.options.animationThrottle ?? 16); // 16ms ~ 60fps
+
+				let cleanup = event => {
+					if (event.animationName === animation.animationName) {
+						clearInterval(interval);
+						this.target.removeEventListener("animationend", cleanup);
+						this.target.removeEventListener("animationcancel", cleanup);
+
+						// Pick up the recent changes
+						this.#handleChanges(properties);
+					}
+				};
+
+				this.target.addEventListener("animationend", cleanup);
+				this.target.addEventListener("animationcancel", cleanup);
+			}
+		}
+		else if (!this.properties.has(event.propertyName)) {
 			return;
 		}
 
@@ -134,11 +168,15 @@ export default class ElementStyleObserver {
 			this.target.addEventListener(eventName, this);
 		}
 
+		// Other properties may have changed in the meantime
+		this.#handleChanges();
+	}
+
+	#handleChanges (properties = this.propertyNames) {
 		let cs = getComputedStyle(this.target);
 		let records = [];
 
-		// Other properties may have changed in the meantime
-		for (let property of this.propertyNames) {
+		for (let property of properties) {
 			let value = cs.getPropertyValue(property);
 			let oldValue = this.properties.get(property);
 
@@ -190,6 +228,7 @@ export default class ElementStyleObserver {
 
 		this.target.addEventListener("transitionstart", this);
 		this.target.addEventListener("transitionend", this);
+		this.target.addEventListener("animationstart", this);
 		this.updateTransitionProperties();
 	}
 
@@ -286,6 +325,7 @@ export default class ElementStyleObserver {
 			this.target.removeEventListener("transitionrun", this);
 			this.target.removeEventListener("transitionstart", this);
 			this.target.removeEventListener("transitionend", this);
+			this.target.removeEventListener("animationstart", this);
 		}
 
 		this.updateTransitionProperties();
