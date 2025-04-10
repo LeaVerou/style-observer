@@ -157,6 +157,7 @@ Just like other observers, changes that happen too close together (set the `thro
 with an array of records, one for each change.
 
 Each record is an object with the following properties:
+
 - `target`: The element that changed
 - `property`: The property that changed
 - `value`: The new value of the property
@@ -169,30 +170,10 @@ Each record is an object with the following properties:
 
 ## Limitations & Caveats
 
-### Disconnected elements
-
-You cannot observe changes on elements not connected to a document.
-
-### Transitions & Animations
-
-- You cannot observe `transition` and `animation` properties.
-- You cannot observe changes caused by CSS animations.
-
-### Observing `display`
-
-Observing `display` is inconsistent across browsers (see [relevant tests](tests/?test=display)):
-
-<div class="scrollable">
-
-| Rule | Chrome | Firefox | Safari | Safari (iOS) | Samsung Internet |
-| --- | --- | --- | --- | --- | --- |
-| From `display: none` | ❌ | ❌ | ❌ | ❌ | ❌ |
-| To `display: none` | ❌ | ❌ | ✅ | ✅ | ❌ |
-| From not `none` to not `none` |  ✅ | ❌ | ✅ | ✅ | ✅ |
-
-</div>
-
-To observe elements becoming visible or not visible, you may want to take a look at [`IntersectionObserver`](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API).
+- You cannot observe changes on elements **not connected to a document**. However, once the elements become connected again, the observer will pick up any changes that happened while they were disconnected.
+- You cannot observe changes to `transition` and `animation` properties (and their constituent properties).
+- You cannot observe changes **caused by CSS animations** (follow [#87](https://github.com/LeaVerou/style-observer/issues/87) for updates).
+- Changes caused due to a slotted element being moved to a different slot will not be picked up.
 
 ### Changing `transition` properties after observing
 
@@ -200,8 +181,9 @@ If you change the `transition`/`transition-*` properties dynamically on elements
 the easiest way to ensure the observer continues working as expected is to call `observer.updateTransition(targets)` to regenerate the `transition` property the observer uses to detect changes.
 
 If running JS is not an option, you can also do it manually:
+
 1. Add `, var(--style-observer-transition, --style-observer-noop)` at the end of your `transition` property.
-E.g. if instead of `transition: 1s background` you'd set `transition: 1s background, var(--style-observer-transition, --style-observer-noop)`.
+   E.g. if instead of `transition: 1s background` you'd set `transition: 1s background, var(--style-observer-transition, --style-observer-noop)`.
 2. Make sure to also set `transition-behavior: allow-discrete;`.
 
 ## Prior Art
@@ -209,11 +191,11 @@ E.g. if instead of `transition: 1s background` you'd set `transition: 1s backgro
 The quest for a JS style observer has been long and torturous.
 
 - Early attempts used polling. Notable examples were [`ComputedStyleObserver` by Keith Clark](https://github.com/keithclark/ComputedStyleObserver)
-and [`StyleObserver` by PixelsCommander](https://github.com/PixelsCommander/StyleObserver)
+  and [`StyleObserver` by PixelsCommander](https://github.com/PixelsCommander/StyleObserver)
 - [Jane Ori](https://propjockey.io) was the first to do better than polling, her [css-var-listener](https://github.com/propjockey/css-var-listener) using a combination of observers and events.
 - [css-variable-observer](https://github.com/fluorumlabs/css-variable-observer) by [Artem Godin](https://github.com/fluorumlabs) pioneered using transition events to observe property changes, and used an ingenious hack based on `font-variation-settings` to observe CSS property changes.
 - Four years later, [Bramus Van Damme](https://github.com/bramus) pioneered a way to do it "properly" in [style-observer](https://github.com/bramus/style-observer),
-thanks to [`transition-behavior: allow-discrete`](https://caniuse.com/mdn-css_properties_transition-behavior) becoming Baseline and even [blogged about all the bugs he encountered along the way](https://www.bram.us/2024/08/31/introducing-bramus-style-observer-a-mutationobserver-for-css/).
+  thanks to [`transition-behavior: allow-discrete`](https://caniuse.com/mdn-css_properties_transition-behavior) becoming Baseline and even [blogged about all the bugs he encountered along the way](https://www.bram.us/2024/08/31/introducing-bramus-style-observer-a-mutationobserver-for-css/).
 
 While `StyleObserver` builds on this body of work, it is not a fork of any of them.
 It was written from scratch with the explicit goal of extending browser support and robustness.
@@ -225,4 +207,5 @@ It was written from scratch with the explicit goal of extending browser support 
 <hr class="readme-only" />
 
 By [Lea Verou](https://lea.verou.me/) and [Dmitry Sharabin](https://d12n.me/).
+
 </footer>
