@@ -1,6 +1,6 @@
 <header class="wa-split">
 
-# <img src="assets/logo.svg" class="logo" width="60"> Style <span>Observer</span>
+<h1 data-version="{{ pkg.version }}"><img src="assets/logo.svg" class="logo" width="60"> Style <span>Observer</span></h1>
 
 <nav>
 	<a href="/api">API</a>

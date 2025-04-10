@@ -1,4 +1,3 @@
-
 @import url("https://kit.fontawesome.com/5956551eb3.css");
 @import url("https://early.webawesome.com/webawesome@3.0.0-alpha.10/dist/styles/themes/default.css");
 @import url("https://early.webawesome.com/webawesome@3.0.0-alpha.10/dist/styles/webawesome.css");
@@ -9,7 +8,8 @@
 	--max-page-width: min(120ch, 100% - 2em);
 	--max-content-width: min(80ch, 100% - 2em);
 	--body-padding: 1em;
-	--rainbow: conic-gradient(in oklch,
+	--rainbow: conic-gradient(
+		in oklch,
 		var(--wa-color-red-60),
 		var(--wa-color-yellow-80),
 		var(--wa-color-green-70),
@@ -28,7 +28,8 @@ body {
 	flex-flow: column;
 }
 
-header, footer {
+header,
+footer {
 	box-sizing: content-box;
 	padding-inline: clamp(1em, 50vw - var(--max-page-width) / 2, 50vw);
 	max-width: var(--max-page-width);
@@ -67,7 +68,16 @@ h1 {
 	font-size: var(--wa-font-size-2xl);
 	font-weight: 900;
 	line-height: 1;
-	letter-spacing: -.02em;
+	letter-spacing: -0.02em;
+
+	&[data-version]::after {
+		content: "v" attr(data-version);
+		display: inline-block;
+		margin-inline-start: var(--wa-space-2xs);
+		font-size: var(--wa-font-size-s);
+		font-weight: var(--wa-font-weight-semibold);
+		color: var(--wa-color-on-quiet);
+	}
 
 	.logo {
 		width: 1.6em;
@@ -93,7 +103,8 @@ header {
 	z-index: 1;
 	display: flex;
 	align-items: center;
-	border-bottom: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-surface-border);
+	border-bottom: var(--wa-border-style) var(--wa-panel-border-width)
+		var(--wa-color-surface-border);
 	padding-block: var(--wa-space-s);
 	background: var(--wa-color-surface-default);
 
@@ -136,7 +147,8 @@ nav {
 }
 
 aside {
-	border-inline-end: var(--wa-border-style) var(--wa-panel-border-width) var(--wa-color-surface-border);
+	border-inline-end: var(--wa-border-style) var(--wa-panel-border-width)
+		var(--wa-color-surface-border);
 	padding-block: var(--wa-space-l);
 	padding-inline: var(--wa-space-l);
 
@@ -203,16 +215,21 @@ pre:has(code) {
 	overflow-x: auto;
 }
 
-
 .blurb {
 	font-size: var(--wa-font-size-l);
 	font-weight: var(--wa-font-weight-semibold);
 	line-height: var(--wa-line-height-condensed);
 }
 
-:nth-child(1) { --index: 1; }
-:nth-child(2) { --index: 2; }
-:nth-child(3) { --index: 3; }
+:nth-child(1) {
+	--index: 1;
+}
+:nth-child(2) {
+	--index: 2;
+}
+:nth-child(3) {
+	--index: 3;
+}
 
 .social {
 	max-width: 80ch;
@@ -221,7 +238,7 @@ pre:has(code) {
 
 	h1 {
 		font-size: var(--wa-font-size-4xl);
-		translate: -.1em 0;
+		translate: -0.1em 0;
 	}
 
 	.logo {
@@ -239,7 +256,7 @@ pre:has(code) {
 		margin-top: var(--wa-space-xs);
 
 		> span {
-			transition: .1s calc(1s * var(--index)) ease-in-out;
+			transition: 0.1s calc(1s * var(--index)) ease-in-out;
 			@starting-style {
 				opacity: 0;
 			}
