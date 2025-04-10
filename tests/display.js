@@ -13,21 +13,24 @@ export default {
 
 		let observer;
 		return new Promise((resolve, reject) => {
-			observer = new StyleObserver(records => {
-				resolve(records);
-			}, { target: dummy, properties: ["display"] });
+			observer = new StyleObserver(
+				records => {
+					resolve(records);
+				},
+				{ target: dummy, properties: ["display"] },
+			);
 
 			dummy.style.setProperty("display", to);
 
 			// Timeout after 500ms
 			setTimeout(() => reject(), 500);
 		})
-		.then(records => records[0].value)
-		.catch(() => "Timed out")
-		.finally(() => {
-			observer.unobserve();
-			dummy.remove();
-		});
+			.then(records => records[0].value)
+			.catch(() => "Timed out")
+			.finally(() => {
+				observer.unobserve();
+				dummy.remove();
+			});
 	},
 
 	tests: [
