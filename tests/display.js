@@ -46,5 +46,10 @@ export default {
 			arg: { from: "grid", to: "flex" },
 			expect: "flex",
 		},
+		{
+			name: "From not none to not none (flex to grid)",
+			arg: { from: "flex", to: "grid" },
+			expect: "grid",
+		},
 	],
 };
