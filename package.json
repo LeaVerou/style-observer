@@ -4,17 +4,22 @@
   "version": "0.0.6",
   "main": "index.js",
   "exports": {
-    ".": "./index.js"
+    ".": {
+      "import": "./index.js",
+      "types": "./types/index.d.ts"
+    }
   },
   "scripts": {
     "test": "open tests/index.html",
     "release": "release-it",
     "build:apidocs": "npx typedoc",
     "build:html": "npx @11ty/eleventy --config=_build/eleventy.js --quiet",
+    "build:types": "tsc --allowJs --emitDeclarationOnly --outDir types --declaration index.js",
     "build": "npm run build:html & npm run build:apidocs",
     "watch:apidocs": "npx typedoc --watch --preserveWatchOutput",
     "watch:html": "npx @11ty/eleventy --config=_build/eleventy.js --serve --quiet",
-    "watch": "npm run watch:html & npm run watch:apidocs"
+    "watch": "npm run watch:html & npm run watch:apidocs",
+    "prepublishOnly": "npm run build:types"
   },
   "keywords": [],
   "contributors": [
@@ -39,7 +44,8 @@
     "prettier-plugin-merge": "^0.7.2",
     "prettier-plugin-space-before-function-paren": "^0.0.5",
     "release-it": "^18.0.0",
-    "typedoc": "^0.27.6",
-    "typedoc-plugin-rename-defaults": "^0.7.2"
+    "typedoc": "^0.28.2",
+    "typedoc-plugin-rename-defaults": "^0.7.3",
+    "typescript": "^5.8.3"
   }
 }
