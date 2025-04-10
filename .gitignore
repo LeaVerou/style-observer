@@ -4,5 +4,6 @@ Thumbs.db
 
 # Build artifacts
 api/
+types/
 index.html
 social.html
