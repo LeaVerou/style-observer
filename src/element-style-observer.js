@@ -2,6 +2,7 @@ import bugs from "./util/detect-bugs.js";
 import gentleRegisterProperty from "./util/gentle-register-property.js";
 import MultiWeakMap from "./util/MultiWeakMap.js";
 import { toArray, wait, getTimesFor } from "./util.js";
+import RenderedObserver from "./rendered-observer.js";
 
 // We register this as non-inherited so that nested targets work as expected
 gentleRegisterProperty("--style-observer-transition", { inherits: false });
@@ -81,6 +82,12 @@ export default class ElementStyleObserver {
 		this.options = { properties: [], ...options };
 		let properties = toArray(options.properties);
 
+		this.renderedObserver = new RenderedObserver(() => {
+			if (this.propertyNames.length > 0) {
+				this.handleEvent();
+			}
+		});
+
 		if (properties.length > 0) {
 			this.observe(properties);
 		}
@@ -105,15 +112,17 @@ export default class ElementStyleObserver {
 	}
 
 	/**
-	 * @param {TransitionEvent} event
+	 * Handle a potential property change
+	 * @private
+	 * @param {TransitionEvent} [event]
 	 */
 	async handleEvent (event) {
-		if (!this.properties.has(event.propertyName)) {
+		if (event && !this.properties.has(event.propertyName)) {
 			return;
 		}
 
 		if (
-			(bugs.TRANSITIONRUN_EVENT_LOOP && event.type === "transitionrun") ||
+			(bugs.TRANSITIONRUN_EVENT_LOOP && event?.type === "transitionrun") ||
 			this.options.throttle > 0
 		) {
 			let eventName = bugs.TRANSITIONRUN_EVENT_LOOP ? "transitionrun" : "transitionstart";
@@ -191,6 +200,8 @@ export default class ElementStyleObserver {
 		this.target.addEventListener("transitionstart", this);
 		this.target.addEventListener("transitionend", this);
 		this.updateTransitionProperties();
+
+		this.renderedObserver.observe(this.target);
 	}
 
 	/**
@@ -283,9 +294,11 @@ export default class ElementStyleObserver {
 		}
 
 		if (this.properties.size === 0) {
+			// No longer observing any properties
 			this.target.removeEventListener("transitionrun", this);
 			this.target.removeEventListener("transitionstart", this);
 			this.target.removeEventListener("transitionend", this);
+			this.renderedObserver.unobserve(this.target);
 		}
 
 		this.updateTransitionProperties();
