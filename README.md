@@ -34,7 +34,7 @@ Detects browser bugs and works around them, so you don't have to.
 [![gzip size](https://img.shields.io/badge/gzip-2.73kB-blue)](https://pkg-size.dev/style-observer)
 
 - <span>✅</span> Observe changes to custom properties
-- <span>✅</span> Observe changes to standard properties (except `display`, `transition`, `animation`)
+- <span>✅</span> Observe changes to standard properties (except `transition` and `animation`)
 - <span>✅</span> Observe changes on any element (including those in Shadow DOM)
 - <span>✅</span> [Lightweight](https://pkg-size.dev/style-observer), ESM-only code, with no dependencies
 - <span>✅</span> [200+ unit tests](tests) you can run in your browser of choice
