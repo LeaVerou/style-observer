@@ -112,5 +112,22 @@ export default {
 			args: ["--not-registered", "1", "0"],
 			expect: "1",
 		},
+		{
+			name: "Don't fire pointlessly immediately after starting observing",
+
+			run () {
+				let { observer, element, result } = this.data;
+
+				requestAnimationFrame(() => {
+					observer.observe(element, "opacity");
+				});
+
+				setTimeout(() => result.resolve("Didn't fire"), 500);
+
+				return result.promise;
+			},
+
+			expect: "Didn't fire",
+		},
 	],
 };
