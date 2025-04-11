@@ -7,15 +7,53 @@ export default {
 		let iframe = document.createElement("iframe");
 		document.body.append(iframe);
 
-		this.data.iframe = iframe;
+		iframe.srcdoc = this.args[0];
 
-		iframe.srcdoc = "";
-		if (this.data.srcdoc !== undefined) {
-			iframe.srcdoc = this.data.srcdoc;
-		}
+		let result = {};
+		result.promise = new Promise((resolve, reject) => {
+			result.resolve = resolve;
+			result.reject = reject;
+		});
+
+		let observer = new RenderedObserver(records => {
+			result.resolve(records);
+		});
+
+		Object.assign(this.data, { iframe, observer, result });
 
 		return new Promise(resolve => (iframe.onload = resolve));
 	},
+
+	run (DOM, target, property, value) {
+		target = this.data.iframe.contentDocument.getElementById(target);
+		let element = this.data.method && this.data.iframe.contentDocument.getElementById(value);
+
+		let observer;
+		return new Promise((resolve, reject) => {
+			observer = new RenderedObserver(records => {
+				resolve(records);
+			});
+			observer.observe(target);
+
+			requestAnimationFrame(() => {
+				if (this.data.method) {
+					target[property](element);
+				}
+				else {
+					target[property] = value;
+				}
+			});
+
+			setTimeout(() => reject(), 500);
+		})
+			.then(records => records.length > 0)
+			.catch(() => "Timed out")
+			.finally(() => {
+				observer.unobserve();
+			});
+	},
+
+	expect: true,
 
 	afterEach () {
 		this.data.iframe.remove();
@@ -23,56 +61,105 @@ export default {
 
 	tests: [
 		{
-			name: "Light DOM",
+			name: "Move element",
+
+			getName (...args) {
+				let [DOM, target, method, element] = args;
+				return `${target}.${method}(${element})`;
+			},
 
 			data: {
-				srcdoc: `
-					<div id=container>
-						Container content
-					</div>
-
-					<div id=child>Child content</div>
-				`,
+				method: true,
 			},
-
-			run (operation) {
-				let container = this.data.iframe.contentDocument.getElementById("container");
-				let child = this.data.iframe.contentDocument.getElementById("child");
-
-				if (operation === "after") {
-					container.append(child);
-				}
-
-				let observer;
-				return new Promise((resolve, reject) => {
-					observer = new RenderedObserver(records => {
-						resolve(records);
-					});
-					observer.observe(container);
-
-					requestAnimationFrame(() => {
-						container[operation](child);
-					});
-
-					setTimeout(() => reject(), 500);
-				})
-					.then(records => records.length > 0)
-					.catch(() => "Timed out")
-					.finally(() => {
-						observer.unobserve();
-					});
-			},
-
-			expect: true,
 
 			tests: [
 				{
-					name: "To container",
-					arg: "append",
+					args: [
+						`<div id="container">
+							Container content
+						</div>
+						<div id="child">Child content</div>`,
+						"container",
+						"append",
+						"child",
+					],
 				},
 				{
-					name: "After container",
-					arg: "after",
+					args: [
+						`<div id="container">
+							Container content
+							<div id="child">Child content</div>
+						</div>`,
+						"container",
+						"after",
+						"child",
+					],
+				},
+			],
+		},
+		{
+			name: "Shadow DOM",
+			tests: [
+				{
+					name: "Slot",
+					args: [
+						`<div>
+							<template shadowrootmode="open">
+								Shadow content
+								<slot name="foo"></slot>
+							</template>
+							<div id="element">Element content</div>
+						</div>`,
+						"element",
+						"slot",
+						"foo",
+					],
+				},
+				{
+					name: "Change slot (from existing to existing)",
+					args: [
+						`<div>
+							<template shadowrootmode="open">
+								Shadow content
+								<slot name="foo"></slot>
+								<slot name="bar"></slot>
+							</template>
+							<div slot="foo" id="slotted">Slotted content</div>
+						</div>`,
+						"slotted",
+						"slot",
+						"bar",
+					],
+				},
+				{
+					name: "Change slot (from non-existing to existing)",
+					args: [
+						`<div>
+							<template shadowrootmode="open">
+								Shadow content
+								<slot name="foo"></slot>
+							</template>
+							<div slot="bar" id="slotted">Slotted content</div>
+						</div>`,
+						"slotted",
+						"slot",
+						"foo",
+					],
+				},
+				{
+					name: "Unslot",
+					args: [
+						`<div>
+							<template shadowrootmode="open">
+								Shadow content
+								<slot name="foo"></slot>
+							</template>
+							<div slot="foo" id="slotted">Slotted content</div>
+						</div>`,
+						"slotted",
+						"slot",
+						""
+					],
 				},
 			],
 		},
