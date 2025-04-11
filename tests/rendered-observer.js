@@ -39,6 +39,9 @@ export default {
 				if (this.data.method) {
 					target[property](element);
 				}
+				else if (this.data.style) {
+					target.style[property] = value;
+				}
 				else {
 					target[property] = value;
 				}
@@ -163,5 +166,18 @@ export default {
 				},
 			],
 		},
+		{
+			name: "Visibility",
+			data: {
+				style: true,
+			},
+			tests: [{from: "block", to: "none"}, {from: "none", to: "block"}].map(({ from, to }) => {
+				let DOM = `<div id="element" style="display: ${from}">Element content</div>`;
+				return {
+					name: `Change from “${from}” to “${to}”`,
+					args: [DOM, "element", "display", to],
+				};
+			}),
+		}
 	],
 };
