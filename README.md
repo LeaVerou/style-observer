@@ -71,7 +71,7 @@ Detects browser bugs and works around them, so you don't have to.
 </tr>
 <tr>
 	<td>Standard properties (discrete)
-	<br><small class="compat wa-caption-s">Except <code>display</code>, <code>transition</code>, <code>animation</code></small>
+	<br><small class="compat wa-caption-s">Except <code>transition</code>, <code>animation</code></small>
 	</td>
 	<td>117</td>
 	<td>17.4</td>
