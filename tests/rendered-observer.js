@@ -24,7 +24,7 @@ export default {
 		return new Promise(resolve => (iframe.onload = resolve));
 	},
 
-	run (DOM, target, property, value) {
+	run (html, target, property, value) {
 		target = this.data.iframe.contentDocument.getElementById(target);
 		let element = this.data.method && this.data.iframe.contentDocument.getElementById(value);
 
@@ -66,8 +66,7 @@ export default {
 		{
 			name: "Move element",
 
-			getName (...args) {
-				let [DOM, target, method, element] = args;
+			getName (html, target, method, element) {
 				return `${target}.${method}(${element})`;
 			},
 
@@ -172,10 +171,10 @@ export default {
 				style: true,
 			},
 			tests: [{from: "block", to: "none"}, {from: "none", to: "block"}].map(({ from, to }) => {
-				let DOM = `<div id="element" style="display: ${from}">Element content</div>`;
+				let html = `<div id="element" style="display: ${from}">Element content</div>`;
 				return {
 					name: `Change from “${from}” to “${to}”`,
-					args: [DOM, "element", "display", to],
+					args: [html, "element", "display", to],
 				};
 			}),
 		}
