@@ -52,6 +52,12 @@ export default class ElementStyleObserver {
 	target;
 
 	/**
+	 * A weak reference to the element's root node.
+	 * @type {WeakRef<Document|ShadowRoot>}
+	 */
+	rootNode;
+
+	/**
 	 * The callback to call when the element's style changes.
 	 * @type {StyleObserverCallback}
 	 */
@@ -79,11 +85,18 @@ export default class ElementStyleObserver {
 		this.constructor.all.add(target, this);
 		this.properties = new Map();
 		this.target = target;
+		this.rootNode = new WeakRef(target.getRootNode());
 		this.callback = callback;
 		this.options = { properties: [], ...options };
 		let properties = toArray(options.properties);
 
 		this.renderedObserver = new RenderedObserver(records => {
+			if (this.target.getRootNode() !== this.rootNode.deref()) {
+				// The element was moved to another document or shadow root
+				this.rootNode = new WeakRef(this.target.getRootNode());
+				this.#setTreeCSS(this.rootNode.deref());
+			}
+
 			if (this.propertyNames.length > 0) {
 				this.handleEvent();
 			}
@@ -105,7 +118,7 @@ export default class ElementStyleObserver {
 		let firstTime = this.constructor.all.get(this.target).size === 1;
 		this.updateTransition({ firstTime });
 
-		this.#setTreeCSS(this.target.getRootNode());
+		this.#setTreeCSS(this.rootNode.deref());
 
 		this.#initialized = true;
 	}
