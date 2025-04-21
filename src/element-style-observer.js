@@ -105,14 +105,7 @@ export default class ElementStyleObserver {
 		let firstTime = this.constructor.all.get(this.target).size === 1;
 		this.updateTransition({ firstTime });
 
-		// Initialize transition behavior for the main document
-		this.#setTransitionBehavior(this.target.ownerDocument);
-
-		// If the target is in a shadow root, initialize that too
-		let root = this.target.getRootNode();
-		if (root instanceof ShadowRoot) {
-			this.#setTransitionBehavior(root);
-		}
+		this.#setTransitionBehavior(this.target.getRootNode());
 
 		this.#initialized = true;
 	}
