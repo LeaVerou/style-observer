@@ -4,7 +4,7 @@ let style;
  * @param {string} css
  */
 export default function adoptCSS (css, document = globalThis.document) {
-	let window = document.defaultView;
+	let window = document.defaultView ?? document.ownerDocument?.defaultView;
 	if (document.adoptedStyleSheets) {
 		let sheet = new window.CSSStyleSheet();
 		sheet.replaceSync(css);
