@@ -3,21 +3,21 @@ let style;
 /**
  * @param {string} css
  */
-export default function adoptCSS (css, document = globalThis.document) {
-	let window = document.defaultView ?? document.ownerDocument?.defaultView;
-	if (document.adoptedStyleSheets) {
+export default function adoptCSS (css, root = globalThis.document) {
+	let window = root.defaultView ?? root.ownerDocument?.defaultView;
+	if (root.adoptedStyleSheets) {
 		let sheet = new window.CSSStyleSheet();
 		sheet.replaceSync(css);
 
-		if (Object.isFrozen(document.adoptedStyleSheets)) {
-			document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
+		if (Object.isFrozen(root.adoptedStyleSheets)) {
+			root.adoptedStyleSheets = [...root.adoptedStyleSheets, sheet];
 		}
 		else {
-			document.adoptedStyleSheets.push(sheet);
+			root.adoptedStyleSheets.push(sheet);
 		}
 	}
 	else {
-		style ??= document.head.appendChild(document.createElement("style"));
+		style ??= root.head.appendChild(root.createElement("style"));
 
 		style.insertAdjacentText("beforeend", css);
 	}
