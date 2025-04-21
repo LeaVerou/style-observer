@@ -105,21 +105,21 @@ export default class ElementStyleObserver {
 		let firstTime = this.constructor.all.get(this.target).size === 1;
 		this.updateTransition({ firstTime });
 
-		this.#setTransitionBehavior(this.target.getRootNode());
+		this.#setTreeCSS(this.target.getRootNode());
 
 		this.#initialized = true;
 	}
 
 	/**
-	 * Set (ones per root) transition behavior on an element's root node (document or shadow root).
-	 * @param {Document|ShadowRoot} root - The root node to set transition behavior on.
+	 * Set (ones per root) CSS on an element's root node (document or shadow root).
+	 * @param {Document|ShadowRoot} root - The root node to set CSS on.
 	 */
-	#setTransitionBehavior (root) {
+	#setTreeCSS (root) {
 		if (this.constructor.rootNodes.has(root)) {
 			return;
 		}
 
-		// Set separately to maximize browser support
+		// Set separately from other transition properties to maximize browser support
 		adoptCSS("* { transition-behavior: allow-discrete !important }", root);
 		this.constructor.rootNodes.add(root);
 	}
