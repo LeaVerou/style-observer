@@ -3,6 +3,7 @@ import gentleRegisterProperty from "./util/gentle-register-property.js";
 import MultiWeakMap from "./util/MultiWeakMap.js";
 import { toArray, wait, getTimesFor } from "./util.js";
 import RenderedObserver from "./rendered-observer.js";
+import adoptCSS from "./util/adopt-css.js";
 
 // We register this as non-inherited so that nested targets work as expected
 gentleRegisterProperty("--style-observer-transition", { inherits: false });
@@ -96,7 +97,7 @@ export default class ElementStyleObserver {
 	/**
 	 * Called the first time observe() is called to initialize the target.
 	 */
-	#init() {
+	#init () {
 		if (this.#initialized) {
 			return;
 		}
@@ -104,7 +105,30 @@ export default class ElementStyleObserver {
 		let firstTime = this.constructor.all.get(this.target).size === 1;
 		this.updateTransition({ firstTime });
 
+		// Initialize transition behavior for the main document
+		this.#setTransitionBehavior(this.target.ownerDocument);
+
+		// If the target is in a shadow root, initialize that too
+		let root = this.target.getRootNode();
+		if (root instanceof ShadowRoot) {
+			this.#setTransitionBehavior(root);
+		}
+
 		this.#initialized = true;
+	}
+
+	/**
+	 * Set (ones per root) transition behavior on an element's root node (document or shadow root).
+	 * @param {Document|ShadowRoot} root - The root node to set transition behavior on.
+	 */
+	#setTransitionBehavior (root) {
+		if (this.constructor.rootNodes.has(root)) {
+			return;
+		}
+
+		// Set separately to maximize browser support
+		adoptCSS("* { transition-behavior: allow-discrete !important }", root);
+		this.constructor.rootNodes.add(root);
 	}
 
 	resolveOptions (options) {
@@ -270,10 +294,7 @@ export default class ElementStyleObserver {
 		// transition: all, var(--style-observer-transition, all);
 		// so we can't just concatenate with whatever the existing value is
 		const prefix = transition ? transition + ", " : "";
-		this.target.style.setProperty("transition", prefix + sot, "important");
-
-		// Set separately to maximize browser support
-		this.target.style.setProperty("transition-behavior", "allow-discrete", "important");
+		this.target.style.setProperty("transition", prefix + sot);
 
 		this.updateTransitionProperties();
 	}
@@ -311,6 +332,12 @@ export default class ElementStyleObserver {
 	 * All instances ever observed by this class.
 	 */
 	static all = new MultiWeakMap();
+
+	/**
+	 * All root nodes that have observed elements.
+	 * @type {WeakSet<Document|ShadowRoot>}
+	 */
+	static rootNodes = new WeakSet();
 }
 
 /**
