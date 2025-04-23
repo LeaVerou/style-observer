@@ -91,7 +91,7 @@ export default class ElementStyleObserver {
 
 		this.renderedObserver = new RenderedObserver(records => {
 			// The element might be moved to another document or shadow root
-			this.#setTreeCSS(this.target.getRootNode());
+			this.targetMoved();
 
 			if (this.propertyNames.length > 0) {
 				this.handleEvent();
@@ -114,31 +114,9 @@ export default class ElementStyleObserver {
 		let firstTime = this.constructor.all.get(this.target).size === 1;
 		this.updateTransition({ firstTime });
 
-		this.#setTreeCSS(this.target.getRootNode());
+		this.targetMoved();
 
 		this.#initialized = true;
-	}
-
-	/**
-	 * Set (ones per root) CSS on an element's root node (document or shadow root).
-	 * @param {Document|ShadowRoot} root - The root node to set CSS on.
-	 */
-	#setTreeCSS (root) {
-		// Ensure root is always a document
-		root = root.ownerDocument ?? root;
-
-		if (this.constructor.rootNodes.has(root)) {
-			return;
-		}
-
-		if (root !== this.#rootNode?.deref()) {
-			// The element was moved to another document or shadow root
-			this.#rootNode = new WeakRef(root);
-		}
-
-		// Set separately from other transition properties to maximize browser support
-		adoptCSS("* { transition-behavior: allow-discrete !important }", root);
-		this.constructor.rootNodes.add(root);
 	}
 
 	resolveOptions (options) {
@@ -307,6 +285,28 @@ export default class ElementStyleObserver {
 		this.target.style.setProperty("transition", prefix + sot);
 
 		this.updateTransitionProperties();
+	}
+
+	/**
+	 * Set (ones per root) CSS on an element's root node (document or shadow root).
+	 */
+	targetMoved () {
+		let root = this.target.getRootNode();
+		root = root.ownerDocument ?? root; // ensure root is always a document
+
+		if (this.constructor.rootNodes.has(root)) {
+			return;
+		}
+
+		if (root !== this.#rootNode?.deref()) {
+			// The element was moved to another document or shadow root
+			this.#rootNode = new WeakRef(root);
+		}
+
+		// Set separately from other transition properties to maximize browser support
+		adoptCSS("* { transition-behavior: allow-discrete !important }", root);
+
+		this.constructor.rootNodes.add(root);
 	}
 
 	/**
