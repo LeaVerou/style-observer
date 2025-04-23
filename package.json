@@ -34,6 +34,10 @@
   "bugs": {
     "url": "https://github.com/LeaVerou/style-observer/issues"
   },
+  "funding": {
+    "type": "individual",
+    "url": "https://github.com/sponsors/LeaVerou"
+  },
   "license": "MIT",
   "type": "module",
   "devDependencies": {
