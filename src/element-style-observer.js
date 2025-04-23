@@ -91,7 +91,7 @@ export default class ElementStyleObserver {
 
 		this.renderedObserver = new RenderedObserver(records => {
 			// The element might be moved to another document or shadow root
-			this.targetMoved();
+			this.initRootNode();
 
 			if (this.propertyNames.length > 0) {
 				this.handleEvent();
@@ -114,7 +114,7 @@ export default class ElementStyleObserver {
 		let firstTime = this.constructor.all.get(this.target).size === 1;
 		this.updateTransition({ firstTime });
 
-		this.targetMoved();
+		this.initRootNode();
 
 		this.#initialized = true;
 	}
@@ -290,7 +290,7 @@ export default class ElementStyleObserver {
 	/**
 	 * Set (ones per root) CSS on an element's root node (document or shadow root).
 	 */
-	targetMoved () {
+	initRootNode () {
 		let root = this.target.getRootNode();
 		root = root.ownerDocument ?? root; // ensure root is always a document
 
