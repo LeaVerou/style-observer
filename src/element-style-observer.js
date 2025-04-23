@@ -3,6 +3,7 @@ import gentleRegisterProperty from "./util/gentle-register-property.js";
 import MultiWeakMap from "./util/MultiWeakMap.js";
 import { toArray, wait, getTimesFor } from "./util.js";
 import RenderedObserver from "./rendered-observer.js";
+import adoptCSS from "./util/adopt-css.js";
 
 // We register this as non-inherited so that nested targets work as expected
 gentleRegisterProperty("--style-observer-transition", { inherits: false });
@@ -51,6 +52,12 @@ export default class ElementStyleObserver {
 	target;
 
 	/**
+	 * A weak reference to the element's root node.
+	 * @type {WeakRef<Document|ShadowRoot>}
+	 */
+	#rootNode;
+
+	/**
 	 * The callback to call when the element's style changes.
 	 * @type {StyleObserverCallback}
 	 */
@@ -83,6 +90,9 @@ export default class ElementStyleObserver {
 		let properties = toArray(options.properties);
 
 		this.renderedObserver = new RenderedObserver(records => {
+			// The element might be moved to another document or shadow root
+			this.initRootNode();
+
 			if (this.propertyNames.length > 0) {
 				this.handleEvent();
 			}
@@ -96,13 +106,15 @@ export default class ElementStyleObserver {
 	/**
 	 * Called the first time observe() is called to initialize the target.
 	 */
-	#init() {
+	#init () {
 		if (this.#initialized) {
 			return;
 		}
 
 		let firstTime = this.constructor.all.get(this.target).size === 1;
 		this.updateTransition({ firstTime });
+
+		this.initRootNode();
 
 		this.#initialized = true;
 	}
@@ -270,12 +282,31 @@ export default class ElementStyleObserver {
 		// transition: all, var(--style-observer-transition, all);
 		// so we can't just concatenate with whatever the existing value is
 		const prefix = transition ? transition + ", " : "";
-		this.target.style.setProperty("transition", prefix + sot, "important");
-
-		// Set separately to maximize browser support
-		this.target.style.setProperty("transition-behavior", "allow-discrete", "important");
+		this.target.style.setProperty("transition", prefix + sot);
 
 		this.updateTransitionProperties();
+	}
+
+	/**
+	 * Set (ones per root) CSS on an element's root node (document or shadow root).
+	 */
+	initRootNode () {
+		let root = this.target.getRootNode();
+		root = root.ownerDocument ?? root; // ensure root is always a document
+
+		if (this.constructor.rootNodes.has(root)) {
+			return;
+		}
+
+		if (root !== this.#rootNode?.deref()) {
+			// The element was moved to another document or shadow root
+			this.#rootNode = new WeakRef(root);
+		}
+
+		// Set separately from other transition properties to maximize browser support
+		adoptCSS("* { transition-behavior: allow-discrete !important }", root);
+
+		this.constructor.rootNodes.add(root);
 	}
 
 	/**
@@ -311,6 +342,12 @@ export default class ElementStyleObserver {
 	 * All instances ever observed by this class.
 	 */
 	static all = new MultiWeakMap();
+
+	/**
+	 * All root nodes that have observed elements.
+	 * @type {WeakSet<Document|ShadowRoot>}
+	 */
+	static rootNodes = new WeakSet();
 }
 
 /**
