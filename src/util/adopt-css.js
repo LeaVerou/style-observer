@@ -1,4 +1,4 @@
-let style;
+let styles = new WeakMap();
 
 /**
  * Adopt CSS into a document or shadow root.
@@ -9,6 +9,7 @@ export default function adoptCSS (css, root = globalThis.document) {
 	// Ensure root is always a document
 	root = root.ownerDocument ?? root;
 	let window = root.defaultView;
+
 	if (root.adoptedStyleSheets) {
 		let sheet = new window.CSSStyleSheet();
 		sheet.replaceSync(css);
@@ -19,10 +20,19 @@ export default function adoptCSS (css, root = globalThis.document) {
 		else {
 			root.adoptedStyleSheets.push(sheet);
 		}
+
+		return sheet;
 	}
 	else {
-		style ??= root.head.appendChild(root.createElement("style"));
+		let style = styles.get(root);
+
+		if (!style) {
+			style = root.head.appendChild(root.createElement("style"));
+			styles.set(root, style);
+		}
 
 		style.insertAdjacentText("beforeend", css);
+
+		return style.sheet;
 	}
 }
