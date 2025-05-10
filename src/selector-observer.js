@@ -49,12 +49,16 @@ export default class SelectorObserver {
 	}
 
 	handleEvent (event) {
+		let { target } = event;
 		if (event.type === "transitionend") {
-			console.log("transitionend", event.target);
+			let selector = decode(event.propertyName.replace(/^--selector-observer-selector-/, ""));
+
+			console.log("transitionend", event.target, selector);
 			// this.callback(event.target);
 		}
 		else if (event.type === "animationend") {
-			console.log("animationend", event.target);
+			let selector = decode(event.animationName.replace(/^selector-observer-/, ""));
+			console.log("animationend", event.target, selector);
 			// this.callback(event.target);
 		}
 	}
@@ -84,8 +88,8 @@ export default class SelectorObserver {
 		if (immediate) {
 			let records = [];
 			for (let root of this.#roots.keys()) {
-				for (let element of root.querySelectorAll(selector)) {
-					let record = { root, element, selector, immediate: true };
+				for (let target of root.querySelectorAll(selector)) {
+					let record = { root, target, selector, immediate: true };
 					records.push(record);
 				}
 			}
@@ -114,38 +118,49 @@ export default class SelectorObserver {
 	}
 
 	#updateCSS(root) {
-		let selectorList = Array.from(this.#selectors).join(",");
-		let css;
-
-		if (this.options.any || true) {
-			css = `
-			@property --selector-observer-any {
-				syntax: "<integer>";
-				initial-value: 0;
-				inherits: false;
-			}
-
-			@keyframes selector-observer-any {
-
-			}
-
-			${selectorList} {
-				--selector-observer-any: 1;
-				transition: --selector-observer-any 1ms step-start;
-				animation: selector-observer-any 1ms step-end;
-
-				@starting-style {
-					--selector-observer-any: 0;
-				}
-			}`;
+		if (this.#selectors.size === 0 && !this.#roots.get(root)) {
+			return;
 		}
-		else {
-			css = `
-			${selectorList} {
-				transition: var(--style-observer-transition);
+
+		let selectorList = Array.from(this.#selectors);
+		let ids = this.options.any ? ["any"] : selectorList.map(selector => encode(selector));
+
+		let animationNames = ids.map(id => "selector-observer-" + id);
+		let transitionProperties = ids.map(id => "--selector-observer-selector-" + id);
+
+		let css = `
+		${transitionProperties
+			.map(
+				property => `@property ${property} {
+			syntax: "<integer>";
+			initial-value: 0;
+			inherits: false;
+		}`,
+			)
+			.join("\n")}
+
+		${animationNames.map(animationName => `@keyframes ${animationName} {}`).join("\n")}
+
+		${selectorList.join(",")} {
+			${transitionProperties.map(property => `${property}: 1`).join(";\n")};
+			--selector-observer-animation: ${animationNames.map(animationName => `${animationName} 1ms step-end`).join(",")};
+			--selector-observer-transition: ${transitionProperties.map(property => `${property} 1ms step-start`).join(",")};
+			transition: var(--selector-observer-transition), var(--style-observer-transition, --style-observer-noop);
+			animation: var(--selector-observer-animation);
+
+			@starting-style {
+				${transitionProperties.map(property => `${property}: 0`).join(";\n")}
 			}
+		}
+
+		${selectorList
+			.map(
+				(selector, index) => `${selector} {
+			${transitionProperties[index]}: 1;
+		}`,
+			)
+			.join("\n")}
 		`;
-		}
 
 		let sheet = this.#roots.get(root);
 
@@ -159,4 +174,20 @@ export default class SelectorObserver {
 	}
 
 	disconnect () {}
+}
+
+export function encode (str) {
+	let utf8 = new TextEncoder().encode(str);
+	let bin = "";
+	for (let byte of utf8) bin += String.fromCharCode(byte);
+	return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+export function decode (encoded) {
+	let pad = encoded.length % 4;
+	if (pad) encoded += "=".repeat(4 - pad);
+	let base64 = encoded.replace(/-/g, "+").replace(/_/g, "/");
+	let binary = atob(base64);
+	let bytes = Uint8Array.from(binary, char => char.charCodeAt(0));
+	return new TextDecoder().decode(bytes);
 }
