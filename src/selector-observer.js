@@ -141,9 +141,9 @@ export default class SelectorObserver {
 
 		${animationNames.map(animationName => `@keyframes ${animationName} {}`).join("\n")}
 
-		${selectorList.join(",")} {
+		${selectorList.join(", ")} {
 			${transitionProperties.map(property => `${property}: 1`).join(";\n")};
-			--selector-observer-animation: ${animationNames.map(animationName => `${animationName} 1ms step-end`).join(",")};
+			--selector-observer-animation: ${ids.map(id => `var(--selector-observer-animation-${id}, selector-observer-animation-noop)`).join(" ")};
 			--selector-observer-transition: ${transitionProperties.map(property => `${property} 1ms step-start`).join(",")};
 			transition: var(--selector-observer-transition), var(--style-observer-transition, --style-observer-noop);
 			animation: var(--selector-observer-animation);
@@ -157,6 +157,7 @@ export default class SelectorObserver {
 			.map(
 				(selector, index) => `${selector} {
 			${transitionProperties[index]}: 1;
+			--selector-observer-animation-${ids[index]}: ${animationNames[index]} 1ms step-end, ;
 		}`,
 			)
 			.join("\n")}

@@ -19,7 +19,10 @@
 
 			observer.observe("#test p", { immediate: true });
 			observer.observe("p.foo");
+			observer.observe("div.bar");
+			console.log("insert Test 2");
 			test.insertAdjacentHTML("beforeend", "<p>Test 2</p>");
+			console.log("add foo class");
 			document.querySelector("p:last-child").classList.add("foo");
 		</script>
 	</body>
