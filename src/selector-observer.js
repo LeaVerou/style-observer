@@ -70,13 +70,13 @@ export default class SelectorObserver {
 			return;
 		}
 
-		this.#roots.delete(root);
-
 		let sheet = this.#roots.get(root);
-
+		
 		if (sheet) {
 			unadoptCSS(sheet, root);
 		}
+
+		this.#roots.delete(root);
 	}
 
 	/**
