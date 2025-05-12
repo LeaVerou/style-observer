@@ -142,7 +142,6 @@ export default class SelectorObserver {
 		${animationNames.map(animationName => `@keyframes ${animationName} {}`).join("\n")}
 
 		${selectorList.join(", ")} {
-			${transitionProperties.map(property => `${property}: 1`).join(";\n")};
 			--selector-observer-animation: ${ids.map(id => `var(--selector-observer-animation-${id}, selector-observer-animation-noop)`).join(" ")};
 			--selector-observer-transition: ${transitionProperties.map(property => `${property} 1ms step-start`).join(",")};
 			transition: var(--selector-observer-transition), var(--style-observer-transition, --style-observer-noop);
