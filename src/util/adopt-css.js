@@ -15,7 +15,7 @@ export function adoptCSS (css, options = {}) {
 
 	// Ensure root is always a document
 	let root = options.root?.getRootNode?.() ?? options.root ?? globalThis.document;
-	let window = options.root.defaultView;
+	let window = root.defaultView;
 
 	if (root.adoptedStyleSheets) {
 		let sheet = new window.CSSStyleSheet();
