@@ -223,19 +223,12 @@ export default class ElementStyleObserver {
 
 		properties = [...new Set(properties)]; // Dedupe
 
-		let supportsAllowDiscrete = CSS.supports("transition-behavior", "allow-discrete");
+		const allowDiscrete = CSS.supports("transition-behavior", "allow-discrete") ? " allow-discrete" : "";
 
 		// Only add properties not already present
 		let transition = properties
 			.filter(property => !transitionProperties.has(property))
-			.map(property => {
-				let transition = `${property} 1ms step-start`;
-				if (supportsAllowDiscrete) {
-					// Set only if supported (to maximize browser support)
-					transition += " allow-discrete";
-				}
-				return transition;
-			})
+			.map(property => `${property} 1ms step-start${allowDiscrete}`)
 			.join(", ");
 
 		this.target.style.setProperty("--style-observer-transition", transition);
