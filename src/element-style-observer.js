@@ -52,12 +52,6 @@ export default class ElementStyleObserver {
 	target;
 
 	/**
-	 * A weak reference to the element's root node.
-	 * @type {WeakRef<Document|ShadowRoot>}
-	 */
-	#rootNode;
-
-	/**
 	 * The callback to call when the element's style changes.
 	 * @type {StyleObserverCallback}
 	 */
@@ -90,9 +84,6 @@ export default class ElementStyleObserver {
 		let properties = toArray(options.properties);
 
 		this.renderedObserver = new RenderedObserver(records => {
-			// The element might be moved to another document or shadow root
-			this.initRootNode();
-
 			if (this.propertyNames.length > 0) {
 				this.handleEvent();
 			}
@@ -113,8 +104,6 @@ export default class ElementStyleObserver {
 
 		let firstTime = this.constructor.all.get(this.target).size === 1;
 		this.updateTransition({ firstTime });
-
-		this.initRootNode();
 
 		this.#initialized = true;
 	}
@@ -234,10 +223,19 @@ export default class ElementStyleObserver {
 
 		properties = [...new Set(properties)]; // Dedupe
 
-		// Only add properties not already present and not excluded
+		let supportsAllowDiscrete = CSS.supports("transition-behavior", "allow-discrete");
+
+		// Only add properties not already present
 		let transition = properties
 			.filter(property => !transitionProperties.has(property))
-			.map(property => `${property} 1ms step-start`)
+			.map(property => {
+				let transition = `${property} 1ms step-start`;
+				if (supportsAllowDiscrete) {
+					// Set only if supported (to maximize browser support)
+					transition += " allow-discrete";
+				}
+				return transition;
+			})
 			.join(", ");
 
 		this.target.style.setProperty("--style-observer-transition", transition);
@@ -285,28 +283,6 @@ export default class ElementStyleObserver {
 		this.target.style.setProperty("transition", prefix + sot);
 
 		this.updateTransitionProperties();
-	}
-
-	/**
-	 * Set (ones per root) CSS on an element's root node (document or shadow root).
-	 */
-	initRootNode () {
-		let root = this.target.getRootNode();
-		root = root.ownerDocument ?? root; // ensure root is always a document
-
-		if (this.constructor.rootNodes.has(root)) {
-			return;
-		}
-
-		if (root !== this.#rootNode?.deref()) {
-			// The element was moved to another document or shadow root
-			this.#rootNode = new WeakRef(root);
-		}
-
-		// Set separately from other transition properties to maximize browser support
-		adoptCSS("* { transition-behavior: allow-discrete !important }", root);
-
-		this.constructor.rootNodes.add(root);
 	}
 
 	/**
