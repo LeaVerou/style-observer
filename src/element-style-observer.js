@@ -3,10 +3,11 @@ import gentleRegisterProperty from "./util/gentle-register-property.js";
 import MultiWeakMap from "./util/MultiWeakMap.js";
 import { toArray, wait, getTimesFor } from "./util.js";
 import RenderedObserver from "./rendered-observer.js";
-import adoptCSS from "./util/adopt-css.js";
 
 // We register this as non-inherited so that nested targets work as expected
 gentleRegisterProperty("--style-observer-transition", { inherits: false });
+
+const allowDiscrete = CSS.supports("transition-behavior", "allow-discrete") ? " allow-discrete" : "";
 
 /**
  * @typedef { object } StyleObserverOptionsObject
@@ -222,8 +223,6 @@ export default class ElementStyleObserver {
 		}
 
 		properties = [...new Set(properties)]; // Dedupe
-
-		const allowDiscrete = CSS.supports("transition-behavior", "allow-discrete") ? " allow-discrete" : "";
 
 		// Only add properties not already present
 		let transition = properties
