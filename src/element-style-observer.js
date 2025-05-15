@@ -264,7 +264,7 @@ export default class ElementStyleObserver {
 			transition = getComputedStyle(this.target).transition;
 		}
 
-		if (transition === "all") {
+		if (transition === "all" || transition === "none") {
 			transition = "";
 		}
 
