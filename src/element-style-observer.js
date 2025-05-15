@@ -74,7 +74,7 @@ export default class ElementStyleObserver {
 	/**
 	 * @param {Element} target
 	 * @param {StyleObserverCallback} callback
-	 * @param {StyleObserverOptions} options
+	 * @param {StyleObserverOptions} [options]
 	 */
 	constructor (target, callback, options = {}) {
 		this.constructor.all.add(target, this);

@@ -19,7 +19,7 @@ export default class StyleObserver {
 
 	/**
 	 * @param {StyleObserverCallback} callback
-	 * @param {StyleObserverOptions | string | string[]} options
+	 * @param {StyleObserverOptions | string | string[]} [options]
 	 */
 	constructor (callback, options) {
 		this.callback = callback;
