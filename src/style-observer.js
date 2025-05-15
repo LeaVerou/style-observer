@@ -1,4 +1,4 @@
-import ElementStyleObserver, {resolveOptions} from "./element-style-observer.js";
+import ElementStyleObserver, { resolveOptions } from "./element-style-observer.js";
 import { toArray } from "./util.js";
 
 /**
@@ -58,7 +58,7 @@ export default class StyleObserver {
 	 * @return {void}
 	 */
 	observe (...args) {
-		let {targets, properties} = resolveArgs(...args);
+		let { targets, properties } = resolveArgs(...args);
 
 		if (targets.length === 0) {
 			// Default to constructor-specified targets
@@ -73,7 +73,11 @@ export default class StyleObserver {
 			let observer = this.elementObservers.get(target);
 
 			if (!observer) {
-				observer = new ElementStyleObserver(target, records => this.changed(records), this.options);
+				observer = new ElementStyleObserver(
+					target,
+					records => this.changed(records),
+					this.options,
+				);
 				this.elementObservers.set(target, observer);
 			}
 
@@ -92,7 +96,7 @@ export default class StyleObserver {
 	 * @return {void}
 	 */
 	unobserve (...args) {
-		let {targets, properties} = resolveArgs(...args);
+		let { targets, properties } = resolveArgs(...args);
 
 		if (targets.length === 0) {
 			// Default to constructor-specified targets

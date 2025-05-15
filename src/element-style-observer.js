@@ -7,7 +7,9 @@ import RenderedObserver from "./rendered-observer.js";
 // We register this as non-inherited so that nested targets work as expected
 gentleRegisterProperty("--style-observer-transition", { inherits: false });
 
-const allowDiscrete = CSS.supports("transition-behavior", "allow-discrete") ? " allow-discrete" : "";
+const allowDiscrete = CSS.supports("transition-behavior", "allow-discrete")
+	? " allow-discrete"
+	: "";
 
 /**
  * @typedef { object } StyleObserverOptionsObject
@@ -98,7 +100,7 @@ export default class ElementStyleObserver {
 	/**
 	 * Called the first time observe() is called to initialize the target.
 	 */
-	#init () {
+	#init() {
 		if (this.#initialized) {
 			return;
 		}
