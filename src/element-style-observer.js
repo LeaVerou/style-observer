@@ -213,7 +213,7 @@ export default class ElementStyleObserver {
 	 */
 	updateTransitionProperties () {
 		// Clear our own transition
-		this.target.style.setProperty("--style-observer-transition", "");
+		this.setProperty("--style-observer-transition", "");
 
 		let transitionProperties = new Set(
 			getComputedStyle(this.target).transitionProperty.split(", "),
@@ -232,7 +232,7 @@ export default class ElementStyleObserver {
 			.map(property => `${property} 1ms step-start${allowDiscrete}`)
 			.join(", ");
 
-		this.target.style.setProperty("--style-observer-transition", transition);
+		this.setProperty("--style-observer-transition", transition);
 	}
 
 	/**
@@ -247,7 +247,7 @@ export default class ElementStyleObserver {
 	 */
 	updateTransition ({ firstTime } = {}) {
 		const sot = "var(--style-observer-transition, --style-observer-noop)";
-		const inlineTransition = this.target.style.transition;
+		const inlineTransition = this.getProperty("transition");
 		let transition;
 
 		// NOTE This code assumes that if there is an inline style, it takes precedence over other styles
@@ -260,7 +260,7 @@ export default class ElementStyleObserver {
 		if (transition === undefined && (firstTime || !this.#inlineTransition)) {
 			// Just update based on most current computed style
 			if (inlineTransition.includes(sot)) {
-				this.target.style.transition = "";
+				this.setProperty("transition", "");
 			}
 
 			transition = getComputedStyle(this.target).transition;
@@ -274,9 +274,83 @@ export default class ElementStyleObserver {
 		// transition: all, var(--style-observer-transition, all);
 		// so we can't just concatenate with whatever the existing value is
 		const prefix = transition ? transition + ", " : "";
-		this.target.style.setProperty("transition", prefix + sot);
+		this.setProperty("transition", prefix + sot);
 
 		this.updateTransitionProperties();
+	}
+
+	/**
+	 * Whether the target has an open shadow root (and the modern adoptedStyleSheets API is supported).
+	 * @type { boolean }
+	 * @private
+	 */
+	get _isHost () {
+		return (
+			this.target.shadowRoot && !Object.isFrozen(this.target.shadowRoot.adoptedStyleSheets)
+		);
+	}
+
+	/**
+	 * Shadow style sheet. Only used if _isHost is true.
+	 * @type { CSSStyleSheet | undefined }
+	 * @private
+	 */
+	_shadowSheet;
+
+	/**
+	 * Any styles we've set on the target, for any reason.
+	 * @type { Record<string, string> }
+	 * @private
+	 */
+	_styles = {};
+
+	/**
+	 * Set a CSS property on the target.
+	 * @param {string} property
+	 * @param {string} value
+	 * @return {void}
+	 */
+	setProperty (property, value) {
+		let inlineStyle = this.target.style;
+		let style = inlineStyle;
+		if (this._isHost) {
+			// This has an open shadow root.
+			// We can use an adopted shadow style to avoid manipulating its style attribute
+			if (!this._shadowSheet) {
+				this._shadowSheet = new CSSStyleSheet();
+				this._shadowSheet.insertRule(`:host { }`);
+				this.target.shadowRoot.adoptedStyleSheets.push(this._shadowSheet);
+
+				if (Object.keys(this._styles).length > 0) {
+					// It was previously not a host, so we need to port the properties over
+					for (let property in this._styles) {
+						let value = this._styles[property];
+						this.setProperty(property, value);
+
+						// Remove from inline style if it hasn't changed externally
+						if (inlineStyle.getPropertyValue(property) === value) {
+							inlineStyle.removeProperty(property);
+						}
+					}
+				}
+			}
+
+			style = this._shadowSheet.cssRules[0].style;
+		}
+
+		style.setProperty(property, value);
+		// Store reserialized value for later comparison
+		this._styles[property] = this.getProperty(property);
+	}
+
+	/**
+	 * Get a CSS property from the target.
+	 * @param {string} property
+	 * @return {string}
+	 */
+	getProperty (property) {
+		let style = this._shadowSheet?.cssRules[0]?.style ?? this.target.style;
+		return style.getPropertyValue(property);
 	}
 
 	/**
