@@ -31,7 +31,7 @@ export default function gentleRegisterProperty (property, meta = {}, window = gl
 
 	if (
 		!property.startsWith("--") ||
-		!CSS.registerProperty ||
+		!CSS?.registerProperty ||
 		isRegisteredProperty(property, window)
 	) {
 		return;
