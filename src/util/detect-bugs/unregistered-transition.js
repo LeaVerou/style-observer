@@ -3,7 +3,7 @@ let document = globalThis.document;
 let dummy = document?.createElement("div");
 document?.body.appendChild(dummy);
 let property = "--foo-" + Date.now();
-dummy?.style.cssText = `${property}: 1; transition: ${property} 1ms step-start allow-discrete`;
+if (dummy) dummy.style.cssText = `${property}: 1; transition: ${property} 1ms step-start allow-discrete`;
 
 /**
  * Detect if the browser is affected by the unregistered transition bug.
@@ -14,6 +14,6 @@ export default new Promise(resolve => {
 	requestAnimationFrame(() => {
 		setTimeout(_ => resolve(true), 30);
 		dummy?.addEventListener("transitionstart", _ => resolve(false));
-		dummy?.style.setProperty(property, "2");
+		dummy?.style?.setProperty(property, "2");
 	});
 }).finally(_ => dummy?.remove());
