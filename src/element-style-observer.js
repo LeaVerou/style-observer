@@ -7,7 +7,7 @@ import RenderedObserver from "./rendered-observer.js";
 // We register this as non-inherited so that nested targets work as expected
 gentleRegisterProperty("--style-observer-transition", { inherits: false });
 
-const allowDiscrete = globalThis.CSS?.supports("transition-behavior", "allow-discrete")
+const allowDiscrete = globalThis.CSS?.supports?.("transition-behavior", "allow-discrete")
 	? " allow-discrete"
 	: "";
 
