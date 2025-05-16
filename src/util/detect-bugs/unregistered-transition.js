@@ -11,7 +11,7 @@ if (dummy) dummy.style.cssText = `${property}: 1; transition: ${property} 1ms st
  * @type {Promise<boolean>}
  */
 export default new Promise(resolve => {
-	requestAnimationFrame(() => {
+	globalThis.requestAnimationFrame?.(() => {
 		setTimeout(_ => resolve(true), 30);
 		dummy?.addEventListener("transitionstart", _ => resolve(false));
 		dummy?.style?.setProperty(property, "2");
