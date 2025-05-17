@@ -16,7 +16,7 @@ if (dummy) { // This should only be false if there's no DOM (e.g. in Node)
 export default new Promise(resolve => {
 	if (!dummy) return resolve(false);
 	let eventsCount = 0;
-	globalThis.requestAnimationFrame(() => {
+	requestAnimationFrame(() => {
 		setTimeout(_ => resolve(eventsCount > 1), 50);
 		dummy.addEventListener("transitionrun", _ => eventsCount++);
 		dummy.style.setProperty(property, "2");
