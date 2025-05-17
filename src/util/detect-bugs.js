@@ -1,23 +1,30 @@
-import TRANSITIONRUN_EVENT_LOOP_BUG from "./detect-bugs/transitionrun-loop.js";
-import UNREGISTERED_TRANSITION_BUG from "./detect-bugs/unregistered-transition.js";
+import detectTransitionRunLoopBug from "./detect-bugs/transitionrun-loop.js";
+import detectUnregisteredTransitionBug from "./detect-bugs/unregistered-transition.js";
+
+// Cache for detection results
+let transitionRunLoopPromise = null;
+let unregisteredTransitionPromise = null;
 
 /**
- * Data structure for all detected bugs.
- * All bugs start off as true, and once their promises resolve, that is replaced with the actual value
+ * Check if the browser is affected by the Safari transitionrun loop bug
+ * @returns {Promise<boolean>}
  */
-export const bugs = {
-	TRANSITIONRUN_EVENT_LOOP: true,
-	UNREGISTERED_TRANSITION: true,
-};
+export function hasTransitionRunLoopBug() {
+	if (!transitionRunLoopPromise) {
+		transitionRunLoopPromise = detectTransitionRunLoopBug();
+	}
+	return transitionRunLoopPromise;
+}
 
-TRANSITIONRUN_EVENT_LOOP_BUG.then(value => {
-	bugs.TRANSITIONRUN_EVENT_LOOP = value;
-});
+/**
+ * Check if the browser is affected by the unregistered transition bug
+ * @returns {Promise<boolean>}
+ */
+export function hasUnregisteredTransitionBug() {
+	if (!unregisteredTransitionPromise) {
+		unregisteredTransitionPromise = detectUnregisteredTransitionBug();
+	}
+	return unregisteredTransitionPromise;
+}
 
-UNREGISTERED_TRANSITION_BUG.then(value => {
-	bugs.UNREGISTERED_TRANSITION = value;
-});
-
-export { TRANSITIONRUN_EVENT_LOOP_BUG, UNREGISTERED_TRANSITION_BUG };
-export const detected = Promise.all([TRANSITIONRUN_EVENT_LOOP_BUG, UNREGISTERED_TRANSITION_BUG]);
-export default bugs;
+export { detectTransitionRunLoopBug, detectUnregisteredTransitionBug };
