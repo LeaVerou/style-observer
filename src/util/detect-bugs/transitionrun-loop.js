@@ -14,7 +14,7 @@ if (dummy) { // This should only be false if there's no DOM (e.g. in Node)
  * @type {Promise<boolean>}
  */
 export default new Promise(resolve => {
-	if (!document) return resolve(false);
+	if (!dummy) return resolve(false);
 	let eventsCount = 0;
 	globalThis.requestAnimationFrame(() => {
 		setTimeout(_ => resolve(eventsCount > 1), 50);
