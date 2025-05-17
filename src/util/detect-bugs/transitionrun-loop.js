@@ -1,10 +1,8 @@
 // In Safari < 18.2, transitioning custom properties of syntax `*` or `<string>`
 // causes an infinite loop of `transitionrun` or `transitionstart` events.
 // We use this test to detect the bug.
-let document = globalThis.document;
-let dummy;
-if (document) {
-	dummy = document.createElement("div");
+let dummy = globalThis.document?.createElement("div");
+if (dummy) { // This should only be false if there's no DOM (e.g. in Node)
 	document.body.appendChild(dummy);
 	let property = "--bar-" + Date.now();
 	dummy.style.cssText = `${property}: 1; transition: ${property} 1ms step-start allow-discrete`;
