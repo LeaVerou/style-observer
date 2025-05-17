@@ -25,13 +25,12 @@ const INITIAL_VALUES = {
  * @param {string} [meta.syntax] - Property syntax.
  * @param {boolean} [meta.inherits] - Whether the property inherits.
  * @param {*} [meta.initialValue] - Initial value.
+ * @param {Window} [window] - The window to check in.
  */
 export default function gentleRegisterProperty (property, meta = {}, window = globalThis) {
-	let CSS = window.CSS;
-
 	if (
 		!property.startsWith("--") ||
-		!CSS?.registerProperty ||
+		!window.CSS?.registerProperty ||
 		isRegisteredProperty(property, window)
 	) {
 		return;
@@ -51,7 +50,7 @@ export default function gentleRegisterProperty (property, meta = {}, window = gl
 	}
 
 	try {
-		CSS.registerProperty(definition);
+		window.CSS.registerProperty(definition);
 	}
 	catch (e) {
 		let error = e;
@@ -71,7 +70,7 @@ export default function gentleRegisterProperty (property, meta = {}, window = gl
 				definition.syntax = "*";
 
 				try {
-					CSS.registerProperty(definition);
+					window.CSS.registerProperty(definition);
 					rethrow = false;
 				}
 				catch (e) {

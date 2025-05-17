@@ -2,10 +2,13 @@
 // causes an infinite loop of `transitionrun` or `transitionstart` events.
 // We use this test to detect the bug.
 let document = globalThis.document;
-let dummy = document?.createElement("div");
-document?.body.appendChild(dummy);
-let property = "--bar-" + Date.now();
-if (dummy) dummy.style.cssText = `${property}: 1; transition: ${property} 1ms step-start allow-discrete`;
+let dummy;
+if (document) {
+	dummy = document.createElement("div");
+	document.body.appendChild(dummy);
+	let property = "--bar-" + Date.now();
+	dummy.style.cssText = `${property}: 1; transition: ${property} 1ms step-start allow-discrete`;
+}
 
 /**
  * Detect if the browser is affected by the Safari transition loop bug.
@@ -13,10 +16,11 @@ if (dummy) dummy.style.cssText = `${property}: 1; transition: ${property} 1ms st
  * @type {Promise<boolean>}
  */
 export default new Promise(resolve => {
+	if (!document) return resolve(false);
 	let eventsCount = 0;
-	globalThis.requestAnimationFrame?.(() => {
+	globalThis.requestAnimationFrame(() => {
 		setTimeout(_ => resolve(eventsCount > 1), 50);
-		dummy?.addEventListener("transitionrun", _ => eventsCount++);
-		dummy?.style?.setProperty(property, "2");
+		dummy.addEventListener("transitionrun", _ => eventsCount++);
+		dummy.style.setProperty(property, "2");
 	});
 }).finally(() => dummy?.remove());

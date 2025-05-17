@@ -1,9 +1,12 @@
 // Detect https://issues.chromium.org/issues/360159391
 let document = globalThis.document;
-let dummy = document?.createElement("div");
-document?.body.appendChild(dummy);
-let property = "--foo-" + Date.now();
-if (dummy) dummy.style.cssText = `${property}: 1; transition: ${property} 1ms step-start allow-discrete`;
+let dummy;
+if (document) {
+	dummy = document.createElement("div");
+	document.body.appendChild(dummy);
+	let property = "--foo-" + Date.now();
+	dummy.style.cssText = `${property}: 1; transition: ${property} 1ms step-start allow-discrete`;
+}
 
 /**
  * Detect if the browser is affected by the unregistered transition bug.
@@ -11,9 +14,10 @@ if (dummy) dummy.style.cssText = `${property}: 1; transition: ${property} 1ms st
  * @type {Promise<boolean>}
  */
 export default new Promise(resolve => {
-	globalThis.requestAnimationFrame?.(() => {
+	if (!document) return resolve(false);
+	globalThis.requestAnimationFrame(() => {
 		setTimeout(_ => resolve(true), 30);
-		dummy?.addEventListener("transitionstart", _ => resolve(false));
-		dummy?.style?.setProperty(property, "2");
+		dummy.addEventListener("transitionstart", _ => resolve(false));
+		dummy.style.setProperty(property, "2");
 	});
 }).finally(_ => dummy?.remove());
