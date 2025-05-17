@@ -1,15 +1,8 @@
-import bugs from "./util/detect-bugs.js";
+import { hasTransitionRunLoopBug, hasUnregisteredTransitionBug } from "./util/detect-bugs.js";
 import gentleRegisterProperty from "./util/gentle-register-property.js";
 import MultiWeakMap from "./util/MultiWeakMap.js";
 import { toArray, wait, getTimesFor } from "./util.js";
 import RenderedObserver from "./rendered-observer.js";
-
-// We register this as non-inherited so that nested targets work as expected
-gentleRegisterProperty("--style-observer-transition", { inherits: false });
-
-const allowDiscrete = globalThis.CSS?.supports?.("transition-behavior", "allow-discrete")
-	? " allow-discrete"
-	: "";
 
 /**
  * @typedef { object } StyleObserverOptionsObject
@@ -79,6 +72,9 @@ export default class ElementStyleObserver {
 	 * @param {StyleObserverOptions} [options]
 	 */
 	constructor (target, callback, options = {}) {
+		// Register property only once an instance is created
+		gentleRegisterProperty("--style-observer-transition", { inherits: false });
+		
 		this.constructor.all.add(target, this);
 		this.properties = new Map();
 		this.target = target;
@@ -125,14 +121,16 @@ export default class ElementStyleObserver {
 			return;
 		}
 
+		const hasTransitionRunLoopBug = await this.constructor.hasTransitionRunLoopBug();
+		
 		if (
-			(bugs.TRANSITIONRUN_EVENT_LOOP && event?.type === "transitionrun") ||
+			(hasTransitionRunLoopBug && event?.type === "transitionrun") ||
 			this.options.throttle > 0
 		) {
-			let eventName = bugs.TRANSITIONRUN_EVENT_LOOP ? "transitionrun" : "transitionstart";
+			let eventName = hasTransitionRunLoopBug ? "transitionrun" : "transitionstart";
 			let delay = Math.max(this.options.throttle, 50);
 
-			if (bugs.TRANSITIONRUN_EVENT_LOOP) {
+			if (hasTransitionRunLoopBug) {
 				// Safari < 18.2 fires `transitionrun` events too often, so we need to debounce.
 				// Wait at least the amount of time needed for the transition to run + 1 frame (~16ms)
 				let times = getTimesFor(
@@ -171,7 +169,7 @@ export default class ElementStyleObserver {
 	 * @param {string | string[]} properties
 	 * @return {void}
 	 */
-	observe (properties) {
+	async observe (properties) {
 		properties = toArray(properties);
 
 		// Drop properties already being observed
@@ -187,7 +185,7 @@ export default class ElementStyleObserver {
 		let cs = getComputedStyle(this.target);
 
 		for (let property of properties) {
-			if (bugs.UNREGISTERED_TRANSITION && !this.constructor.properties.has(property)) {
+			if (await this.constructor.hasUnregisteredTransitionBug() && !this.constructor.properties.has(property)) {
 				// Init property
 				gentleRegisterProperty(property, undefined, this.target.ownerDocument.defaultView);
 				this.constructor.properties.add(property);
@@ -197,7 +195,7 @@ export default class ElementStyleObserver {
 			this.properties.set(property, value);
 		}
 
-		if (bugs.TRANSITIONRUN_EVENT_LOOP) {
+		if (await this.constructor.hasTransitionRunLoopBug()) {
 			this.target.addEventListener("transitionrun", this);
 		}
 
@@ -229,7 +227,7 @@ export default class ElementStyleObserver {
 		// Only add properties not already present
 		let transition = properties
 			.filter(property => !transitionProperties.has(property))
-			.map(property => `${property} 1ms step-start${allowDiscrete}`)
+			.map(property => `${property} 1ms step-start${this.constructor.getAllowDiscrete()}`)
 			.join(", ");
 
 		this.setProperty("--style-observer-transition", transition);
@@ -386,12 +384,56 @@ export default class ElementStyleObserver {
 	 * All instances ever observed by this class.
 	 */
 	static all = new MultiWeakMap();
+	
+	/**
+	 * Cached result of the allow-discrete support check
+	 * @type {string}
+	 * @private
+	 */
+	static #allowDiscrete = null;
 
 	/**
-	 * All root nodes that have observed elements.
-	 * @type {WeakSet<Document|ShadowRoot>}
+	 * Check if we can use the 'allow-discrete' property
+	 * @returns {string}
 	 */
-	static rootNodes = new WeakSet();
+	static getAllowDiscrete() {
+		if (this.#allowDiscrete === null) {
+			this.#allowDiscrete = CSS.supports("transition-behavior", "allow-discrete")
+				? " allow-discrete"
+				: "";
+		}
+		return this.#allowDiscrete;
+	}
+	
+	/**
+	 * Promise for the transitionrun loop bug detection
+	 * @type {Promise<boolean>}
+	 * @private
+	 */
+	static #transitionRunLoopBugPromise = hasTransitionRunLoopBug();
+	
+	/**
+	 * Check if the browser has the transitionrun loop bug
+	 * @returns {Promise<boolean>}
+	 */
+	static hasTransitionRunLoopBug() {
+		return this.#transitionRunLoopBugPromise;
+	}
+
+	/**
+	 * Promise for the unregistered transition bug detection
+	 * @type {Promise<boolean>}
+	 * @private
+	 */
+	static #unregisteredTransitionBugPromise = hasUnregisteredTransitionBug();
+	
+	/**
+	 * Check if the browser has the unregistered transition bug detection
+	 * @returns {Promise<boolean>}
+	 */
+	static hasUnregisteredTransitionBug() {
+		return this.#unregisteredTransitionBugPromise;
+	}
 }
 
 /**
