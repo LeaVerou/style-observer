@@ -1,8 +1,6 @@
 // Detect https://issues.chromium.org/issues/360159391
-let document = globalThis.document;
-let dummy;
-if (document) {
-	dummy = document.createElement("div");
+let dummy = globalThis.document?.createElement("div");
+if (dummy) { // This should only be false if there's no DOM (e.g. in Node)
 	document.body.appendChild(dummy);
 	let property = "--foo-" + Date.now();
 	dummy.style.cssText = `${property}: 1; transition: ${property} 1ms step-start allow-discrete`;
@@ -14,8 +12,8 @@ if (document) {
  * @type {Promise<boolean>}
  */
 export default new Promise(resolve => {
-	if (!document) return resolve(false);
-	globalThis.requestAnimationFrame(() => {
+	if (!dummy) return resolve(false);
+	requestAnimationFrame(() => {
 		setTimeout(_ => resolve(true), 30);
 		dummy.addEventListener("transitionstart", _ => resolve(false));
 		dummy.style.setProperty(property, "2");
