@@ -1,4 +1,4 @@
-import { hasTransitionRunLoopBug, hasUnregisteredTransitionBug } from "./util/detect-bugs.js";
+import bugs from "./util/detect-bugs.js";
 import gentleRegisterProperty from "./util/gentle-register-property.js";
 import MultiWeakMap from "./util/MultiWeakMap.js";
 import { toArray, wait, getTimesFor } from "./util.js";
@@ -120,7 +120,7 @@ export default class ElementStyleObserver {
 			return;
 		}
 
-		const hasTransitionRunLoopBug = await hasTransitionRunLoopBug();
+		const hasTransitionRunLoopBug = await bugs.transitionRunLoop();
 		
 		if (
 			(hasTransitionRunLoopBug && event?.type === "transitionrun") ||
@@ -184,7 +184,7 @@ export default class ElementStyleObserver {
 		let cs = getComputedStyle(this.target);
 
 		for (let property of properties) {
-			if (await hasUnregisteredTransitionBug() && !this.constructor.properties.has(property)) {
+			if (await bugs.unregisteredTransition() && !this.constructor.properties.has(property)) {
 				// Init property
 				gentleRegisterProperty(property, undefined, this.target.ownerDocument.defaultView);
 				this.constructor.properties.add(property);
@@ -194,7 +194,7 @@ export default class ElementStyleObserver {
 			this.properties.set(property, value);
 		}
 
-		if (await hasTransitionRunLoopBug()) {
+		if (await bugs.transitionRunLoop()) {
 			this.target.addEventListener("transitionrun", this);
 		}
 
