@@ -4,6 +4,10 @@ import MultiWeakMap from "./util/MultiWeakMap.js";
 import { toArray, wait, getTimesFor } from "./util.js";
 import RenderedObserver from "./rendered-observer.js";
 
+const allowDiscrete = globalThis.CSS?.supports("transition-behavior", "allow-discrete")
+	? " allow-discrete"
+	: "";
+
 /**
  * @typedef { object } StyleObserverOptionsObject
  * @property { string[] } properties - The properties to observe.
@@ -226,7 +230,7 @@ export default class ElementStyleObserver {
 		// Only add properties not already present
 		let transition = properties
 			.filter(property => !transitionProperties.has(property))
-			.map(property => `${property} 1ms step-start${this.constructor.getAllowDiscrete()}`)
+			.map(property => `${property} 1ms step-start${allowDiscrete}`)
 			.join(", ");
 
 		this.target.style.setProperty("--style-observer-transition", transition);
@@ -309,26 +313,6 @@ export default class ElementStyleObserver {
 	 * All instances ever observed by this class.
 	 */
 	static all = new MultiWeakMap();
-	
-	/**
-	 * Cached result of the allow-discrete support check
-	 * @type {string}
-	 * @private
-	 */
-	static #allowDiscrete = null;
-
-	/**
-	 * Check if we can use the 'allow-discrete' property
-	 * @returns {string}
-	 */
-	static getAllowDiscrete() {
-		if (this.#allowDiscrete === null) {
-			this.#allowDiscrete = CSS.supports("transition-behavior", "allow-discrete")
-				? " allow-discrete"
-				: "";
-		}
-		return this.#allowDiscrete;
-	}
 }
 
 /**
