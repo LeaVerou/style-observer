@@ -6,7 +6,7 @@ import RenderedObserver from "./rendered-observer.js";
 
 // Start bug detection early if we have a DOM
 if (globalThis.document) {
-	Bugs.detectAll();
+	Bugs.detect();
 }
 
 const allowDiscrete = globalThis.CSS?.supports("transition-behavior", "allow-discrete")
@@ -82,7 +82,7 @@ export default class ElementStyleObserver {
 	 */
 	constructor (target, callback, options = {}) {
 		gentleRegisterProperty("--style-observer-transition", { inherits: false });
-		Bugs.detectAll();
+		Bugs.detect();
 
 		this.constructor.all.add(target, this);
 		this.properties = new Map();
