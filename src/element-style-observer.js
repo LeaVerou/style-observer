@@ -72,7 +72,6 @@ export default class ElementStyleObserver {
 	 * @param {StyleObserverOptions} [options]
 	 */
 	constructor (target, callback, options = {}) {
-		// Register property only once an instance is created
 		gentleRegisterProperty("--style-observer-transition", { inherits: false });
 		
 		this.constructor.all.add(target, this);
@@ -185,7 +184,7 @@ export default class ElementStyleObserver {
 		let cs = getComputedStyle(this.target);
 
 		for (let property of properties) {
-			if (await this.constructor.hasUnregisteredTransitionBug() && !this.constructor.properties.has(property)) {
+			if (await hasUnregisteredTransitionBug() && !this.constructor.properties.has(property)) {
 				// Init property
 				gentleRegisterProperty(property, undefined, this.target.ownerDocument.defaultView);
 				this.constructor.properties.add(property);
@@ -195,7 +194,7 @@ export default class ElementStyleObserver {
 			this.properties.set(property, value);
 		}
 
-		if (await this.constructor.hasTransitionRunLoopBug()) {
+		if (await hasTransitionRunLoopBug()) {
 			this.target.addEventListener("transitionrun", this);
 		}
 
@@ -403,36 +402,6 @@ export default class ElementStyleObserver {
 				: "";
 		}
 		return this.#allowDiscrete;
-	}
-	
-	/**
-	 * Promise for the transitionrun loop bug detection
-	 * @type {Promise<boolean>}
-	 * @private
-	 */
-	static #transitionRunLoopBugPromise = hasTransitionRunLoopBug();
-	
-	/**
-	 * Check if the browser has the transitionrun loop bug
-	 * @returns {Promise<boolean>}
-	 */
-	static hasTransitionRunLoopBug() {
-		return this.#transitionRunLoopBugPromise;
-	}
-
-	/**
-	 * Promise for the unregistered transition bug detection
-	 * @type {Promise<boolean>}
-	 * @private
-	 */
-	static #unregisteredTransitionBugPromise = hasUnregisteredTransitionBug();
-	
-	/**
-	 * Check if the browser has the unregistered transition bug detection
-	 * @returns {Promise<boolean>}
-	 */
-	static hasUnregisteredTransitionBug() {
-		return this.#unregisteredTransitionBugPromise;
 	}
 }
 
