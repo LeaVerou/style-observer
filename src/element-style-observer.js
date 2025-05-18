@@ -120,7 +120,7 @@ export default class ElementStyleObserver {
 			return;
 		}
 
-		const hasTransitionRunLoopBug = await this.constructor.hasTransitionRunLoopBug();
+		const hasTransitionRunLoopBug = await hasTransitionRunLoopBug();
 		
 		if (
 			(hasTransitionRunLoopBug && event?.type === "transitionrun") ||
