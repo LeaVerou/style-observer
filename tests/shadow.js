@@ -2,6 +2,60 @@ import StyleObserver from "../index.js";
 import gentleRegisterProperty from "./util/gentle-register-property.js";
 import tests from "./tests.js";
 
+const inlineStyleTest = {
+	name: "Don't use inline styles",
+	async run ({property, meta, initial, value}) {
+		// Make the property unique
+		property += "-" + this.data.hostId;
+
+		let host = document.getElementById(this.data.hostId);
+		host.style.setProperty(property, initial);
+
+		return new Promise((resolve, reject) => {
+			let observer = new StyleObserver(records => {
+				resolve(records);
+			});
+
+			observer.observe(host, property);
+
+			requestAnimationFrame(() => {
+				host.style.setProperty(property, value);
+			});
+
+			// Timeout after 500ms
+			setTimeout(() => reject(), 500);
+		})
+		.catch(_ => {
+			return [{ value: "Timed out" }];
+		})
+		.then(records => {
+			let value = records[0].value;
+			let result = value !== "Timed out" ? "Observer fired" : "Observer did not fire";
+			let inlineValue = host.style.getPropertyValue("--style-observer-transition");
+			let adoptedValue = getComputedStyle(host).getPropertyValue("--style-observer-transition");
+
+			return { result, inlineValue, adoptedValue };
+		});
+	},
+	map (value) {
+		let { result, inlineValue, adoptedValue } = value;
+		inlineValue = inlineValue.length === 0 || inlineValue === "Empty";
+		adoptedValue = adoptedValue.length > 0;
+
+		return { result, inlineValue, adoptedValue };
+	},
+	arg: {
+		property: "--test-inline-style",
+		initial: "foo",
+		value: "bar",
+	},
+	expect: {
+		result: "Observer fired",
+		inlineValue: "Empty",
+		adoptedValue: "Not empty",
+	},
+};
+
 export default {
 	name: "Shadow DOM",
 
@@ -14,7 +68,7 @@ export default {
 
 	run ({property, meta, initial, value}) {
 		let host = document.getElementById(this.data.hostId);
-		let id = this.arg.property + "-" + CSS.escape(this.arg.value);
+		let id = property + "-" + CSS.escape(value);
 		let target = host.shadowRoot.getElementById(id);
 
 		if (property.startsWith("--")) {
@@ -65,19 +119,25 @@ export default {
 				document.body.append(host);
 			},
 			afterAll () {
-				document.getElementById("imperative-host").remove();
+				// document.getElementById("imperative-host").remove();
 			},
 			data: {
 				hostId: "imperative-host",
 			},
-			tests,
+			tests: [
+				...tests,
+				inlineStyleTest,
+			],
 		},
 		{
 			name: "Declarative",
 			data: {
 				hostId: "declarative-host",
 			},
-			tests,
+			tests: [
+				...tests,
+				inlineStyleTest,
+			],
 		},
 		{
 			name: "Registered custom element",
@@ -98,7 +158,10 @@ export default {
 			data: {
 				hostId: "registered-host",
 			},
-			tests,
+			tests: [
+				...tests,
+				inlineStyleTest,
+			],
 		},
 	],
 };
