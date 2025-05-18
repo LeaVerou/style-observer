@@ -25,9 +25,7 @@ const inlineStyleTest = {
 			// Timeout after 500ms
 			setTimeout(() => reject(), 500);
 		})
-		.catch(_ => {
-			return "Observer did not fire";
-		})
+		.catch(_ => "Observer did not fire")
 		.then(result => {
 			let inlineValue = host.style.getPropertyValue("--style-observer-transition");
 			let adoptedValue = getComputedStyle(host).getPropertyValue("--style-observer-transition");
