@@ -119,7 +119,7 @@ export default {
 				document.body.append(host);
 			},
 			afterAll () {
-				// document.getElementById("imperative-host").remove();
+				document.getElementById("imperative-host").remove();
 			},
 			data: {
 				hostId: "imperative-host",
