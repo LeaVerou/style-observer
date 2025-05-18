@@ -17,6 +17,25 @@ class Bugs {
 	static #unregisteredTransition = null;
 
 	/**
+	 * Detect all bugs in parallel
+	 * @returns {Promise<{ transitionRunLoop: boolean, unregisteredTransition: boolean }>}
+	 */
+	static async detect () {
+		const [transitionRunLoop, unregisteredTransition] = await Promise.all([
+			detectTransitionRunLoopBug(),
+			detectUnregisteredTransitionBug(),
+		]);
+
+		this.#transitionRunLoop = transitionRunLoop;
+		this.#unregisteredTransition = unregisteredTransition;
+
+		return {
+			transitionRunLoop,
+			unregisteredTransition,
+		};
+	}
+
+	/**
 	 * Whether the browser has the transition run loop bug
 	 * @type {boolean}
 	 */
@@ -42,20 +61,6 @@ class Bugs {
 			});
 		}
 		return this.#unregisteredTransition;
-	}
-
-	/**
-	 * Detect all bugs in parallel
-	 * @returns {Promise<void>}
-	 */
-	static async detectAll () {
-		const [transitionRunLoop, unregisteredTransition] = await Promise.all([
-			detectTransitionRunLoopBug(),
-			detectUnregisteredTransitionBug(),
-		]);
-
-		this.#transitionRunLoop = transitionRunLoop;
-		this.#unregisteredTransition = unregisteredTransition;
 	}
 }
 
