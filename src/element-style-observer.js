@@ -1,8 +1,13 @@
-import bugs from "./util/detect-bugs.js";
+import Bugs from "./util/detect-bugs.js";
 import gentleRegisterProperty from "./util/gentle-register-property.js";
 import MultiWeakMap from "./util/MultiWeakMap.js";
 import { toArray, wait, getTimesFor } from "./util.js";
 import RenderedObserver from "./rendered-observer.js";
+
+// Start bug detection early if we have a DOM
+if (globalThis.document) {
+	Bugs.detectAll();
+}
 
 const allowDiscrete = globalThis.CSS?.supports("transition-behavior", "allow-discrete")
 	? " allow-discrete"
@@ -77,7 +82,8 @@ export default class ElementStyleObserver {
 	 */
 	constructor (target, callback, options = {}) {
 		gentleRegisterProperty("--style-observer-transition", { inherits: false });
-		
+		Bugs.detectAll();
+
 		this.constructor.all.add(target, this);
 		this.properties = new Map();
 		this.target = target;
@@ -99,7 +105,7 @@ export default class ElementStyleObserver {
 	/**
 	 * Called the first time observe() is called to initialize the target.
 	 */
-	#init() {
+	#init () {
 		if (this.#initialized) {
 			return;
 		}
@@ -124,16 +130,14 @@ export default class ElementStyleObserver {
 			return;
 		}
 
-		const hasTransitionRunLoopBug = await bugs.transitionRunLoop();
-		
 		if (
-			(hasTransitionRunLoopBug && event?.type === "transitionrun") ||
+			(Bugs.transitionRunLoop && event?.type === "transitionrun") ||
 			this.options.throttle > 0
 		) {
-			let eventName = hasTransitionRunLoopBug ? "transitionrun" : "transitionstart";
+			let eventName = Bugs.transitionRunLoop ? "transitionrun" : "transitionstart";
 			let delay = Math.max(this.options.throttle, 50);
 
-			if (hasTransitionRunLoopBug) {
+			if (Bugs.transitionRunLoop) {
 				// Safari < 18.2 fires `transitionrun` events too often, so we need to debounce.
 				// Wait at least the amount of time needed for the transition to run + 1 frame (~16ms)
 				let times = getTimesFor(
@@ -172,7 +176,7 @@ export default class ElementStyleObserver {
 	 * @param {string | string[]} properties
 	 * @return {void}
 	 */
-	async observe (properties) {
+	observe (properties) {
 		properties = toArray(properties);
 
 		// Drop properties already being observed
@@ -188,7 +192,7 @@ export default class ElementStyleObserver {
 		let cs = getComputedStyle(this.target);
 
 		for (let property of properties) {
-			if (await bugs.unregisteredTransition() && !this.constructor.properties.has(property)) {
+			if (Bugs.unregisteredTransition && !this.constructor.properties.has(property)) {
 				// Init property
 				gentleRegisterProperty(property, undefined, this.target.ownerDocument.defaultView);
 				this.constructor.properties.add(property);
@@ -198,7 +202,7 @@ export default class ElementStyleObserver {
 			this.properties.set(property, value);
 		}
 
-		if (await bugs.transitionRunLoop()) {
+		if (Bugs.transitionRunLoop) {
 			this.target.addEventListener("transitionrun", this);
 		}
 

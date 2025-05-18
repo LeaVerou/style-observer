@@ -1,32 +1,62 @@
 import detectTransitionRunLoopBug from "./detect-bugs/transitionrun-loop.js";
 import detectUnregisteredTransitionBug from "./detect-bugs/unregistered-transition.js";
 
-// Cache for detection results
-let transitionRunLoopPromise = null;
-let unregisteredTransitionPromise = null;
-
-const bugs = {
+class Bugs {
 	/**
-	 * Check if the browser is affected by the Safari transitionrun loop bug
-	 * @returns {Promise<boolean>}
+	 * Whether the browser has the transition run loop bug
+	 * @type {boolean | null}
+	 * @private
 	 */
-	async transitionRunLoop() {
-		if (!transitionRunLoopPromise) {
-			transitionRunLoopPromise = detectTransitionRunLoopBug();
-		}
-		return transitionRunLoopPromise;
-	},
+	static #transitionRunLoop = null;
 
 	/**
-	 * Check if the browser is affected by the unregistered transition bug
-	 * @returns {Promise<boolean>}
+	 * Whether the browser has the unregistered transition bug
+	 * @type {boolean | null}
+	 * @private
 	 */
-	async unregisteredTransition() {
-		if (!unregisteredTransitionPromise) {
-			unregisteredTransitionPromise = detectUnregisteredTransitionBug();
+	static #unregisteredTransition = null;
+
+	/**
+	 * Whether the browser has the transition run loop bug
+	 * @type {boolean}
+	 */
+	static get transitionRunLoop () {
+		if (this.#transitionRunLoop === null) {
+			this.#transitionRunLoop = false; // Default to false while detecting
+			detectTransitionRunLoopBug().then(result => {
+				this.#transitionRunLoop = result;
+			});
 		}
-		return unregisteredTransitionPromise;
+		return this.#transitionRunLoop;
 	}
-};
 
-export default bugs;
+	/**
+	 * Whether the browser has the unregistered transition bug
+	 * @type {boolean}
+	 */
+	static get unregisteredTransition () {
+		if (this.#unregisteredTransition === null) {
+			this.#unregisteredTransition = false; // Default to false while detecting
+			detectUnregisteredTransitionBug().then(result => {
+				this.#unregisteredTransition = result;
+			});
+		}
+		return this.#unregisteredTransition;
+	}
+
+	/**
+	 * Detect all bugs in parallel
+	 * @returns {Promise<void>}
+	 */
+	static async detectAll () {
+		const [transitionRunLoop, unregisteredTransition] = await Promise.all([
+			detectTransitionRunLoopBug(),
+			detectUnregisteredTransitionBug(),
+		]);
+
+		this.#transitionRunLoop = transitionRunLoop;
+		this.#unregisteredTransition = unregisteredTransition;
+	}
+}
+
+export default Bugs;
