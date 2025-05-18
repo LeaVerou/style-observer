@@ -41,7 +41,7 @@ export default class Bugs {
 	 */
 	static get transitionRunLoop () {
 		if (this.#transitionRunLoop === null) {
-			this.#transitionRunLoop = false; // Default to false while detecting
+			this.#transitionRunLoop = true; // Default to true while detecting, just in case
 			detectTransitionRunLoopBug().then(result => {
 				this.#transitionRunLoop = result;
 			});
@@ -55,7 +55,7 @@ export default class Bugs {
 	 */
 	static get unregisteredTransition () {
 		if (this.#unregisteredTransition === null) {
-			this.#unregisteredTransition = false; // Default to false while detecting
+			this.#unregisteredTransition = true; // Default to true while detecting, just in case
 			detectUnregisteredTransitionBug().then(result => {
 				this.#unregisteredTransition = result;
 			});
