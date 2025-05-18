@@ -9,6 +9,7 @@
       "default": "./index.js"
     }
   },
+  "sideEffects": false,
   "scripts": {
     "test": "open tests/index.html",
     "release": "release-it",
