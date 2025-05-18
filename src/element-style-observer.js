@@ -71,7 +71,6 @@ export default class ElementStyleObserver {
 	/**
 	 * Whether the observer has been initialized.
 	 * @type {boolean}
-	 * @private
 	 */
 	#initialized = false;
 
