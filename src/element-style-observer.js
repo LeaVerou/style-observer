@@ -81,6 +81,7 @@ export default class ElementStyleObserver {
 	 */
 	constructor (target, callback, options = {}) {
 		gentleRegisterProperty("--style-observer-transition", { inherits: false });
+
 		Bugs.detect();
 
 		this.constructor.all.add(target, this);
