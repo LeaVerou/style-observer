@@ -5,14 +5,12 @@ export default class Bugs {
 	/**
 	 * Whether the browser has the transition run loop bug
 	 * @type {boolean | null}
-	 * @private
 	 */
 	static #transitionRunLoop = null;
 
 	/**
 	 * Whether the browser has the unregistered transition bug
 	 * @type {boolean | null}
-	 * @private
 	 */
 	static #unregisteredTransition = null;
 
