@@ -25,7 +25,7 @@ const INITIAL_VALUES = {
  * @param {string} [meta.syntax] - Property syntax.
  * @param {boolean} [meta.inherits] - Whether the property inherits.
  * @param {*} [meta.initialValue] - Initial value.
- * @param {Window} [window] - The window to check in.
+ * @param {Window} [window] - Window to register the property in.
  */
 export default function gentleRegisterProperty (property, meta = {}, window = globalThis) {
 	if (
