@@ -13,7 +13,7 @@ const inlineStyleTest = {
 
 		return new Promise((resolve, reject) => {
 			let observer = new StyleObserver(records => {
-				resolve(records);
+				resolve("Observer fired");
 			});
 
 			observer.observe(host, property);
@@ -26,11 +26,9 @@ const inlineStyleTest = {
 			setTimeout(() => reject(), 500);
 		})
 		.catch(_ => {
-			return [{ value: "Timed out" }];
+			return "Observer did not fire";
 		})
-		.then(records => {
-			let value = records[0].value;
-			let result = value !== "Timed out" ? "Observer fired" : "Observer did not fire";
+		.then(result => {
 			let inlineValue = host.style.getPropertyValue("--style-observer-transition");
 			let adoptedValue = getComputedStyle(host).getPropertyValue("--style-observer-transition");
 
