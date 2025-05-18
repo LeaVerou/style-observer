@@ -1,7 +1,7 @@
 import detectTransitionRunLoopBug from "./detect-bugs/transitionrun-loop.js";
 import detectUnregisteredTransitionBug from "./detect-bugs/unregistered-transition.js";
 
-class Bugs {
+export default class Bugs {
 	/**
 	 * Whether the browser has the transition run loop bug
 	 * @type {boolean | null}
@@ -63,5 +63,3 @@ class Bugs {
 		return this.#unregisteredTransition;
 	}
 }
-
-export default Bugs;
