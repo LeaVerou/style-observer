@@ -5,8 +5,9 @@
   "main": "index.js",
   "exports": {
     ".": {
-      "types": "./types/index.d.ts",
-      "default": "./index.js"
+      "import": "./index.js",
+      "require": "./index.js",
+      "types": "./types/index.d.ts"
     }
   },
   "sideEffects": false,
