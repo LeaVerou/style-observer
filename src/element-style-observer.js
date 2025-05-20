@@ -9,7 +9,7 @@ if (globalThis.document) {
 	Bugs.detect();
 }
 
-const allowDiscrete = globalThis.CSS?.supports("transition-behavior", "allow-discrete")
+const allowDiscrete = globalThis.CSS?.supports?.("transition-behavior", "allow-discrete")
 	? " allow-discrete"
 	: "";
 
