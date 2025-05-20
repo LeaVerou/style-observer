@@ -54,6 +54,9 @@ export default class StyleObserver {
 	 * @overload
 	 * @param {string | string[]} properties
 	 * @param {Element | Element[]} targets
+	 *
+	 * @overload
+	 * @param {...(string | Element | (string | Element)[]) } propertiesOrTargets
 
 	 * @return {void}
 	 */
