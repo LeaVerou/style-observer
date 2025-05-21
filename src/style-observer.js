@@ -52,15 +52,16 @@ export default class StyleObserver {
 	 * @overload
 	 * @param {Element | Element[]} targets
 	 * @param {string | string[]} properties
+	 * @returns {void}
 	 *
 	 * @overload
 	 * @param {string | string[]} properties
 	 * @param {Element | Element[]} targets
+	 * @returns {void}
 	 *
 	 * @overload
 	 * @param {...(string | Element | (string | Element)[]) } propertiesOrTargets
-
-	 * @return {void}
+	 * @returns {void}
 	 */
 	observe (...args) {
 		let { targets, properties } = resolveArgs(...args);
@@ -96,15 +97,16 @@ export default class StyleObserver {
 	 * @overload
 	 * @param {Element | Element[]} targets
 	 * @param {string | string[]} properties
+	 * @returns {void}
 	 *
 	 * @overload
 	 * @param {string | string[]} properties
 	 * @param {Element | Element[]} targets
+	 * @returns {void}
 	 *
 	 * @overload
 	 * @param {...(string | Element | (string | Element)[]) } propertiesOrTargets
-	 *
-	 * @return {void}
+	 * @returns {void}
 	 */
 	unobserve (...args) {
 		let { targets, properties } = resolveArgs(...args);
