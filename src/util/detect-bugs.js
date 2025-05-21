@@ -1,63 +1,32 @@
-import detectTransitionRunLoopBug from "./detect-bugs/transitionrun-loop.js";
-import detectUnregisteredTransitionBug from "./detect-bugs/unregistered-transition.js";
+import TRANSITIONRUN_EVENT_LOOP_BUG from "./detect-bugs/transitionrun-loop.js";
+import UNREGISTERED_TRANSITION_BUG from "./detect-bugs/unregistered-transition.js";
 
-export default class Bugs {
-	/**
-	 * Whether the browser has the transition run loop bug
-	 * @type {boolean | null}
-	 */
-	static #transitionRunLoop = null;
+export const detectors = { TRANSITIONRUN_EVENT_LOOP_BUG, UNREGISTERED_TRANSITION_BUG };
+/**
+ * Data structure for all detected bugs.
+ * All bugs start off as true, and once their promises resolve, that is replaced with the actual value
+ */
+export const bugs = {
+	detectAll () {
+		return Promise.all(Object.values(detectors).map(detector => detector.valuePending));
+	},
+};
 
-	/**
-	 * Whether the browser has the unregistered transition bug
-	 * @type {boolean | null}
-	 */
-	static #unregisteredTransition = null;
-
-	/**
-	 * Detect all bugs in parallel
-	 * @returns {Promise<{ transitionRunLoop: boolean, unregisteredTransition: boolean }>}
-	 */
-	static async detect () {
-		const [transitionRunLoop, unregisteredTransition] = await Promise.all([
-			detectTransitionRunLoopBug(),
-			detectUnregisteredTransitionBug(),
-		]);
-
-		this.#transitionRunLoop = transitionRunLoop;
-		this.#unregisteredTransition = unregisteredTransition;
-
-		return {
-			transitionRunLoop,
-			unregisteredTransition,
-		};
-	}
-
-	/**
-	 * Whether the browser has the transition run loop bug
-	 * @type {boolean}
-	 */
-	static get transitionRunLoop () {
-		if (this.#transitionRunLoop === null) {
-			this.#transitionRunLoop = true; // Default to true while detecting, just in case
-			detectTransitionRunLoopBug().then(result => {
-				this.#transitionRunLoop = result;
+for (let bug in detectors) {
+	let detector = detectors[bug];
+	Object.defineProperty(bugs, bug, {
+		get () {
+			detector.valuePending.then(value => {
+				delete this[bug];
+				this[bug] = value;
 			});
-		}
-		return this.#transitionRunLoop;
-	}
 
-	/**
-	 * Whether the browser has the unregistered transition bug
-	 * @type {boolean}
-	 */
-	static get unregisteredTransition () {
-		if (this.#unregisteredTransition === null) {
-			this.#unregisteredTransition = true; // Default to true while detecting, just in case
-			detectUnregisteredTransitionBug().then(result => {
-				this.#unregisteredTransition = result;
-			});
-		}
-		return this.#unregisteredTransition;
-	}
+			// Until we know, assume the bug is present
+			return true;
+		},
+		configurable: true,
+		enumerable: true,
+	});
 }
+
+export default bugs;
