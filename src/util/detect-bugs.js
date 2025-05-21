@@ -2,6 +2,7 @@ import TRANSITIONRUN_EVENT_LOOP_BUG from "./detect-bugs/transitionrun-loop.js";
 import UNREGISTERED_TRANSITION_BUG from "./detect-bugs/unregistered-transition.js";
 
 export const detectors = { TRANSITIONRUN_EVENT_LOOP_BUG, UNREGISTERED_TRANSITION_BUG };
+
 /**
  * Data structure for all detected bugs.
  * All bugs start off as true, and once their promises resolve, that is replaced with the actual value
