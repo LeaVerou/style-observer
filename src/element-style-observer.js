@@ -135,7 +135,7 @@ export default class ElementStyleObserver {
 			(Bugs.TRANSITIONRUN_EVENT_LOOP_BUG && event?.type === "transitionrun") ||
 			this.options.throttle > 0
 		) {
-			let eventName = Bugs.TRANSITION_RUN_LOOP_BUG ? "transitionrun" : "transitionstart";
+			let eventName = Bugs.TRANSITIONRUN_EVENT_LOOP_BUG ? "transitionrun" : "transitionstart";
 			let delay = Math.max(this.options.throttle, 50);
 
 			if (Bugs.TRANSITION_RUN_LOOP_BUG) {
