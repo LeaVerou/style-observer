@@ -48,17 +48,20 @@ export default class StyleObserver {
 
 	/**
 	 * Observe one or more targets for changes to one or more CSS properties.
+	 *
+	 * @overload
 	 * @param {Element | Element[]} targets
 	 * @param {string | string[]} properties
+	 * @returns {void}
 	 *
 	 * @overload
 	 * @param {string | string[]} properties
 	 * @param {Element | Element[]} targets
+	 * @returns {void}
 	 *
 	 * @overload
 	 * @param {...(string | Element | (string | Element)[]) } propertiesOrTargets
-
-	 * @return {void}
+	 * @returns {void}
 	 */
 	observe (...args) {
 		let { targets, properties } = resolveArgs(...args);
@@ -90,13 +93,20 @@ export default class StyleObserver {
 
 	/**
 	 * Stop observing one or more targets for changes to one or more CSS properties.
+	 *
+	 * @overload
 	 * @param {Element | Element[]} targets
 	 * @param {string | string[]} properties
+	 * @returns {void}
 	 *
 	 * @overload
 	 * @param {string | string[]} properties
 	 * @param {Element | Element[]} targets
-	 * @return {void}
+	 * @returns {void}
+	 *
+	 * @overload
+	 * @param {...(string | Element | (string | Element)[]) } propertiesOrTargets
+	 * @returns {void}
 	 */
 	unobserve (...args) {
 		let { targets, properties } = resolveArgs(...args);
