@@ -5,13 +5,14 @@ import { toArray, wait, getTimesFor } from "./util.js";
 import RenderedObserver from "./rendered-observer.js";
 
 // Start bug detection early if we have a DOM
+let allowDiscrete = "";
 if (globalThis.document) {
-	Bugs.detect();
-}
+	Bugs.detectAll();
 
-const allowDiscrete = globalThis.CSS?.supports?.("transition-behavior", "allow-discrete")
-	? " allow-discrete"
-	: "";
+	allowDiscrete = globalThis.CSS?.supports?.("transition-behavior", "allow-discrete")
+		? " allow-discrete"
+		: "";
+}
 
 /**
  * @typedef { object } StyleObserverOptionsObject
@@ -105,7 +106,7 @@ export default class ElementStyleObserver {
 	/**
 	 * Called the first time observe() is called to initialize the target.
 	 */
-	#init () {
+	#init() {
 		if (this.#initialized) {
 			return;
 		}
