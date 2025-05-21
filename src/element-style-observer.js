@@ -203,7 +203,7 @@ export default class ElementStyleObserver {
 			this.properties.set(property, value);
 		}
 
-		if (Bugs.TRANSITION_RUN_LOOP_BUG) {
+		if (Bugs.TRANSITIONRUN_EVENT_LOOP_BUG) {
 			this.target.addEventListener("transitionrun", this);
 		}
 
