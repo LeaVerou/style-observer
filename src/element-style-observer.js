@@ -132,7 +132,7 @@ export default class ElementStyleObserver {
 		}
 
 		if (
-			(Bugs.TRANSITION_RUN_LOOP_BUG && event?.type === "transitionrun") ||
+			(Bugs.TRANSITIONRUN_EVENT_LOOP_BUG && event?.type === "transitionrun") ||
 			this.options.throttle > 0
 		) {
 			let eventName = Bugs.TRANSITION_RUN_LOOP_BUG ? "transitionrun" : "transitionstart";
