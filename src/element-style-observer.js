@@ -266,8 +266,11 @@ export default class ElementStyleObserver {
 			transition = getComputedStyle(this.target).transition;
 		}
 
-		// Don't disable transitions on properties we are observing. See https://github.com/LeaVerou/style-observer/issues/107
-		transition = transition.replace("none", "");
+		if (transition.startsWith("none ")) {
+			// transition-property: none;
+			// Don't disable transitions on properties we are observing. See https://github.com/LeaVerou/style-observer/issues/107
+			transition = transition.slice(5);
+		}
 
 		if (transition === "all") {
 			transition = "";
