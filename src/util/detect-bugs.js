@@ -13,7 +13,7 @@ export const bugs = {
 };
 
 for (let bug in detectors) {
-	let detector = bugs[bug];
+	let detector = detectors[bug];
 	Object.defineProperty(bugs, bug, {
 		get () {
 			detector.valuePending.then(value => {
