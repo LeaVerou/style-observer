@@ -26,7 +26,6 @@ for (let bug in detectors) {
 		},
 		configurable: true,
 		enumerable: true,
-		writable: true,
 	});
 }
 
