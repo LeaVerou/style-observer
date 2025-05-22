@@ -1,4 +1,4 @@
-import Bugs from "./util/detect-bugs.js";
+import bugs from "./util/detect-bugs.js";
 import gentleRegisterProperty from "./util/gentle-register-property.js";
 import MultiWeakMap from "./util/MultiWeakMap.js";
 import { toArray, wait, getTimesFor } from "./util.js";
@@ -10,7 +10,7 @@ const allowDiscrete = globalThis.CSS?.supports?.("transition-behavior", "allow-d
 
 if (globalThis.document) {
 	gentleRegisterProperty("--style-observer-transition", { inherits: false });
-	Bugs.detectAll();
+	bugs.detectAll();
 }
 
 /**
@@ -127,13 +127,13 @@ export default class ElementStyleObserver {
 		}
 
 		if (
-			(Bugs.TRANSITIONRUN_EVENT_LOOP_BUG && event?.type === "transitionrun") ||
+			(bugs.TRANSITIONRUN_EVENT_LOOP_BUG && event?.type === "transitionrun") ||
 			this.options.throttle > 0
 		) {
-			let eventName = Bugs.TRANSITIONRUN_EVENT_LOOP_BUG ? "transitionrun" : "transitionstart";
+			let eventName = bugs.TRANSITIONRUN_EVENT_LOOP_BUG ? "transitionrun" : "transitionstart";
 			let delay = Math.max(this.options.throttle, 50);
 
-			if (Bugs.TRANSITIONRUN_EVENT_LOOP_BUG) {
+			if (bugs.TRANSITIONRUN_EVENT_LOOP_BUG) {
 				// Safari < 18.2 fires `transitionrun` events too often, so we need to debounce.
 				// Wait at least the amount of time needed for the transition to run + 1 frame (~16ms)
 				let times = getTimesFor(
@@ -188,7 +188,7 @@ export default class ElementStyleObserver {
 		let cs = getComputedStyle(this.target);
 
 		for (let property of properties) {
-			if (Bugs.UNREGISTERED_TRANSITION_BUG && !this.constructor.properties.has(property)) {
+			if (bugs.UNREGISTERED_TRANSITION_BUG && !this.constructor.properties.has(property)) {
 				// Init property
 				gentleRegisterProperty(property, undefined, this.target.ownerDocument.defaultView);
 				this.constructor.properties.add(property);
@@ -198,7 +198,7 @@ export default class ElementStyleObserver {
 			this.properties.set(property, value);
 		}
 
-		if (Bugs.TRANSITIONRUN_EVENT_LOOP_BUG) {
+		if (bugs.TRANSITIONRUN_EVENT_LOOP_BUG) {
 			this.target.addEventListener("transitionrun", this);
 		}
 
