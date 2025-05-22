@@ -1,7 +1,7 @@
-import TRANSITIONRUN_EVENT_LOOP_BUG from "./detect-bugs/transitionrun-loop.js";
-import UNREGISTERED_TRANSITION_BUG from "./detect-bugs/unregistered-transition.js";
+import TRANSITIONRUN_EVENT_LOOP from "./detect-bugs/transitionrun-loop.js";
+import UNREGISTERED_TRANSITION from "./detect-bugs/unregistered-transition.js";
 
-export const detectors = { TRANSITIONRUN_EVENT_LOOP_BUG, UNREGISTERED_TRANSITION_BUG };
+export const detectors = { TRANSITIONRUN_EVENT_LOOP, UNREGISTERED_TRANSITION };
 
 /**
  * Data structure for all detected bugs.
