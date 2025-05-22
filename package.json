@@ -10,7 +10,6 @@
       "types": "./types/index.d.ts"
     }
   },
-  "sideEffects": false,
   "scripts": {
     "test": "open tests/index.html",
     "release": "release-it",
