@@ -1,23 +1,33 @@
-import TRANSITIONRUN_EVENT_LOOP_BUG from "./detect-bugs/transitionrun-loop.js";
-import UNREGISTERED_TRANSITION_BUG from "./detect-bugs/unregistered-transition.js";
+import TRANSITIONRUN_EVENT_LOOP from "./detect-bugs/transitionrun-loop.js";
+import UNREGISTERED_TRANSITION from "./detect-bugs/unregistered-transition.js";
+
+export const detectors = { TRANSITIONRUN_EVENT_LOOP, UNREGISTERED_TRANSITION };
 
 /**
  * Data structure for all detected bugs.
  * All bugs start off as true, and once their promises resolve, that is replaced with the actual value
  */
 export const bugs = {
-	TRANSITIONRUN_EVENT_LOOP: true,
-	UNREGISTERED_TRANSITION: true,
+	detectAll () {
+		return Promise.all(Object.values(detectors).map(detector => detector.valuePending));
+	},
 };
 
-TRANSITIONRUN_EVENT_LOOP_BUG.then(value => {
-	bugs.TRANSITIONRUN_EVENT_LOOP = value;
-});
+for (let bug in detectors) {
+	let detector = detectors[bug];
+	Object.defineProperty(bugs, bug, {
+		get () {
+			detector.valuePending.then(value => {
+				delete this[bug];
+				this[bug] = value;
+			});
 
-UNREGISTERED_TRANSITION_BUG.then(value => {
-	bugs.UNREGISTERED_TRANSITION = value;
-});
+			// Until we know, assume the bug is present
+			return true;
+		},
+		configurable: true,
+		enumerable: true,
+	});
+}
 
-export { TRANSITIONRUN_EVENT_LOOP_BUG, UNREGISTERED_TRANSITION_BUG };
-export const detected = Promise.all([TRANSITIONRUN_EVENT_LOOP_BUG, UNREGISTERED_TRANSITION_BUG]);
 export default bugs;

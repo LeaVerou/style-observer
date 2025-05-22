@@ -6,15 +6,16 @@
  * @param {string} [meta.syntax] - Property syntax.
  * @param {boolean} [meta.inherits] - Whether the property inherits.
  * @param {*} [meta.initialValue] - Initial value.
+ * @param {Window} [window] - Window to register the property in.
  * @returns {boolean} - Whether the property was successfully registered.
  */
-export default function gentleRegisterProperty (property, meta = {}, global = globalThis) {
-	if (!property.startsWith("--") || !global.CSS?.registerProperty) {
+export default function gentleRegisterProperty (property, meta = {}, window = globalThis) {
+	if (!property.startsWith("--") || !window.CSS?.registerProperty) {
 		return false;
 	}
 
 	try {
-		global.CSS.registerProperty({
+		window.CSS.registerProperty({
 			name: property,
 			inherits: meta.inherits ?? true,
 			syntax: meta.syntax,

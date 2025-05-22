@@ -4,12 +4,14 @@ import MultiWeakMap from "./util/MultiWeakMap.js";
 import { toArray, wait, getTimesFor } from "./util.js";
 import RenderedObserver from "./rendered-observer.js";
 
-// We register this as non-inherited so that nested targets work as expected
-gentleRegisterProperty("--style-observer-transition", { inherits: false });
-
-const allowDiscrete = CSS.supports("transition-behavior", "allow-discrete")
+const allowDiscrete = globalThis.CSS?.supports?.("transition-behavior", "allow-discrete")
 	? " allow-discrete"
 	: "";
+
+if (globalThis.document) {
+	gentleRegisterProperty("--style-observer-transition", { inherits: false });
+	bugs.detectAll();
+}
 
 /**
  * @typedef { object } StyleObserverOptionsObject
@@ -69,7 +71,6 @@ export default class ElementStyleObserver {
 	/**
 	 * Whether the observer has been initialized.
 	 * @type {boolean}
-	 * @private
 	 */
 	#initialized = false;
 
@@ -100,7 +101,7 @@ export default class ElementStyleObserver {
 	/**
 	 * Called the first time observe() is called to initialize the target.
 	 */
-	#init() {
+	#init () {
 		if (this.#initialized) {
 			return;
 		}
@@ -386,12 +387,6 @@ export default class ElementStyleObserver {
 	 * All instances ever observed by this class.
 	 */
 	static all = new MultiWeakMap();
-
-	/**
-	 * All root nodes that have observed elements.
-	 * @type {WeakSet<Document|ShadowRoot>}
-	 */
-	static rootNodes = new WeakSet();
 }
 
 /**

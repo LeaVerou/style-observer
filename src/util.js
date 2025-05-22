@@ -3,7 +3,7 @@
  * @param {*} value - The value to convert.
  * @returns {any[]} The converted array.
  */
-export function toArray(value) {
+export function toArray (value) {
 	if (value === undefined || value === null) {
 		return [];
 	}
@@ -95,7 +95,7 @@ export function getTimesFor (property, transitions) {
 	}
 	else {
 		let properties = [...new Set([...getLonghands(property), property, "all"])];
-		propertyRegex = RegExp(`(?:^|\\s)(${ properties.join("|") })\\b`);
+		propertyRegex = RegExp(`(?:^|\\s)(${properties.join("|")})\\b`);
 	}
 
 	let lastRelevantTransition = transitions.findLast(transition => propertyRegex.test(transition));
