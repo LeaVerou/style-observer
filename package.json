@@ -6,6 +6,7 @@
   "exports": {
     ".": {
       "import": "./index.js",
+      "require": "./index.js",
       "types": "./types/index.d.ts"
     }
   },
