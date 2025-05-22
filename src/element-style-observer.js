@@ -267,8 +267,12 @@ export default class ElementStyleObserver {
 			transition = getComputedStyle(this.target).transition;
 		}
 
-		if (transition === "all" || transition === "none") {
+		if (transition === "all") {
 			transition = "";
+		}
+		else {
+			// Don't disable transitions on properties we are observing. See https://github.com/LeaVerou/style-observer/issues/107
+			transition = transition.replace(/^none\b/, "");
 		}
 
 		// Note that in Safari < 18.2 this fires no `transitionrun` or `transitionstart` events:
