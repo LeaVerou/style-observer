@@ -1,11 +1,12 @@
 {
   "name": "style-observer",
   "description": "Observe CSS property changes on any elements",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "main": "index.js",
   "exports": {
     ".": {
       "import": "./index.js",
+      "require": "./index.js",
       "types": "./types/index.d.ts"
     }
   },
