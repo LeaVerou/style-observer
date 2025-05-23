@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Selector Observer Test</title>
+	</head>
+	<body>
+		<div id="test">
+			<p>Test</p>
+		</div>
+
+		<script type="module">
+			import SelectorObserver from "./src/selector-observer.js";
+
+			const observer = new SelectorObserver(records => {
+				console.log(...records);
+			});
+
+			observer.observe("#test p", { immediate: true });
+			observer.observe("p.foo");
+			observer.observe("div.bar");
+			console.log("insert Test 2");
+			test.insertAdjacentHTML("beforeend", "<p>Test 2</p>");
+			console.log("add foo class");
+			document.querySelector("p:last-child").classList.add("foo");
+		</script>
+	</body>
+</html>
