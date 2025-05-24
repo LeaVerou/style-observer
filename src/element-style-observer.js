@@ -313,9 +313,10 @@ export default class ElementStyleObserver {
 	 * Set a CSS property on the target.
 	 * @param {string} property
 	 * @param {string} value
+	 * @param {string} [priority]
 	 * @return {void}
 	 */
-	setProperty (property, value) {
+	setProperty (property, value, priority) {
 		let inlineStyle = this.target.style;
 		let style = inlineStyle;
 		if (this._isHost) {
@@ -343,7 +344,7 @@ export default class ElementStyleObserver {
 			style = this._shadowSheet.cssRules[0].style;
 		}
 
-		style.setProperty(property, value);
+		style.setProperty(property, value, priority);
 		// Store reserialized value for later comparison
 		this._styles[property] = this.getProperty(property);
 	}
