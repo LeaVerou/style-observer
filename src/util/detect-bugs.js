@@ -18,6 +18,13 @@ for (let bug in detectors) {
 	let detector = detectors[bug];
 	Object.defineProperty(bugs, bug, {
 		get () {
+			if (detector.value !== undefined) {
+				delete detector.valuePending;
+				delete this[bug];
+
+				return (this[bug] = detector.value);
+			}
+
 			detector.valuePending.then(value => {
 				delete this[bug];
 				this[bug] = value;
