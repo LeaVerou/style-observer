@@ -36,7 +36,9 @@ export default {
 		cs = getComputedStyle(dummy);
 		let newValue = cs.getPropertyValue("--style-observer-adopted-style-sheet-bug");
 
+		dummy.remove();
 		delete this.value;
+
 		return (this.value = oldValue === newValue);
 	},
 	get valuePending () {
