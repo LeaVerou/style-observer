@@ -7,12 +7,7 @@ import gentleRegisterProperty from "../gentle-register-property.js";
  * @returns {{value: boolean, valuePending: boolean}}
  */
 export default {
-	value: undefined,
-	get valuePending () {
-		if (this.value !== undefined) {
-			return this.value;
-		}
-
+	get value () {
 		gentleRegisterProperty("--style-observer-adopted-style-sheet-bug", {
 			syntax: "<number>",
 			inherits: true,
@@ -41,7 +36,11 @@ export default {
 		cs = getComputedStyle(dummy);
 		let newValue = cs.getPropertyValue("--style-observer-adopted-style-sheet-bug");
 
-		delete this.valuePending;
+		delete this.value;
 		return (this.value = oldValue === newValue);
+	},
+	get valuePending () {
+		delete this.valuePending;
+		return this.value;
 	},
 };
