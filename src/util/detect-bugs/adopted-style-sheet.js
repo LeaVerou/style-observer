@@ -8,15 +8,24 @@ import gentleRegisterProperty from "../gentle-register-property.js";
  */
 export default {
 	get value () {
+		let dummy = document.createElement("div");
+		document.body.append(dummy);
+		dummy.attachShadow({ mode: "open" });
+
+		if (Object.isFrozen(dummy.shadowRoot.adoptedStyleSheets)) {
+			// The browser doesn't support the modern adoptedStyleSheets API, i.e., it is not affected by the bug
+			dummy.remove();
+			delete this.value;
+
+			return (this.value = false);
+		}
+
 		gentleRegisterProperty("--style-observer-adopted-style-sheet-bug", {
 			syntax: "<number>",
 			inherits: true,
 			initialValue: 0,
 		});
 
-		let dummy = document.createElement("div");
-		document.body.append(dummy);
-		dummy.attachShadow({ mode: "open" });
 		let sheet = new CSSStyleSheet();
 		sheet.insertRule(`
 			:host {
