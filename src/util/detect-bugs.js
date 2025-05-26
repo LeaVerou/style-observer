@@ -1,7 +1,8 @@
 import TRANSITIONRUN_EVENT_LOOP from "./detect-bugs/transitionrun-loop.js";
 import UNREGISTERED_TRANSITION from "./detect-bugs/unregistered-transition.js";
+import ADOPTED_STYLE_SHEET from "./detect-bugs/adopted-style-sheet.js";
 
-export const detectors = { TRANSITIONRUN_EVENT_LOOP, UNREGISTERED_TRANSITION };
+export const detectors = { TRANSITIONRUN_EVENT_LOOP, UNREGISTERED_TRANSITION, ADOPTED_STYLE_SHEET };
 
 /**
  * Data structure for all detected bugs.
@@ -17,6 +18,13 @@ for (let bug in detectors) {
 	let detector = detectors[bug];
 	Object.defineProperty(bugs, bug, {
 		get () {
+			if (detector.value !== undefined) {
+				delete detector.valuePending;
+				delete this[bug];
+
+				return (this[bug] = detector.value);
+			}
+
 			detector.valuePending.then(value => {
 				delete this[bug];
 				this[bug] = value;
