@@ -1,9 +1,11 @@
 import StyleObserver from "../index.js";
 import gentleRegisterProperty from "./util/gentle-register-property.js";
 import tests from "./tests.js";
+import bugs from "../src/util/detect-bugs.js";
 
 const inlineStyleTest = {
 	name: "Don't use inline styles",
+	skip: !document.adoptedStyleSheets || bugs.ADOPTED_STYLE_SHEET,
 	async run ({property, meta, initial, value}) {
 		// Make the property unique
 		property += "-" + this.data.hostId;
@@ -127,6 +129,7 @@ export default {
 		},
 		{
 			name: "Declarative",
+			skip: document.getElementById("declarative-host").shadowRoot === null,
 			data: {
 				hostId: "declarative-host",
 			},
