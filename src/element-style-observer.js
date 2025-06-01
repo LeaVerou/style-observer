@@ -291,7 +291,7 @@ export default class ElementStyleObserver {
 	 */
 	get _isHost () {
 		return (
-			this.target.shadowRoot && !Object.isFrozen(this.target.shadowRoot.adoptedStyleSheets)
+			!bugs.ADOPTED_STYLE_SHEET && this.target.shadowRoot && !Object.isFrozen(this.target.shadowRoot.adoptedStyleSheets)
 		);
 	}
 
@@ -319,7 +319,7 @@ export default class ElementStyleObserver {
 	setProperty (property, value, priority) {
 		let inlineStyle = this.target.style;
 		let style = inlineStyle;
-		if (!bugs.ADOPTED_STYLE_SHEET && this._isHost) {
+		if (this._isHost) {
 			// This has an open shadow root.
 			// We can use an adopted shadow style to avoid manipulating its style attribute
 			if (!this._shadowSheet) {
