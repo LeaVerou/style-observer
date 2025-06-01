@@ -291,7 +291,7 @@ export default class ElementStyleObserver {
 	 */
 	get _isHost () {
 		return (
-			!bugs.ADOPTED_STYLE_SHEET && this.target.shadowRoot && !Object.isFrozen(this.target.shadowRoot.adoptedStyleSheets)
+			this.target.shadowRoot && !bugs.ADOPTED_STYLE_SHEET && !Object.isFrozen(this.target.shadowRoot.adoptedStyleSheets)
 		);
 	}
 
