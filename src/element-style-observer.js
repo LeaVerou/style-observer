@@ -1,4 +1,4 @@
-import bugs from "./util/detect-bugs.js";
+import bugs, { detectors } from "./util/detect-bugs.js";
 import gentleRegisterProperty from "./util/gentle-register-property.js";
 import MultiWeakMap from "./util/MultiWeakMap.js";
 import { toArray, wait, getTimesFor } from "./util.js";
@@ -199,7 +199,17 @@ export default class ElementStyleObserver {
 		}
 
 		if (bugs.TRANSITIONRUN_EVENT_LOOP) {
+			// In the browsers affected by the bug, `transitionstart` events might not be fired at all,
+			// so we need to listen for `transitionrun` events instead.
+			// See https://github.com/LeaVerou/style-observer/issues/42
 			this.target.addEventListener("transitionrun", this);
+
+			detectors.TRANSITIONRUN_EVENT_LOOP.valuePending?.then(affected => {
+				if (!affected) {
+					// The bug is not present, we can remove the listener
+					this.target.removeEventListener("transitionrun", this);
+				}
+			});
 		}
 
 		this.target.addEventListener("transitionstart", this);
