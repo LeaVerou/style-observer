@@ -10,5 +10,6 @@
 	"change": "Property change",
 	"transition": "The transition property",
 	"util": "Utility functions",
-	"reflow": "Reflow (layout recalculation)"
+	"reflow": "Reflow (layout recalculation)",
+	"rendered-observer": "RenderedObserver"
 }
