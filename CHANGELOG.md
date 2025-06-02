@@ -1,5 +1,22 @@
 # Change Log
 
+## v0.1.1 (2025-06-01)
+
+### Improvements
+
+- Make the Style Observer package work correctly in Webpack by [@web-padawan](https://github.com/web-padawan) in [#122](https://github.com/LeaVerou/style-observer/pull/122).
+- Detect the [Safari adopted stylesheet bug](https://bugs.webkit.org/show_bug.cgi?id=293556) and work around it by [@DmitrySharabin](https://github.com/DmitrySharabin) and [@LeaVerou](https://github.com/LeaVerou) in [#121](https://github.com/LeaVerou/style-observer/pull/121) and [#124](https://github.com/LeaVerou/style-observer/pull/124).
+
+### Tests
+
+- Skip Shadow DOM tests in browsers that don't support them by [@DmitrySharabin](https://github.com/DmitrySharabin) in [#123](https://github.com/LeaVerou/style-observer/pull/123).
+
+**Full Changelog:** [0.1.0...0.1.1](https://github.com/LeaVerou/style-observer/compare/0.1.0...0.1.1)
+
+### New Contributors
+
+- [@web-padawan](https://github.com/web-padawan) made their first contribution in [#122](https://github.com/LeaVerou/style-observer/pull/122)
+
 ## v0.1.0 (2025-05-22)
 
 ### Optimizations
