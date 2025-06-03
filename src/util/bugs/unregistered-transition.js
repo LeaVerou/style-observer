@@ -5,9 +5,11 @@
  * @see https://issues.chromium.org/issues/360159391
  * @returns {Promise<boolean>}
  */
-export default {
-	value: undefined,
-	get valuePending () {
+import Bug from "../Bug.js";
+
+export default new Bug({
+	initialValue: true,
+	detect () {
 		if (this.value !== undefined) {
 			return this.value;
 		}
@@ -17,8 +19,7 @@ export default {
 		let property = "--foo-" + Date.now();
 		dummy.style.cssText = `${property}: 1; transition: ${property} 1ms step-start allow-discrete`;
 
-		delete this.valuePending;
-		return (this.valuePending = new Promise(resolve => {
+		return new Promise(resolve => {
 			requestAnimationFrame(() => {
 				setTimeout(_ => resolve(true), 30);
 				dummy.addEventListener("transitionstart", _ => resolve(false));
@@ -26,6 +27,6 @@ export default {
 			});
 		})
 			.then(v => (this.value = v))
-			.finally(() => dummy.remove()));
+			.finally(() => dummy.remove());
 	},
-};
+});
