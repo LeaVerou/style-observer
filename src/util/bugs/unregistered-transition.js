@@ -3,17 +3,13 @@
 /**
  * Detect if the browser is affected by the unregistered transition bug.
  * @see https://issues.chromium.org/issues/360159391
- * @returns {Promise<boolean>}
  */
 import Bug from "../Bug.js";
 
 export default new Bug({
+	name: "UNREGISTERED_TRANSITION",
 	initialValue: true,
 	detect () {
-		if (this.value !== undefined) {
-			return this.value;
-		}
-
 		let dummy = document.createElement("div");
 		document.body.appendChild(dummy);
 		let property = "--foo-" + Date.now();
@@ -26,7 +22,7 @@ export default new Bug({
 				dummy.style.setProperty(property, "2");
 			});
 		})
-			.then(v => (this.value = v))
+			.then(value => value)
 			.finally(() => dummy.remove());
 	},
 });
