@@ -7,7 +7,7 @@ export default class Bug {
 		Bug.all[name] = this;
 		Object.defineProperty(Bug, name, {
 			get () {
-				return this.value;
+				return this.all[name].value;
 			},
 			configurable: true,
 			enumerable: true,
