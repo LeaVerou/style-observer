@@ -10,7 +10,6 @@ import Bug from "../Bug.js";
 
 export default new Bug({
 	name: "TRANSITIONRUN_EVENT_LOOP",
-	initialValue: true,
 	detect () {
 		let dummy = document.createElement("div");
 		document.body.appendChild(dummy);

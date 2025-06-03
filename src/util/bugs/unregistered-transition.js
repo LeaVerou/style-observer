@@ -8,7 +8,6 @@ import Bug from "../Bug.js";
 
 export default new Bug({
 	name: "UNREGISTERED_TRANSITION",
-	initialValue: true,
 	detect () {
 		let dummy = document.createElement("div");
 		document.body.appendChild(dummy);

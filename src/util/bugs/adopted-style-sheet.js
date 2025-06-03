@@ -9,7 +9,6 @@ import Bug from "../Bug.js";
 
 export default new Bug({
 	name: "ADOPTED_STYLE_SHEET",
-	initialValue: true,
 	detect () {
 		let dummy = document.createElement("div");
 		document.body.append(dummy);
