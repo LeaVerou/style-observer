@@ -2,7 +2,7 @@
  * Detect if the browser is affected by the Safari adopted style sheet bug:
  * removing a CSS custom property from an adopted stylesheet in a ShadowRoot
  * does not update the computed value as expected and doesn't trigger a transition.
- * @returns {{value: boolean, valuePending: boolean}}
+ * @see https://bugs.webkit.org/show_bug.cgi?id=293556
  */
 import gentleRegisterProperty from "../gentle-register-property.js";
 import Bug from "../Bug.js";
@@ -18,9 +18,8 @@ export default new Bug({
 		if (Object.isFrozen(dummy.shadowRoot.adoptedStyleSheets)) {
 			// The browser doesn't support the modern adoptedStyleSheets API, i.e., it is not affected by the bug
 			dummy.remove();
-			delete this.value;
 
-			return (this.value = false);
+			return false;
 		}
 
 		gentleRegisterProperty("--style-observer-adopted-style-sheet-bug", {
@@ -49,8 +48,7 @@ export default new Bug({
 		let newValue = cs.getPropertyValue("--style-observer-adopted-style-sheet-bug");
 
 		dummy.remove();
-		delete this.value;
 
-		return (this.value = oldValue === newValue);
+		return oldValue === newValue;
 	},
 });
