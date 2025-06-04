@@ -11,6 +11,7 @@ let tests = await Promise.all([
 	"transition",
 	"util",
 	"reflow",
+	"disconnected",
 ].map(name => import(`./${name}.js`).then(module => module.default)));
 
 
