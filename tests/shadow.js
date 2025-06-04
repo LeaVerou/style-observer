@@ -1,7 +1,7 @@
 import StyleObserver from "../index.js";
 import gentleRegisterProperty from "./util/gentle-register-property.js";
 import tests from "./tests.js";
-import bugs from "../src/util/detect-bugs.js";
+import bugs from "../src/util/bugs/index.js";
 
 const inlineStyleTest = {
 	name: "Don't use inline styles",

@@ -1,4 +1,4 @@
-import bugs, { detectors } from "./util/bugs/index.js";
+import bugs from "./util/bugs/index.js";
 import gentleRegisterProperty from "./util/gentle-register-property.js";
 import MultiWeakMap from "./util/MultiWeakMap.js";
 import { toArray, wait, getTimesFor } from "./util.js";
@@ -204,7 +204,7 @@ export default class ElementStyleObserver {
 			// See https://github.com/LeaVerou/style-observer/issues/42
 			this.target.addEventListener("transitionrun", this);
 
-			detectors.TRANSITIONRUN_EVENT_LOOP.valuePending.then(affected => {
+			bugs.all.TRANSITIONRUN_EVENT_LOOP.valuePending?.then(affected => {
 				if (!affected) {
 					// The bug is not present, we can remove the listener
 					this.target.removeEventListener("transitionrun", this);

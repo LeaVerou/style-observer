@@ -5,17 +5,12 @@
 /**
  * Detect if the browser is affected by the Safari transition loop bug.
  * @see https://bugs.webkit.org/show_bug.cgi?id=279012
- * @returns {Promise<boolean>}
  */
 import Bug from "../Bug.js";
 
 export default new Bug({
-	initialValue: true,
+	name: "TRANSITIONRUN_EVENT_LOOP",
 	detect () {
-		if (this.value !== undefined) {
-			return this.value;
-		}
-
 		let dummy = document.createElement("div");
 		document.body.appendChild(dummy);
 		let property = "--bar-" + Date.now();
@@ -29,7 +24,7 @@ export default new Bug({
 				dummy.style.setProperty(property, "2");
 			});
 		})
-			.then(v => (this.value = v))
+			.then(value => value)
 			.finally(() => dummy.remove());
 	},
 });
