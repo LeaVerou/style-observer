@@ -24,7 +24,6 @@ export default new Bug({
 				dummy.style.setProperty(property, "2");
 			});
 		})
-			.then(value => value)
 			.finally(() => dummy.remove());
 	},
 });
