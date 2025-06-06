@@ -67,3 +67,34 @@ export default function gentleRegisterProperty (property, meta = {}, root = glob
 
 	registeredProperties[property] = styleSheet;
 }
+
+/**
+ * Unregister a CSS custom property if it was registered with `gentleRegisterProperty`.
+ * @param {string} property - Property name.
+ * @param {Document} [root=globalThis.document] - Document to unregister the property from.
+ */
+export function unregisterProperty (property, root = globalThis.document) {
+	let registeredProperties = properties.get(root);
+
+	if (!registeredProperties || !(property in registeredProperties)) {
+		return;
+	}
+
+	let styleSheet = registeredProperties[property];
+	if (root.adoptedStyleSheets) {
+		root.adoptedStyleSheets = root.adoptedStyleSheets.filter(sheet => sheet !== styleSheet);
+	}
+	else {
+		// Find the rule corresponding to the property and remove it
+		let rules = styleSheet.cssRules;
+		for (let i = 0; i < rules.length; i++) {
+			let rule = rules[i].cssRules[0];
+			if (rule.name === property) {
+				styleSheet.deleteRule(i);
+				break;
+			}
+		}
+	}
+
+	delete registeredProperties[property];
+}
