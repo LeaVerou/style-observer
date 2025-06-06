@@ -1,4 +1,5 @@
 import adoptCSS from "./adopt-css.js";
+import isRegisteredProperty from "./is-registered-property.js";
 
 const INITIAL_VALUES = {
 	"<angle>": "0deg",
@@ -25,18 +26,22 @@ const INITIAL_VALUES = {
 let properties = new Map();
 
 /**
- * Register a CSS custom property.
+ * Register a CSS custom property if it’s not already registered.
  * @param {string} property - Property name.
  * @param {Object} [meta] - Property definition.
  * @param {string} [meta.syntax] - Property syntax.
  * @param {boolean} [meta.inherits] - Whether the property inherits.
  * @param {*} [meta.initialValue] - Initial value.
- * @param {Document} [root] - Document to register the property in.
+ * @param {Document} [root=globalThis.document] - Document to register the property in.
  */
 export default function gentleRegisterProperty (property, meta = {}, root = globalThis.document) {
 	let registeredProperties = properties.get(root);
 
-	if (!property.startsWith("--") || (registeredProperties && property in registeredProperties)) {
+	if (
+		!property.startsWith("--") || 
+		(registeredProperties && property in registeredProperties) || 
+		isRegisteredProperty(property, root)
+	) {
 		return;
 	}
 
