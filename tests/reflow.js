@@ -68,9 +68,9 @@ export default {
 			reflowObserver.disconnect();
 		});
 
-		setTimeout(() => {
+		requestAnimationFrame(() => {
 			target.style.setProperty(property, value);
-		}, 50);
+		});
 
 		return Promise.all([reflowPromise, stylePromise]).then(([reflow, change]) => reflow);
 	},
