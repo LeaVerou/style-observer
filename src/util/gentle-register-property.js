@@ -1,5 +1,3 @@
-import isRegisteredProperty from "./is-registered-property.js";
-
 const INITIAL_VALUES = {
 	"<angle>": "0deg",
 	"<color>": "transparent",
@@ -19,7 +17,35 @@ const INITIAL_VALUES = {
 };
 
 /**
- * Register a CSS custom property if it’s not already registered.
+ * All registered properties.
+ * @type { Set<string> }
+ * @private
+ */
+let _properties = new Set();
+
+/**
+ * The style sheet that contains the registered properties (if the modern adoptedStyleSheets API is supported).
+ * @type { CSSStyleSheet }
+ * @private
+ */
+let _styleSheet;
+
+/**
+ * The style element that contains the registered properties (if the modern adoptedStyleSheets API is not supported).
+ * @type { HTMLStyleElement }
+ * @private
+ */
+let _styleElement;
+
+/**
+ * CSS `@property` rules to be added to the CSS layer with all properties that should be registered.
+ * @type { string }
+ * @private
+ */
+let _layerRules = "";
+
+/**
+ * Register a CSS custom property.
  * @param {string} property - Property name.
  * @param {Object} [meta] - Property definition.
  * @param {string} [meta.syntax] - Property syntax.
@@ -28,16 +54,11 @@ const INITIAL_VALUES = {
  * @param {Window} [window] - Window to register the property in.
  */
 export default function gentleRegisterProperty (property, meta = {}, window = globalThis) {
-	if (
-		!property.startsWith("--") ||
-		!window.CSS?.registerProperty ||
-		isRegisteredProperty(property, window)
-	) {
+	if (!property.startsWith("--") || _properties.has(property)) {
 		return;
 	}
 
 	let definition = {
-		name: property,
 		syntax: meta.syntax || "*",
 		inherits: meta.inherits ?? true,
 	};
@@ -49,41 +70,34 @@ export default function gentleRegisterProperty (property, meta = {}, window = gl
 		definition.initialValue = INITIAL_VALUES[definition.syntax];
 	}
 
-	try {
-		window.CSS.registerProperty(definition);
+	_properties.add(property);
+
+	_layerRules += `@property ${property} {
+		syntax: "${definition.syntax}";
+		inherits: ${definition.inherits};
+		${definition.initialValue !== undefined ? `initial-value: ${definition.initialValue};` : ""}
+	}\n`;
+
+	if (!_styleSheet && window.document.adoptedStyleSheets && !Object.isFrozen(window.document.adoptedStyleSheets)) {
+		// The modern adoptedStyleSheets API is supported
+		_styleSheet = new CSSStyleSheet();
+		window.document.adoptedStyleSheets.push(_styleSheet);
 	}
-	catch (e) {
-		let error = e;
-		let rethrow = true;
 
-		if (e instanceof window.DOMException) {
-			if (e.name === "InvalidModificationError") {
-				// Property is already registered, which is fine
-				rethrow = false;
-			}
-			else if (e.name === "SyntaxError") {
-				// In Safari < 18.2 (where we face the infinite loop bug),
-				// there is no way to provide an initial value for a custom property with a syntax of "<string>".
-				// There will always be an error: “The given initial value does not parse for the given syntax.”
-				// So we try again with universal syntax.
-				// We do the same for any other syntax that is not supported.
-				definition.syntax = "*";
+	if (!_styleSheet && !_styleElement) {
+		// The modern adoptedStyleSheets API is not supported
+		_styleElement = Object.assign(window.document.createElement("style"), { id: "style-observer-styles" });
+		window.document.head.append(_styleElement);
+	}
 
-				try {
-					window.CSS.registerProperty(definition);
-					rethrow = false;
-				}
-				catch (e) {
-					error = e;
-				}
-			}
-		}
+	let rule = `@layer style-observer-registered-properties {
+		${_layerRules}
+	}`;
 
-		if (rethrow) {
-			// Re-throw any other errors
-			throw new Error(`Failed to register custom property ${property}: ${error.message}`, {
-				cause: error,
-			});
-		}
+	if (_styleSheet) {
+		_styleSheet.replaceSync(rule);
+	}
+	else {
+		_styleElement.textContent = rule;
 	}
 }
