@@ -1,3 +1,5 @@
+import adoptCSS from "./adopt-css.js";
+
 const INITIAL_VALUES = {
 	"<angle>": "0deg",
 	"<color>": "transparent",
@@ -17,32 +19,10 @@ const INITIAL_VALUES = {
 };
 
 /**
- * All registered properties.
- * @type { Set<string> }
- * @private
+ * All registered properties per document. Every property is associated with a style sheet with the corresponding `@property` rule.
+ * @type { Map<Document, Record<string, CSSStyleSheet>> }
  */
-let _properties = new Set();
-
-/**
- * The style sheet that contains the registered properties (if the modern adoptedStyleSheets API is supported).
- * @type { CSSStyleSheet }
- * @private
- */
-let _styleSheet;
-
-/**
- * The style element that contains the registered properties (if the modern adoptedStyleSheets API is not supported).
- * @type { HTMLStyleElement }
- * @private
- */
-let _styleElement;
-
-/**
- * CSS `@property` rules to be added to the CSS layer with all properties that should be registered.
- * @type { string }
- * @private
- */
-let _layerRules = "";
+let properties = new Map();
 
 /**
  * Register a CSS custom property.
@@ -51,10 +31,12 @@ let _layerRules = "";
  * @param {string} [meta.syntax] - Property syntax.
  * @param {boolean} [meta.inherits] - Whether the property inherits.
  * @param {*} [meta.initialValue] - Initial value.
- * @param {Window} [window] - Window to register the property in.
+ * @param {Document} [root] - Document to register the property in.
  */
-export default function gentleRegisterProperty (property, meta = {}, window = globalThis) {
-	if (!property.startsWith("--") || _properties.has(property)) {
+export default function gentleRegisterProperty (property, meta = {}, root = globalThis.document) {
+	let registeredProperties = properties.get(root);
+
+	if (!property.startsWith("--") || (registeredProperties && property in registeredProperties)) {
 		return;
 	}
 
@@ -70,34 +52,18 @@ export default function gentleRegisterProperty (property, meta = {}, window = gl
 		definition.initialValue = INITIAL_VALUES[definition.syntax];
 	}
 
-	_properties.add(property);
+	let styleSheet = adoptCSS(`@layer style-observer-registered-properties {
+		@property ${property} {
+			syntax: "${definition.syntax}";
+			inherits: ${definition.inherits};
+			${definition.initialValue !== undefined ? `initial-value: ${definition.initialValue};` : ""}
+		}
+	}`, root);
 
-	_layerRules += `@property ${property} {
-		syntax: "${definition.syntax}";
-		inherits: ${definition.inherits};
-		${definition.initialValue !== undefined ? `initial-value: ${definition.initialValue};` : ""}
-	}\n`;
-
-	if (!_styleSheet && window.document.adoptedStyleSheets && !Object.isFrozen(window.document.adoptedStyleSheets)) {
-		// The modern adoptedStyleSheets API is supported
-		_styleSheet = new CSSStyleSheet();
-		window.document.adoptedStyleSheets.push(_styleSheet);
+	if (!registeredProperties) {
+		registeredProperties = {};
+		properties.set(root, registeredProperties);
 	}
 
-	if (!_styleSheet && !_styleElement) {
-		// The modern adoptedStyleSheets API is not supported
-		_styleElement = Object.assign(window.document.createElement("style"), { id: "style-observer-styles" });
-		window.document.head.append(_styleElement);
-	}
-
-	let rule = `@layer style-observer-registered-properties {
-		${_layerRules}
-	}`;
-
-	if (_styleSheet) {
-		_styleSheet.replaceSync(rule);
-	}
-	else {
-		_styleElement.textContent = rule;
-	}
+	registeredProperties[property] = styleSheet;
 }
