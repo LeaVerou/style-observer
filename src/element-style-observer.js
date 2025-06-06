@@ -190,7 +190,7 @@ export default class ElementStyleObserver {
 		for (let property of properties) {
 			if (bugs.UNREGISTERED_TRANSITION && !this.constructor.properties.has(property)) {
 				// Init property
-				gentleRegisterProperty(property, undefined, this.target.ownerDocument.defaultView);
+				gentleRegisterProperty(property, undefined, this.target.ownerDocument);
 				this.constructor.properties.add(property);
 			}
 
