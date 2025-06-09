@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Older browser compatibility tests</title>
+	<link rel="stylesheet" href="https://htest.dev/htest.css" crossorigin />
+	<script type="module">
+		import adoptCSS from "../src/util/adopt-css.js";
+
+		// Import all the tests we have.
+		// Declarative shadow DOM is not supported in old browsers,
+		// so we skip corresponding tests
+		let skip = ["Declarative"];
+		let tests = await import("./index-fn.js").then(m => m.default).then(m => m.tests);
+		tests = tests.map(test => {
+			return {
+				...test,
+				throws: false,
+				tests: test.tests.map(t => {
+					if (!skip.includes(t.name)) {
+						return t;
+					}
+
+					return {
+						...t,
+						skip: true,
+					}
+				}),
+			}
+		});
+
+		let render = await import("https://htest.dev/src/render.js").then(m => m.default);
+		render({
+			name: "Older browser compatibility tests",
+			tests,
+		});
+
+		// Enable hTest features like test isolation, navigation, etc.
+		import("https://htest.dev/htest.js");
+	</script>
+</head>
+
+<body>
+	<registered-component></registered-component>
+</body>
+
+</html>
