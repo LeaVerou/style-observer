@@ -1,3 +1,4 @@
+import adoptCSS from "./adopt-css.js";
 import isRegisteredProperty from "./is-registered-property.js";
 
 const INITIAL_VALUES = {
@@ -19,25 +20,32 @@ const INITIAL_VALUES = {
 };
 
 /**
+ * All registered properties per document. Every property is associated with a style sheet with the corresponding `@property` rule.
+ * @type { Map<Document, Record<string, CSSStyleSheet>> }
+ */
+let properties = new Map();
+
+/**
  * Register a CSS custom property if it’s not already registered.
  * @param {string} property - Property name.
  * @param {Object} [meta] - Property definition.
  * @param {string} [meta.syntax] - Property syntax.
  * @param {boolean} [meta.inherits] - Whether the property inherits.
  * @param {*} [meta.initialValue] - Initial value.
- * @param {Window} [window] - Window to register the property in.
+ * @param {Document} [root=globalThis.document] - Document to register the property in.
  */
-export default function gentleRegisterProperty (property, meta = {}, window = globalThis) {
+export default function gentleRegisterProperty (property, meta = {}, root = globalThis.document) {
+	let registeredProperties = properties.get(root);
+
 	if (
-		!property.startsWith("--") ||
-		!window.CSS?.registerProperty ||
-		isRegisteredProperty(property, window)
+		!property.startsWith("--") || 
+		(registeredProperties && property in registeredProperties) || 
+		isRegisteredProperty(property, root)
 	) {
 		return;
 	}
 
 	let definition = {
-		name: property,
 		syntax: meta.syntax || "*",
 		inherits: meta.inherits ?? true,
 	};
@@ -49,41 +57,49 @@ export default function gentleRegisterProperty (property, meta = {}, window = gl
 		definition.initialValue = INITIAL_VALUES[definition.syntax];
 	}
 
-	try {
-		window.CSS.registerProperty(definition);
+	let styleSheet = adoptCSS(`@layer style-observer-registered-properties {
+		@property ${property} {
+			syntax: "${definition.syntax}";
+			inherits: ${definition.inherits};
+			${definition.initialValue !== undefined ? `initial-value: ${definition.initialValue};` : ""}
+		}
+	}`, root);
+
+	if (!registeredProperties) {
+		registeredProperties = {};
+		properties.set(root, registeredProperties);
 	}
-	catch (e) {
-		let error = e;
-		let rethrow = true;
 
-		if (e instanceof window.DOMException) {
-			if (e.name === "InvalidModificationError") {
-				// Property is already registered, which is fine
-				rethrow = false;
-			}
-			else if (e.name === "SyntaxError") {
-				// In Safari < 18.2 (where we face the infinite loop bug),
-				// there is no way to provide an initial value for a custom property with a syntax of "<string>".
-				// There will always be an error: “The given initial value does not parse for the given syntax.”
-				// So we try again with universal syntax.
-				// We do the same for any other syntax that is not supported.
-				definition.syntax = "*";
+	registeredProperties[property] = styleSheet;
+}
 
-				try {
-					window.CSS.registerProperty(definition);
-					rethrow = false;
-				}
-				catch (e) {
-					error = e;
-				}
+/**
+ * Unregister a CSS custom property if it was registered with `gentleRegisterProperty`.
+ * @param {string} property - Property name.
+ * @param {Document} [root=globalThis.document] - Document to unregister the property from.
+ */
+export function unregisterProperty (property, root = globalThis.document) {
+	let registeredProperties = properties.get(root);
+
+	if (!registeredProperties || !(property in registeredProperties)) {
+		return;
+	}
+
+	let styleSheet = registeredProperties[property];
+	if (root.adoptedStyleSheets) {
+		root.adoptedStyleSheets = root.adoptedStyleSheets.filter(sheet => sheet !== styleSheet);
+	}
+	else {
+		// Find the rule corresponding to the property and remove it
+		let rules = styleSheet.cssRules;
+		for (let i = 0; i < rules.length; i++) {
+			let rule = rules[i].cssRules[0];
+			if (rule.name === property) {
+				styleSheet.deleteRule(i);
+				break;
 			}
 		}
-
-		if (rethrow) {
-			// Re-throw any other errors
-			throw new Error(`Failed to register custom property ${property}: ${error.message}`, {
-				cause: error,
-			});
-		}
 	}
+
+	delete registeredProperties[property];
 }
