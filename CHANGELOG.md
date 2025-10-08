@@ -1,5 +1,26 @@
 # Change Log
 
+## v0.1.2 (2025-10-08)
+
+### Improvements
+
+- Remove the `transitionrun` event listener if the browser is not affected by the `transitionrun` event loop bug by [@DmitrySharabin](https://github.com/DmitrySharabin) in [#127](https://github.com/LeaVerou/style-observer/pull/127).
+- Improve browser bug detection by [@LeaVerou](https://github.com/LeaVerou) and [@DmitrySharabin](https://github.com/DmitrySharabin) in [#129](https://github.com/LeaVerou/style-observer/pull/129).
+- Register properties by placing the corresponding `@property` rules in a CSS layer instead of less permissive `CSS.registerProperty` by [@DmitrySharabin](https://github.com/DmitrySharabin) in [#132](https://github.com/LeaVerou/style-observer/pull/132). The user’s rules now have higher priority, and they can redefine already registered properties if needed.
+
+### Tests
+
+- Test that Style Observer doesn't fire pointlessly immediately after starting observing by [@DmitrySharabin](https://github.com/DmitrySharabin) in [#98](https://github.com/LeaVerou/style-observer/pull/98).
+- Test that Style Observer correctly works with disconnected elements by [@DmitrySharabin](https://github.com/DmitrySharabin) in [#99](https://github.com/LeaVerou/style-observer/pull/99).
+- Fix race conditions in the reflow tests by [@DmitrySharabin](https://github.com/DmitrySharabin) in [#132](https://github.com/LeaVerou/style-observer/pull/132).
+- Fix bug with `isRegisteredProperty()` argument by [@DmitrySharabin](https://github.com/DmitrySharabin) in [6e73d42](https://github.com/LeaVerou/style-observer/commit/6e73d427528ecc86d6c4c56d8c2aca8b5dc42ecd).
+
+### Other
+
+- Add an MIT licence so people can freely use the library in their projects by [@LeaVerou](https://github.com/LeaVerou) in [a1a66ac](https://github.com/LeaVerou/style-observer/commit/a1a66acee7fd2dbdbe9738ff37bbc5eae7407864).
+
+**Full Changelog:** [0.1.1...0.1.2](https://github.com/LeaVerou/style-observer/compare/0.1.1...0.1.2)
+
 ## v0.1.1 (2025-06-01)
 
 ### Improvements
