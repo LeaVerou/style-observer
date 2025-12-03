@@ -7,7 +7,7 @@
  */
 export default function isRegisteredProperty (property, root = globalThis.document) {
 	let dummy = root.createElement("div");
-	root.body.append(dummy);
+	root.head.append(dummy);
 
 	let invalidValue = "foo(bar)"; // a value that is invalid for any registered syntax
 	dummy.style.setProperty(property, invalidValue);
