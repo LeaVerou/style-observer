@@ -421,6 +421,8 @@ export function resolveOptions (options) {
 	}
 	else if (typeof options === "object") {
 		options = { properties: [], ...options };
+		options.properties = toArray(options.properties);
+		options.targets = toArray(options.targets);
 	}
 
 	return options;

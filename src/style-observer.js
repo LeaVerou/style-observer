@@ -25,10 +25,11 @@ export default class StyleObserver {
 		this.callback = callback;
 
 		options = resolveOptions(options);
-		options.targets ??= [];
+		options.targets = toArray(options.targets);
+		options.properties = toArray(options.properties);
 
 		if (options.target) {
-			options.targets.push(options.target);
+			options.targets.push(...toArray(options.target));
 		}
 
 		this.options = options;
